@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1052</width>
-    <height>638</height>
+    <width>1050</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,8 +30,8 @@
    <widget class="QWidget" name="formLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>140</y>
+      <x>0</x>
+      <y>0</y>
       <width>301</width>
       <height>241</height>
      </rect>
@@ -42,23 +42,42 @@
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string comment="Module" extracomment="Module"/>
+       </property>
        <property name="text">
-        <string>Модуль m=</string>
+        <string>m=</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSpinBox" name="m"/>
+      <widget class="QSpinBox" name="m">
+       <property name="toolTip">
+        <string>Модуль зацепления</string>
+       </property>
+       <property name="statusTip">
+        <string>Модуль</string>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Число зубьев шестерни z1=</string>
+        <string>z1=</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
       <widget class="QSpinBox" name="z1">
+       <property name="toolTip">
+        <string>Число зубьев шестерни</string>
+       </property>
        <property name="maximum">
         <number>999</number>
        </property>
@@ -67,12 +86,15 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Число зубьев колеса z2=</string>
+        <string>z2=</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
       <widget class="QSpinBox" name="z2">
+       <property name="toolTip">
+        <string>Число зубьев колеса</string>
+       </property>
        <property name="maximum">
         <number>999</number>
        </property>
@@ -81,12 +103,15 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Коэфф. смещения колеса x2=</string>
+        <string>x2=</string>
        </property>
       </widget>
      </item>
      <item row="3" column="1">
       <widget class="QDoubleSpinBox" name="x2">
+       <property name="toolTip">
+        <string>Коэффициент смещения колеса</string>
+       </property>
        <property name="decimals">
         <number>3</number>
        </property>
@@ -95,7 +120,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Аппликата большего торцового сечения венца шестерни W0=</string>
+        <string>W0=</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -105,23 +130,27 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="W0">
+       <property name="toolTip">
+        <string>Аппликата большего торцового сечения венца шестерни</string>
+       </property>
+       <property name="decimals">
+        <number>3</number>
+       </property>
+      </widget>
+     </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Межосевой угол E=</string>
+        <string>E=</string>
        </property>
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="E"/>
-     </item>
-     <item row="6" column="1">
-      <widget class="QSpinBox" name="bw"/>
-     </item>
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="W0">
-       <property name="decimals">
-        <number>3</number>
+      <widget class="QDoubleSpinBox" name="E">
+       <property name="toolTip">
+        <string>Межосевой угол</string>
        </property>
       </widget>
      </item>
@@ -132,13 +161,20 @@
        </property>
       </widget>
      </item>
+     <item row="6" column="1">
+      <widget class="QSpinBox" name="bw">
+       <property name="toolTip">
+        <string>Ширина зубчатого венча</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="formLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>20</y>
+      <x>340</x>
+      <y>30</y>
       <width>255</width>
       <height>110</height>
      </rect>
@@ -182,8 +218,8 @@
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>0</y>
+      <x>400</x>
+      <y>10</y>
       <width>189</width>
       <height>17</height>
      </rect>
@@ -401,7 +437,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1052</width>
+     <width>1050</width>
      <height>24</height>
     </rect>
    </property>
