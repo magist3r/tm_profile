@@ -13,7 +13,7 @@ void PaintArea::paintEvent(QPaintEvent *)
     double r = (rf2 - ra2 - c * m);
 
     QTransform transform;
-    transform.scale(65, -65);
+    transform.scale(40, -40);
     transform.translate(0, -3.7);
     //transform.rotate(90);
 
@@ -27,13 +27,15 @@ void PaintArea::paintEvent(QPaintEvent *)
     };
     QPainter painter(this);
     painter.setTransform(transform);
-
-    painter.setPen(Qt::red);
+    painter.setPen(Qt::black);
 
     //painter.setFont(QFont("Arial", 30));
    // painter.drawText(rect(), Qt::AlignCenter, QTime::currentTime().toString());
     painter.drawConvexPolygon(points,4);
-    painter.setRenderHint(painter.Antialiasing);
+    //painter.d;
+    painter.setRenderHint(painter.Antialiasing, true);
+    //painter.
+
 
     QMapIterator<double, QMap<double,double> > i(out_list);
     while (i.hasNext())
@@ -55,6 +57,7 @@ void PaintArea::paintEvent(QPaintEvent *)
             qDebug() << i.key() << j.key() << j.value();
         }
     }
+
 }
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
