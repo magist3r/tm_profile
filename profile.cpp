@@ -32,10 +32,12 @@ double rf2; // Радиус впадин колеса
 double eps = 0.000001; // Требуемая точность расчётов
 double dx; // Величина модификации
 
+/*
+void radius()
+Расчет радиусов вершин и впадин колеса (ra2 и rf2)
+*/
 void radius()
 {
-    // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
-
     double alpha_w02;
 
     double inv_alpha_w02 = ((x2 - x0) / (z2 - z0)) * 2 * tan(alpha) + tan(alpha) - alpha;
@@ -100,7 +102,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double sum_xt_3 = 0;
 
     int i = 0;
-
+    // Расчет коэффициентов смещения
     for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
     {
         double delta_oi = E; // Угол аксоидного конуса шестерни
@@ -123,7 +125,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         alpha_y1 = acos(rb1 / ry1);
         double xt = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
-     //   if (i == 0) {double xt_max = xt;}
+        if (i == 0 || i == n + 1) {xt += dx;} //Модификация
         S[i] = xt;
 
         sum_Wi += Wi - W0;
@@ -151,7 +153,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         sum_xt_3
     };
 
-    double X[3]; // Матрица результатов
+    double X[3]; // Матрица результатов (коэффициенты уравнения траектории)
     double T[3][3];
 
     double detA = det(A);
@@ -322,7 +324,7 @@ QList<double> a_tw (double ry1, double Wi)
     return out_list;
 }
 
-// Расчет определителя матрицы
+/* Расчет определителя матрицы */
 
 double det(double A[3][3])
 {

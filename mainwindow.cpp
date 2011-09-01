@@ -40,7 +40,7 @@ void MainWindow::load_vars()
     bw = ui->bw->value();
     ra2 = ui->ra2->value();
     rf2 = ui->rf2->value();
-    dx = ui->dx->value();
+    dx = ui->dx->value() / 100.0;
 }
 
 void MainWindow::on_pushButton_clicked()
