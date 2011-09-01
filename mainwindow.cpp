@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->label_dx->setText(QString::number(ui->dx->value() / 100.0,'f',2)); // Установка значения модификации в label_dx
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +40,7 @@ void MainWindow::load_vars()
     bw = ui->bw->value();
     ra2 = ui->ra2->value();
     rf2 = ui->rf2->value();
+    dx = ui->dx->value();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -94,3 +96,10 @@ void MainWindow::on_MainButton_clicked()
      painter.setFont(QFont("Arial", 30));
      painter.drawText(rect(), Qt::AlignCenter, "Qt");
 }*/
+
+void MainWindow::on_dx_valueChanged(int value)
+{
+    ui->label_dx->setText(QString::number(value / 100.0,'f',2)); // Установка значения модификации в label_dx
+}
+
+

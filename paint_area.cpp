@@ -14,9 +14,11 @@ void PaintArea::paintEvent(QPaintEvent *)
 
     QTransform transform;
     transform.scale(40, -40);
-    transform.translate(0, -3.7);
+    transform.translate(1.7, -3.7);
+  //  transform.
     //transform.rotate(90);
 
+    qDebug() << width() << height();
 
     QPointF points[4] =
     {
@@ -27,11 +29,12 @@ void PaintArea::paintEvent(QPaintEvent *)
     };
     QPainter painter(this);
     painter.setTransform(transform);
-    painter.setPen(Qt::black);
-
+    painter.setPen(Qt::gray);
+    //painter.
     //painter.setFont(QFont("Arial", 30));
    // painter.drawText(rect(), Qt::AlignCenter, QTime::currentTime().toString());
-    painter.drawConvexPolygon(points,4);
+    //painter.drawConvexPolygon(points,4);
+
     //painter.d;
     painter.setRenderHint(painter.Antialiasing, true);
     //painter.
@@ -45,19 +48,19 @@ void PaintArea::paintEvent(QPaintEvent *)
         while (j.hasNext())
         {
             j.next();
-            if (j.value() >= 0 && j.value() <= 0.0085)
+            if (j.value() >= 0 && j.value() <= 0.0085) // Условие попадания в инерционную зону
             {
-                painter.setPen(Qt::green);
+                painter.setPen(Qt::black);
             }
             else
             {
-                painter.setPen(Qt::red);
+                painter.setPen(Qt::white);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-            qDebug() << i.key() << j.key() << j.value();
+    //        qDebug() << i.key() << j.key() << j.value();
         }
     }
-
+    qDebug() << painter.window().center();
 }
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)

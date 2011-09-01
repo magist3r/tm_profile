@@ -22,6 +22,8 @@ private slots:
 
     void on_MainButton_clicked();
 
+    void on_dx_valueChanged(int value);
+
 private:
     void load_vars();
 
