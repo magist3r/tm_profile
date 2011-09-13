@@ -5,7 +5,10 @@
 void PaintArea::paintEvent(QPaintEvent *)
 {
     QMap<double, QMap<double,double> > out_list;
-
+    if (ra2 == 0)
+    {
+        return;
+    }
     out_list = pr_profile(ra2, rf2);
 
     double r = (rf2 - ra2 - c * m);
