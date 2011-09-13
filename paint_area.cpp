@@ -1,13 +1,11 @@
 #include "paint_area.h"
 #include "profile.h"
-#include <QDateTime>
 #include "math.h"
-#include "QDebug"
 
 void PaintArea::paintEvent(QPaintEvent *)
 {
     QMap<double, QMap<double,double> > out_list;
-    //load_vars();
+
     out_list = pr_profile(ra2, rf2);
 
     double r = (rf2 - ra2 - c * m);
@@ -15,30 +13,11 @@ void PaintArea::paintEvent(QPaintEvent *)
     QTransform transform;
     transform.scale(40, -40);
     transform.translate(1.7, -3.7);
-  //  transform.
-    //transform.rotate(90);
 
-    qDebug() << width() << height();
-
-    QPointF points[4] =
-    {
-        QPointF(bw, 0),
-        QPointF(bw, r),
-        QPointF(0, r + bw * tan(E)),
-        QPointF(0, bw * tan(E))
-    };
     QPainter painter(this);
     painter.setTransform(transform);
     painter.setPen(Qt::gray);
-    //painter.
-    //painter.setFont(QFont("Arial", 30));
-   // painter.drawText(rect(), Qt::AlignCenter, QTime::currentTime().toString());
-    //painter.drawConvexPolygon(points,4);
-
-    //painter.d;
     painter.setRenderHint(painter.Antialiasing, true);
-    //painter.
-
 
     QMapIterator<double, QMap<double,double> > i(out_list);
     while (i.hasNext())
@@ -57,10 +36,8 @@ void PaintArea::paintEvent(QPaintEvent *)
                 painter.setPen(Qt::white);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-    //        qDebug() << i.key() << j.key() << j.value();
         }
     }
-    qDebug() << painter.window().center();
 }
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)

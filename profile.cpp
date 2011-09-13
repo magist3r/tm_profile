@@ -1,6 +1,5 @@
 #include "profile.h"
 #include "math.h"
-#include <QDebug>
 
 double m; // Модуль зацепления
 double z1; // Число зубьев шестерни
@@ -34,7 +33,7 @@ double dx; // Величина модификации
 
 /*
 void radius()
-Расчет радиусов вершин и впадин колеса (ra2 и rf2)
+// Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 */
 void radius()
 {
@@ -60,27 +59,9 @@ void radius()
     ra2 = rf2 - m * (2 * ha + c);
 }
 
-QMap<QString,double> t_profile(double ra2, double rf2)
-{
-    QList<double> list;
-    QMap<QString,double> out_list;
-
-    double n = 4; // Количество радиусов
-    double dW = 0.5; // Шаг торцовых сечений
-    double dr = (rf2 - ra2 - c * m) / n; // Шаг радиусов
-    double ry1;
-
-    for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
-    {
-        for (double ry2 = ra2; ry2 <= rf2 - c * m; ry2 += dr)
-        {
-            ry1 = ry2 / cos(E) - Wi * tan(E);
-            list = a_tw(ry1, Wi);
-        }
-    }
-    return out_list;
-}
-
+/* QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
+// Расчет толщин зубьев практического и теоретического профилей
+*/
 QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 {
     int n = 10; // Количество разбиений
@@ -90,8 +71,6 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double dr = (rf2 - ra2 - c * m) / n2; // Шаг радиусов
 
     QList<double> list;
-
-    double S[n+1];
 
     double sum_Wi = 0;
     double sum_Wi_2 = 0;
@@ -126,7 +105,6 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         double xt = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
         if (i == 0 || i == n + 1) {xt += dx;} //Модификация
-        S[i] = xt;
 
         sum_Wi += Wi - W0;
         sum_Wi_2 += pow(Wi - W0, 2);
@@ -158,7 +136,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 
     double detA = det(A);
 
-    for (int m = 0; m < 3; m++)
+    for (int z = 0; z < 3; z++)
     {
         for (int i = 0; i < 3; i++)
         {
@@ -169,24 +147,12 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         }
         for (int j = 0; j < 3; j++)
             {
-                T[j][m] = B[j];
+                T[j][z] = B[j];
             }
-        X[m] = det(T) / detA;
+        X[z] = det(T) / detA;
     }
-
 
     double w0 = -X[1] / (2 * X[2]);
-    double s_kw = 0;
-    i = 0;
-    for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
-    {
-        double s = X[2] * pow((Wi - W0),2) + X[1] * (Wi - W0) + X[0];
-        s_kw += pow(s - S[i],2);
-  //      qDebug() << s << S[i];
-
-        i++;
-    }
-
     double wnk = -m;
     double wnn = 0;
     double wn;
@@ -226,10 +192,12 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double wok = wk + 0.5 * d0 * sin(-atan(m * (2 * X[2] * wk + X[1])));
     int w00 = int(won);
     int w0k = int(wok) + 1;
- //   qDebug() << w00 << w0k;
+
     dW = 0.05;
     i = 3;
+
     QMap<double, QMap<double, double> > profile;
+
     for (double Woi = w00; Woi <= w0k; Woi += dW)
     {
         double wn = w0;
@@ -249,12 +217,12 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             }
 
         }
-        if (wi < 0 || wi > bw)
+
+        if (wi < 0 || wi > bw) // Выбор реальных торцовых сечений
         {
             continue;
         }
-        //X[i] = wi;
-        //double Wi = Woi - 0.5 * d0
+
         double delta_oi = -atan(m * (2 * X[2] * wi + X[1]));
         double xt = X[2] * pow(wi, 2) + X[1] * wi + X[0];
         double aw0 = m * (0.5 * z1 + xt) + 0.5 * d0 * cos(delta_oi);
@@ -264,40 +232,35 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         double d = m * z1;
         double d_b = d * cos(alpha_2);
         double ry1_min = ra2 / cos(E) - (W0 + bw) * tan(E);
+
         for (double ry2 = ra2; ry2 <= rf2 - c * m; ry2 += dr)
         {
             double Wi = wi + W0;
-           // ry2 = rav2;
             double ry1 = ry2 / cos(E) - Wi * tan(E);
 
             // Теоретический профиль
             list = a_tw(ry1, Wi);
             double x_tr = list[0];
             double y_tr = list[1];
-            double s_tr = 2 * ry1 * atan(x_tr / y_tr);
+            double s_tr = 2 * ry1 * atan(x_tr / y_tr); // Толщина зуба теоретическая
 
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha_2) * cos(delta_oi));
-            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha) - alpha) - 2 * (tan(alpha_ty) - alpha_ty));
+            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha) - alpha) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             profile[wi][ry1 - ry1_min] = s_tr - s_pr;
-         //   qDebug() << wi << ry1 << s_tr << s_pr << s_tr - s_pr;
         }
-
-        //qDebug() << Woi << aw0 << wi << xt << delta_oi * 180 / M_PI;
     }
-
-
-
     return profile;
-
 }
 
-
-
+/*
+QList<double> a_tw (double ry1, double Wi)
+// Подбор угла профиля в торцовом сечении
+*/
 QList<double> a_tw (double ry1, double Wi)
 {
-    // Подбор угла профиля в торцовом сечении
+
     QList<double> out_list;
 
     double vy2, p, q, alpha_tw, phi1;
@@ -324,8 +287,9 @@ QList<double> a_tw (double ry1, double Wi)
     return out_list;
 }
 
-/* Расчет определителя матрицы */
-
+/* double det(double A[3][3])
+// Расчет определителя матрицы
+*/
 double det(double A[3][3])
 {
    return A[0][0] * A[1][1] * A[2][2] +

@@ -69,17 +69,6 @@ void MainWindow::on_pushButton_clicked()
     // ui->widget->paintEvent(this);
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-    ui->ra2->setValue(42.435);
-
-    load_vars();
-
-    QMap<QString,double> out_list;
-
-    out_list = t_profile(ui->ra2->value(), ui->rf2->value());
-}
-
 void MainWindow::on_MainButton_clicked()
 {
     ui->ra2->setValue(42.435);
