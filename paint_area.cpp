@@ -1,6 +1,7 @@
 #include "paint_area.h"
 #include "profile.h"
 #include "math.h"
+#include <QDebug>
 
 void PaintArea::paintEvent(QPaintEvent *)
 {
@@ -39,6 +40,7 @@ void PaintArea::paintEvent(QPaintEvent *)
                 painter.setPen(Qt::white);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
+     //       qDebug() << i.key() << j.key();
         }
     }
 }

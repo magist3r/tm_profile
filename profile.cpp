@@ -1,5 +1,6 @@
 #include "profile.h"
 #include "math.h"
+#include <QDebug>
 
 double m; // Модуль зацепления
 double z1; // Число зубьев шестерни
@@ -80,9 +81,10 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double sum_xt_2 = 0;
     double sum_xt_3 = 0;
 
-    int i = 0;
+    double Wi = W0;
     // Расчет коэффициентов смещения
-    for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
+    //for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
+    for (int i=0; i <= n; i++)
     {
         double delta_oi = E; // Угол аксоидного конуса шестерни
         double alpha1 = atan(tan(alpha) * cos(delta_oi));
@@ -113,7 +115,8 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         sum_xt += xt;
         sum_xt_2 += xt * (Wi - W0);
         sum_xt_3 += xt * pow(Wi - W0, 2);
-        i++;
+        qDebug() << Wi << i;
+        Wi += dW;
     }
 
     // Решение СЛАУ методом Крамера
@@ -150,6 +153,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
                 T[j][z] = B[j];
             }
         X[z] = det(T) / detA;
+        qDebug() << X[z];
     }
 
     double w0 = -X[1] / (2 * X[2]);
@@ -175,6 +179,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double wkn = bw;
     double wkk = bw + m;
     double wk;
+//    qDebug() << -atan(m * (2 * X[2] * 1 + X[1])) * 180 / M_PI;
     while (wkk-wkn > eps)
     {
         wk = (wkn + wkk) / 2;
@@ -192,9 +197,9 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     double wok = wk + 0.5 * d0 * sin(-atan(m * (2 * X[2] * wk + X[1])));
     int w00 = int(won);
     int w0k = int(wok) + 1;
-
+    qDebug() << w00 << w0k;
     dW = 0.05;
-    i = 3;
+    int i = 3;
 
     QMap<double, QMap<double, double> > profile;
 
@@ -217,7 +222,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             }
 
         }
-
+   //     qDebug() << wi;
         if (wi < 0 || wi > bw) // Выбор реальных торцовых сечений
         {
             continue;
