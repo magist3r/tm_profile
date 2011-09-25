@@ -8,6 +8,8 @@ void radius();
 
 QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2);
 
+QList<double> square_metod(QMap<double, double> S);
+
 QList<double> a_tw(double ry1, double Wi);
 
 double det(double A[3][3]);

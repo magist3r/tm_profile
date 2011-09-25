@@ -1,6 +1,7 @@
 #include "profile.h"
 #include "math.h"
 #include <QDebug>
+#include <QGenericMatrix>
 
 double m; // Модуль зацепления
 double z1; // Число зубьев шестерни
@@ -65,7 +66,7 @@ void radius()
 */
 QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 {
-    int n = 10; // Количество разбиений
+    int n = 10; // Количество разбиений (должно быть четным)
     int n2 = 50; // Количество радиусов
     double dW = bw / n; // Шаг торцовых сечений
     double rav2 = (rf2 + ra2 - c * m) / 2;
@@ -73,14 +74,10 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 
     QList<double> list;
 
-    double sum_Wi = 0;
-    double sum_Wi_2 = 0;
-    double sum_Wi_3 = 0;
-    double sum_Wi_4 = 0;
-    double sum_xt = 0;
-    double sum_xt_2 = 0;
-    double sum_xt_3 = 0;
 
+
+    QMap<double, double> S;
+    QList<double> X;
     double Wi = W0;
     // Расчет коэффициентов смещения
     //for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
@@ -106,7 +103,8 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         alpha_y1 = acos(rb1 / ry1);
         double xt = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
-        if (i == 0 || i == n + 1) {xt += dx;} //Модификация
+        S[Wi - W0] = xt;
+        /*if (i == 0 || i == n + 1) {xt += dx;} //Модификация
 
         sum_Wi += Wi - W0;
         sum_Wi_2 += pow(Wi - W0, 2);
@@ -115,48 +113,38 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         sum_xt += xt;
         sum_xt_2 += xt * (Wi - W0);
         sum_xt_3 += xt * pow(Wi - W0, 2);
-        qDebug() << Wi << i;
+        qDebug() << Wi << i;*/
         Wi += dW;
     }
 
-    // Решение СЛАУ методом Крамера
-    double A[3][3] = // Основная матрица
+    X = square_metod(S);
+    qDebug() << "0>>" << X[2] * 0 + X[1] * 0 + X[0];
+    qDebug() << "2.5>>" << X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0];
+    qDebug() << "5>>" << X[2] * pow(bw,2) + X[1] * bw + X[0];
+    if(dx != 0)
     {
-        {n + 1, sum_Wi, sum_Wi_2},
-        {sum_Wi, sum_Wi_2, sum_Wi_3},
-        {sum_Wi_2, sum_Wi_3, sum_Wi_4}
-    };
-
-    double B[3] = // Матрица коэффициентов
-    {
-        sum_xt,
-        sum_xt_2,
-        sum_xt_3
-    };
-
-    double X[3]; // Матрица результатов (коэффициенты уравнения траектории)
-    double T[3][3];
-
-    double detA = det(A);
-
-    for (int z = 0; z < 3; z++)
-    {
-        for (int i = 0; i < 3; i++)
+        S.clear();
+        double Wi = W0;
+      /*  for (int i=0; i <= n; i++)
         {
-            for (int j = 0; j < 3; j++)
-            {
-                T[i][j] = A[i][j];
-            }
-        }
-        for (int j = 0; j < 3; j++)
-            {
-                T[j][z] = B[j];
-            }
-        X[z] = det(T) / detA;
-        qDebug() << X[z];
-    }
 
+            qDebug() << mod;
+            S[Wi-W0] = X[2] * pow(Wi-W0,2) + X[1] * (Wi-W0) + X[0] - mod;
+            Wi += dW;
+        }*/
+        double center = 0.8 * n;
+        double mod1 = dx * fabs(0 - center) / (0.5 * n);
+        double mod2 = dx * fabs(n - center) / (0.5 * n);
+        S[0] = X[2] * 0 + X[1] * 0 + X[0] + mod1;
+        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0];
+        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] + mod2;
+        X = square_metod(S);
+    }
+    qDebug() << "0>>" << X[2] * 0 + X[1] * 0 + X[0];
+    qDebug() << "2.5>>" << X[2] * bw/2 + X[1] * bw/2 + X[0];
+    qDebug() << "5>>" << X[2] * bw + X[1] * bw + X[0];
     double w0 = -X[1] / (2 * X[2]);
+    qDebug() << ">>>>>>>>>>>>>>>>>.>" << w0;
     double wnk = -m;
     double wnn = 0;
     double wn;
@@ -257,6 +245,66 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         }
     }
     return profile;
+}
+
+QList<double> square_metod(QMap<double, double> S)
+{
+    double sum_x = 0;
+    double sum_x2 = 0;
+    double sum_x3 = 0;
+    double sum_x4 = 0;
+    double sum_y = 0;
+    double sum_xy = 0;
+    double sum_x2y = 0;
+    QList<double> X; // Матрица результатов (коэффициенты уравнения)
+
+    int n = 0;
+    QMap<double, double>::iterator i;
+    for (i = S.begin(); i != S.end(); ++i)
+    {
+        sum_x += i.key();
+        sum_x2 += pow(i.key(), 2);
+        sum_x3 += pow(i.key(), 3);
+        sum_x4 += pow(i.key(), 4);
+        sum_y += i.value();
+        sum_xy += i.key() * i.value();
+        sum_x2y += pow(i.key(), 2) * i.value();
+        n++;
+    }
+    double A[3][3] = // Основная матрица
+    {
+        {n, sum_x, sum_x2},
+        {sum_x, sum_x2, sum_x3},
+        {sum_x2, sum_x3, sum_x4}
+    };
+
+    double B[3] = // Матрица коэффициентов
+    {
+        sum_y,
+        sum_xy,
+        sum_x2y
+    };
+
+    double detA = det(A);
+    double A_bkp[3][3];
+    for (int i = 0; i < 3; i++)
+    {
+        for (int a = 0; a < 3; a++)
+        {
+            for (int b = 0; b < 3; b++)
+            {
+                A_bkp[a][b] = A[a][b];
+
+            }
+        }
+        for (int j = 0; j < 3; j++)
+        {
+            A_bkp[j][i] = B[j];
+        }
+        X.append(det(A_bkp) / detA);
+        qDebug() << "X(i)" << X[i] << det(A_bkp);
+    }
+    return X;
 }
 
 /*
