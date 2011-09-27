@@ -39,8 +39,8 @@ void PaintArea::paintEvent(QPaintEvent *)
         painter.drawLine(0,i,bw,i);
     }
 
-    painter.setPen(Qt::gray);
-    painter.setRenderHint(painter.Antialiasing, true);
+  //  painter.setPen(Qt::gray);
+//    painter.setRenderHint(painter.Antialiasing, true);
 
     QMapIterator<double, QMap<double,double> > i(out_list);
     while (i.hasNext())
@@ -52,18 +52,20 @@ void PaintArea::paintEvent(QPaintEvent *)
             j.next();
             if (j.value() < 0) // Условие попадания в инерционную зону
             {
-                painter.setPen(Qt::white);
+                painter.setPen(Qt::green);
             }
             else if (j.value() >= 0 && j.value() <= 0.0085)
             {
-                painter.setPen(Qt::black);
+                painter.setPen(Qt::blue);
+                qDebug() << "GJGFFFFFFFFFFFFFFFFFFFFFKKK!!!!";
+                painter.setPen(Qt::blue);
             }
             else
             {
                 painter.setPen(Qt::red);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-     //       qDebug() << i.key() << j.key();
+            qDebug() << i.key() << j.key() << j.value();
         }
     }
 }

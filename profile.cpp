@@ -32,6 +32,8 @@ double rf2; // Радиус впадин колеса
 
 double eps = 0.000001; // Требуемая точность расчётов
 double dx; // Величина модификации
+double dx_0;
+double dx_bw;
 
 /*
 void radius()
@@ -66,7 +68,7 @@ void radius()
 */
 QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 {
-    int n = 10; // Количество разбиений (должно быть четным)
+    int n = 100; // Количество разбиений (должно быть четным)
     int n2 = 50; // Количество радиусов
     double dW = bw / n; // Шаг торцовых сечений
     double rav2 = (rf2 + ra2 - c * m) / 2;
@@ -121,7 +123,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     qDebug() << "0>>" << X[2] * 0 + X[1] * 0 + X[0];
     qDebug() << "2.5>>" << X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0];
     qDebug() << "5>>" << X[2] * pow(bw,2) + X[1] * bw + X[0];
-    if(dx != 0)
+    if(dx != 0 || dx_0 != 0 || dx_bw != 0)
     {
         S.clear();
         double Wi = W0;
@@ -132,12 +134,12 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             S[Wi-W0] = X[2] * pow(Wi-W0,2) + X[1] * (Wi-W0) + X[0] - mod;
             Wi += dW;
         }*/
-        double center = 0.8 * n;
+        double center = 0.1 * n;
         double mod1 = dx * fabs(0 - center) / (0.5 * n);
         double mod2 = dx * fabs(n - center) / (0.5 * n);
-        S[0] = X[2] * 0 + X[1] * 0 + X[0] + mod1;
-        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0];
-        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] + mod2;
+        S[0] = X[2] * 0 + X[1] * 0 + X[0] + dx_0;
+        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0] - dx;
+        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] + dx_bw;
         X = square_metod(S);
     }
     qDebug() << "0>>" << X[2] * 0 + X[1] * 0 + X[0];
