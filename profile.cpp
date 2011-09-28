@@ -227,9 +227,10 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         double aw0 = m * (0.5 * z1 + xt) + 0.5 * d0 * cos(delta_oi);
         double ha_2 = ha / cos(delta_oi);
         double c_2 = c / cos(delta_oi);
-        double alpha_2 = atan(tan(alpha) * cos(delta_oi));
+   //     double alpha_2 = atan(tan(alpha) * cos(delta_oi));
         double d = m * z1;
-        double d_b = d * cos(alpha_2);
+        double alpha_t = atan(tan(alpha) * cos(delta_oi));
+        double d_b = d * cos(alpha_t);
         double ry1_min = ra2 / cos(E) - (W0 + bw) * tan(E);
 
         double ry2 = ra2;
@@ -245,12 +246,13 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             double y_tr = list[1];
             double s_tr = 2 * ry1 * atan(x_tr / y_tr); // Толщина зуба теоретическая
 
+          //  alpha_2 = alpha;
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
-            double st = m * (M_PI / 2 + 2 * xt * tan(alpha_2) * cos(delta_oi));
-            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_2) - alpha_2) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
+            double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
+            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             profile[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
-
+            qDebug() << Wi - W0 << ry1 << x_tr << s_tr << s_pr;
             ry2 += dr;
         }
         Wi += dW;

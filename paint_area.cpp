@@ -79,7 +79,7 @@ void PaintArea::paintEvent(QPaintEvent *)
                 painter.setPen(Qt::red);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-            qDebug() << i.key() << j.key() << j.value();
+      //      qDebug() << i.key() << j.key() << j.value();
         }
     }
 }
