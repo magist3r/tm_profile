@@ -49,50 +49,15 @@ void MainWindow::load_vars()
 
 void MainWindow::on_pushButton_clicked()
 {
- /*   ui->m->setValue(2);
-    ui->z1->setValue(34);
-    ui->z2->setValue(40);
-    ui->x2->setValue(2.21);
-    ui->alpha->setValue(20);
-    ui->c->setValue(0.25);
-    ui->z0->setValue(19);
-    ui->x0->setValue(0.105);
-    ui->da0->setValue(43.42);
-    ui->ha->setValue(1);
-    ui->E->setValue(9);
-    ui->W0->setValue(40.777);
-    ui->d0->setValue(27);
-    ui->bw->setValue(5);*/
-
     load_vars();
     radius();
     ui->ra2->setValue(ra2);
     ui->rf2->setValue(rf2);
-    //ui->W1_lim->setValue(out_list["W1_lim"]);
-
-    // ui->widget->paintEvent(this);
 }
 
 void MainWindow::on_MainButton_clicked()
 {
-//    ui->ra2->setValue(42.435);
     load_vars();
-
-
-
-}
-
-/*void QWidget::paintEvent(QPaintEvent *)
-{
-     QPainter painter(this);
-     painter.setPen(Qt::blue);
-     painter.setFont(QFont("Arial", 30));
-     painter.drawText(rect(), Qt::AlignCenter, "Qt");
-}*/
-
-void MainWindow::on_dx_valueChanged(int value)
-{
-    //ui->label_dx->setText(QString::number(value / 100.0,'f',2)); // Установка значения модификации в label_dx
 }
 
 void MainWindow::saveProperties()
@@ -169,8 +134,6 @@ void MainWindow::loadProperties()
     settings.endGroup();
 
 }
-
-
 
 void MainWindow::on_pushButton_2_clicked()
 {
