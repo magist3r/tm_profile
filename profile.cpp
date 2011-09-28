@@ -137,17 +137,17 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         double center = 0.1 * n;
         double mod1 = dx * fabs(0 - center) / (0.5 * n);
         double mod2 = dx * fabs(n - center) / (0.5 * n);
-        S[0] = X[2] * 0 + X[1] * 0 + X[0] + dx_0;
-        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0] - dx;
-        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] + dx_bw;
+        S[0] = X[2] * 0 + X[1] * 0 + X[0] - dx_0;
+        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0] + dx;
+        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] - dx_bw;
         X = square_metod(S);
     }
     qDebug() << "0>>" << X[2] * 0 + X[1] * 0 + X[0];
-    qDebug() << "2.5>>" << X[2] * bw/2 + X[1] * bw/2 + X[0];
-    qDebug() << "5>>" << X[2] * bw + X[1] * bw + X[0];
+    qDebug() << "2.5>>" << X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0];
+    qDebug() << "5>>" << X[2] * pow(bw,2) + X[1] * bw + X[0];
     double w0 = -X[1] / (2 * X[2]);
     qDebug() << ">>>>>>>>>>>>>>>>>.>" << w0;
-    double wnk = -m;
+ /*   double wnk = -m;
     double wnn = 0;
     double wn;
     while (fabs(wnk-wnn) > eps)
@@ -189,13 +189,17 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
     int w0k = int(wok) + 1;
     qDebug() << w00 << w0k;
     dW = 0.05;
-    int i = 3;
+    int i = 3;*/
 
     QMap<double, QMap<double, double> > profile;
 
-    for (double Woi = w00; Woi <= w0k; Woi += dW)
+    Wi = W0;
+    // Расчет коэффициентов смещения
+    //for (double Wi = W0; Wi <= W0 + bw; Wi += dW)
+    for (int i=0; i <= n; i++)
     {
-        double wn = w0;
+        double wi = Wi - W0;
+   /*     double wn = w0;
         double wk = bw + m;
         double wi;
         while (wk-wn > eps)
@@ -216,7 +220,7 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         if (wi < 0 || wi > bw) // Выбор реальных торцовых сечений
         {
             continue;
-        }
+        }*/
 
         double delta_oi = -atan(m * (2 * X[2] * wi + X[1]));
         double xt = X[2] * pow(wi, 2) + X[1] * wi + X[0];
@@ -228,9 +232,11 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
         double d_b = d * cos(alpha_2);
         double ry1_min = ra2 / cos(E) - (W0 + bw) * tan(E);
 
-        for (double ry2 = ra2; ry2 <= rf2 - c * m; ry2 += dr)
+        double ry2 = ra2;
+        for (int j=0; j <= n2; j++)
+     //   for (double ry2 = ra2; ry2 <= rf2 - c * m; ry2 += dr)
         {
-            double Wi = wi + W0;
+
             double ry1 = ry2 / cos(E) - Wi * tan(E);
 
             // Теоретический профиль
@@ -242,9 +248,12 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha_2) * cos(delta_oi));
-            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha) - alpha) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
-            profile[wi][ry1 - ry1_min] = s_tr - s_pr;
+            double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_2) - alpha_2) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
+            profile[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
+
+            ry2 += dr;
         }
+        Wi += dW;
     }
     return profile;
 }

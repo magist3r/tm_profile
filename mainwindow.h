@@ -22,8 +22,16 @@ private slots:
 
     void on_dx_valueChanged(int value);
 
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
 private:
     void load_vars();
+
+    void saveProperties();
+
+    void loadProperties();
 
     Ui::MainWindow *ui;
 };

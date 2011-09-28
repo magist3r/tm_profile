@@ -3,6 +3,7 @@
 #include "profile.h"
 #include "math.h"
 #include "paint_area.h"
+#include <QSettings>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -93,4 +94,43 @@ void MainWindow::on_dx_valueChanged(int value)
     ui->label_dx->setText(QString::number(value / 100.0,'f',2)); // Установка значения модификации в label_dx
 }
 
+void MainWindow::saveProperties()
+{
+    QSettings settings("tm_profile", "zb-susu");
+    settings.beginGroup("properties");
+    const QString name = "m_" + QString::number(ui->m->value()) + "|z1_" + QString::number(ui->z1->value()) + "|z2_" + QString::number(ui->z2->value());
+    settings.beginGroup(name);
+    settings.setValue("MainWindow", saveState());
+    settings.setValue("z1", ui->z1->value());
+    settings.setValue("x2", ui->x2->value());
+    settings.endGroup();
+    settings.endGroup();
 
+}
+
+void MainWindow::loadProperties()
+{
+   QSettings settings("tm_profile", "zb-susu");
+    settings.beginGroup("properties");
+    const QString name = "m_" + QString::number(ui->m->value()) + "|z1_" + QString::number(ui->z1->value()) + "|z2_" + QString::number(ui->z2->value());
+    settings.beginGroup(name);
+    qDebug() << name;
+    restoreState(settings.value("MainWindow").toByteArray());
+    ui->z1->setValue(settings.value("z1").toInt());
+    ui->x2->setValue(settings.value("x2").toDouble());
+    settings.endGroup();
+    settings.endGroup();
+
+}
+
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    saveProperties();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    loadProperties();
+}
