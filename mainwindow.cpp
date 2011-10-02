@@ -1,3 +1,21 @@
+/*
+tm_profile - program for calculation of cylinder-bevel transmissions
+Copyright (C) 2011 Sergey Lopatin
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "profile.h"
@@ -5,6 +23,8 @@
 #include "paint_area.h"
 #include <QSettings>
 #include <QDebug>
+
+Profile profile;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,9 +40,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::load_vars()
+void MainWindow::setVars()
 {
-    m = ui->m->value();
+   /* m = ui->m->value();
     z1 = ui->z1->value();
     z2 = ui->z2->value();
     x2 = ui->x2->value();
@@ -34,30 +54,70 @@ void MainWindow::load_vars()
     z0 = ui->z0->value();
     x0 = ui->x0->value();
     da0 = ui->da0->value();
-    i21 = z1 / z2;
-    rb2 = 0.5 * m * z2 * cos(alpha);
-    delta2 = atan(sin(E) / (cos(E) - i21));
-    psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;
+
     d0 = ui->d0->value();
     bw = ui->bw->value();
     ra2 = ui->ra2->value();
     rf2 = ui->rf2->value();
     dx = ui->dx->value();
     dx_0 = ui->dx_0->value();
-    dx_bw = ui->dx_bw->value();
+    dx_bw = ui->dx_bw->value();*/
+
+
+    profile.m = ui->m->value();
+    profile.z1 = ui->z1->value();
+    profile.z2 = ui->z2->value();
+    profile.x2 = ui->x2->value();
+    profile.E = ui->E->value() * M_PI / 180;
+    profile.W0 = ui->W0->value();
+    profile.alpha = ui->alpha->value() * M_PI / 180;
+    profile.ha = ui->ha->value();
+    profile.c = ui->c->value();
+    profile.z0 = ui->z0->value();
+    profile.x0 = ui->x0->value();
+    profile.da0 = ui->da0->value();
+  /*  profile.i21 = z1 / z2;
+    profile.rb2 = 0.5 * m * z2 * cos(alpha);
+    profile.delta2 = atan(sin(E) / (cos(E) - i21));
+    profile.psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;*/
+    profile.d0 = ui->d0->value();
+    profile.bw = ui->bw->value();
+    profile.ra2 = ui->ra2->value();
+    profile.rf2 = ui->rf2->value();
+    profile.dx = ui->dx->value();
+    profile.dx_0 = ui->dx_0->value();
+    profile.dx_bw = ui->dx_bw->value();
+ //   profile.calculate();
+
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    load_vars();
-    radius();
-    ui->ra2->setValue(ra2);
-    ui->rf2->setValue(rf2);
+    setVars();
+    if (profile.getRadius())
+    {
+        ui->ra2->setValue(profile.ra2);
+        ui->rf2->setValue(profile.rf2);
+    }
 }
 
 void MainWindow::on_MainButton_clicked()
 {
-    load_vars();
+    setVars();
+    profile.calculate();
+    ui->textBrowser->clear();
+  /*  QMapIterator<double, QMap<double,double> > i(profile.result);
+    while (i.hasNext())
+    {
+        i.next();
+        QMapIterator<double,double> j(i.value());
+        while (j.hasNext())
+        {
+            j.next();
+            ui->textBrowser->append("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
+        }
+    }*/
+    ui->PaintContactArea->drawImage(&profile);
 }
 
 void MainWindow::saveProperties()
@@ -159,3 +219,9 @@ void MainWindow::on_pushButton_3_clicked()
         loadProperties();
     }
 }
+
+ void MainWindow::addToDebugConsole(QString &text)
+ {
+     ui->textBrowser->append(text);
+ }
+

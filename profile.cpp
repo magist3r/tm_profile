@@ -1,8 +1,26 @@
+/*
+tm_profile - program for calculation of cylinder-bevel transmissions
+Copyright (C) 2011 Sergey Lopatin
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "profile.h"
 #include "math.h"
 #include <QDebug>
 
-double m; // Модуль зацепления
+/*double m; // Модуль зацепления
 double z1; // Число зубьев шестерни
 double z2; // Число зубьев колеса
 double x2; // Коэффициент смещения колеса
@@ -32,13 +50,15 @@ double rf2; // Радиус впадин колеса
 double eps = 0.000001; // Требуемая точность расчётов
 double dx; // Величина модификации
 double dx_0;
-double dx_bw;
+double dx_bw;*/
 
-/*
-void radius()
-// Расчет радиусов вершин и впадин колеса (ra2 и rf2)
-*/
-void radius()
+
+Profile::Profile()
+{
+
+}
+
+bool Profile::getRadius()
 {
     double alpha_w02;
 
@@ -60,13 +80,17 @@ void radius()
     }
     rf2 = (m * (z2 - z0) * (cos(alpha)/cos(alpha_w02)) + da0) / 2;
     ra2 = rf2 - m * (2 * ha + c);
+    return true;
 }
 
-/* QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
-// Расчет толщин зубьев практического и теоретического профилей
-*/
-QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
+void Profile::calculate()
 {
+    i21 = z1 / z2;
+    rb2 = 0.5 * m * z2 * cos(alpha);
+    delta2 = atan(sin(E) / (cos(E) - i21));
+    psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;
+    result.clear();
+
     int n = 100; // Количество разбиений (должно быть четным)
     int n2 = 50; // Количество радиусов
     double dW = bw / n; // Шаг торцовых сечений
@@ -123,8 +147,6 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
 
     double w0 = -X[1] / (2 * X[2]);
 
-    QMap<double, QMap<double, double> > profile;
-
     Wi = W0;
 
     // Расчет коэффициентов смещения
@@ -157,16 +179,15 @@ QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2)
             double alpha_ty = acos(0.5 * d_b / ry1);
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
-            profile[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
+            result[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
 
             ry2 += dr;
         }
         Wi += dW;
     }
-    return profile;
 }
 
-QList<double> square_metod(QMap<double, double> S)
+QList<double> Profile::square_metod(QMap<double, double> &S)
 {
     double sum_x = 0;
     double sum_x2 = 0;
@@ -226,11 +247,7 @@ QList<double> square_metod(QMap<double, double> S)
     return X;
 }
 
-/*
-QList<double> a_tw (double ry1, double Wi)
-// Подбор угла профиля в торцовом сечении
-*/
-QList<double> a_tw (double ry1, double Wi)
+QList<double> Profile::a_tw (double ry1, double Wi)
 {
 
     QList<double> out_list;
@@ -259,10 +276,7 @@ QList<double> a_tw (double ry1, double Wi)
     return out_list;
 }
 
-/* double det(double A[3][3])
-// Расчет определителя матрицы
-*/
-double det(double A[3][3])
+double Profile::det(double A[3][3])
 {
    return A[0][0] * A[1][1] * A[2][2] +
           A[0][1] * A[1][2] * A[2][0] +
