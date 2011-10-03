@@ -32,6 +32,9 @@ public:
 
     void drawImage(Profile *profile);
 
+signals:
+    void addToDebugConsole(QString text);
+
 private:
     bool toPaint;
     QImage image;

@@ -33,7 +33,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void addToDebugConsole(QString &text);
+
 
 private slots:
     void on_pushButton_clicked();
@@ -43,6 +43,8 @@ private slots:
     void on_pushButton_2_clicked();
 
     void on_pushButton_3_clicked();
+
+    void addToDebugConsole(QString text);
 
 private:
     void setVars();

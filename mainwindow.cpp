@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
   //  ui->label_dx->setText(QString::number(ui->dx->value() / 100.0,'f',2)); // Установка значения модификации в label_dx
     connect(ui->MainButton, SIGNAL(clicked()), ui->PaintContactArea, SLOT(update()));
+    connect(ui->PaintContactArea, SIGNAL(addToDebugConsole(QString)), this, SLOT(addToDebugConsole(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -220,7 +221,7 @@ void MainWindow::on_pushButton_3_clicked()
     }
 }
 
- void MainWindow::addToDebugConsole(QString &text)
+ void MainWindow::addToDebugConsole(QString text)
  {
      ui->textBrowser->append(text);
  }

@@ -129,7 +129,7 @@ void PaintArea::drawImage(Profile *profile)
                 painter.setPen(Qt::red);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-            MainWindow.addToDebugConsole("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
+            emit addToDebugConsole("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
          }
     }
     image = image1;
