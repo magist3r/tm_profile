@@ -24,12 +24,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 void PaintArea::paintEvent(QPaintEvent *)
 {
-    if(toPaint)
-    {
-        QPainter painter(this);
-        painter.drawImage(0,0, image);
-        toPaint = false;
-    }
+   QPainter painter(this);
+   painter.drawImage(0,0, image);
 
     /*QTransform transform;
     transform.scale(40,-40);*/
@@ -75,7 +71,7 @@ void PaintArea::paintEvent(QPaintEvent *)
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 {
-    toPaint = false;
+
 }
 
 
@@ -84,7 +80,8 @@ void PaintArea::drawImage(Profile *profile)
     QImage image1(width(), height(), QImage::Format_ARGB32_Premultiplied);
     image1.fill(0);
     QPainter painter(&image1);
-    //  painter.begin();
+
+   // painter.drawRoundedRect(QRect(0,0,width(),height()),0.5,0.5);
 
     double r = (profile->rf2 - profile->c * profile->m) / cos(profile->E) - (profile->ra2 / cos(profile->E) - profile->bw * tan(profile->E));
 
@@ -121,9 +118,21 @@ void PaintArea::drawImage(Profile *profile)
                 painter.setPen(Qt::white);
             }
             else if (j.value() >= 0 && j.value() <= 0.0085)
+                        {
+                            painter.setPen(QColor(255 - 255/0.0085 * j.value(),255 - 255/0.0085 * j.value(),255));
+                        }
+          /*  else if (j.value() >= 0 && j.value() <= 0.003)
             {
-                painter.setPen(Qt::black);
+                painter.setPen(QColor(160,160,255));
             }
+            else if (j.value() >= 0.003 && j.value() < 0.006)
+            {
+                painter.setPen(QColor(70,70,255));
+            }
+            else if (j.value() >= 0.006 && j.value() <= 0.0085)
+            {
+                painter.setPen(QColor(0,0,255));
+            }*/
             else
             {
                 painter.setPen(Qt::red);
@@ -133,7 +142,6 @@ void PaintArea::drawImage(Profile *profile)
          }
     }
     image = image1;
-    toPaint = true;
     image.save("./img.png", "PNG");
     this->update();
     //QPainter painter()

@@ -36,7 +36,6 @@ signals:
     void addToDebugConsole(QString text);
 
 private:
-    bool toPaint;
     QImage image;
 
 protected:
