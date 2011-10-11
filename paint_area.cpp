@@ -77,9 +77,13 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 
 void PaintArea::drawImage(Profile *profile)
 {
-    QImage image1(width(), height(), QImage::Format_ARGB32_Premultiplied);
-    image1.fill(0);
-    QPainter painter(&image1);
+  //  image = profile->image;
+     image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
+    image.fill(0);
+    QPainter painter(&image);
+
+    painter.setBrush(Qt::white);
+    painter.drawRect(width(), 0, -10, 10);
 
    // painter.drawRoundedRect(QRect(0,0,width(),height()),0.5,0.5);
 
@@ -138,10 +142,9 @@ void PaintArea::drawImage(Profile *profile)
                 painter.setPen(Qt::red);
             }
             painter.drawPoint(QPointF(i.key(),j.key()));
-            emit addToDebugConsole("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
+
          }
     }
-    image = image1;
     image.save("./img.png", "PNG");
     this->update();
     //QPainter painter()

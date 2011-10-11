@@ -46,12 +46,14 @@ private slots:
 
     void addToDebugConsole(QString text);
 
+    void drawArea();
+
 private:
     void setVars();
 
     void saveProperties();
 
-    void loadProperties();
+    void loadProperties(QString value);
 
     Ui::MainWindow *ui;
 };

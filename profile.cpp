@@ -20,42 +20,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "math.h"
 #include <QDebug>
 
-/*double m; // Модуль зацепления
-double z1; // Число зубьев шестерни
-double z2; // Число зубьев колеса
-double x2; // Коэффициент смещения колеса
-double W0; // Аппликата большего торцового сечения венца шестерни
-double E; // Межосевой угол
-double bw; // Ширина зубчатого венца
-
-// Параметры исходного контура
-double alpha; // Угол профиля
-double c; // Коэффициент радиального зазора
-double ha; // Коэффициент высоты зуба
-// Параметры зуборезного долбяка
-double z0; // Число зубьев инструмента
-double x0; // Коэффициент  смещения
-double da0; // Диаметр вершин зубьев
-// Расчетные величины
-double i21; // Передаточное отношение
-double rb2; // Радиус основной окружности колеса
-double delta2;
-double psi_b2;
-
-double d0; // Делительный диаметр фрезы
-
-double ra2; // Радиус вершин зубьев колеса
-double rf2; // Радиус впадин колеса
-
-double eps = 0.000001; // Требуемая точность расчётов
-double dx; // Величина модификации
-double dx_0;
-double dx_bw;*/
-
-
-Profile::Profile()
+Profile::Profile(QObject *parent) : QThread(parent)
 {
 
+}
+
+Profile::~Profile()
+{
+    wait();
 }
 
 bool Profile::getRadius()
@@ -83,7 +55,7 @@ bool Profile::getRadius()
     return true;
 }
 
-void Profile::calculate()
+void Profile::run()
 {
     i21 = z1 / z2;
     rb2 = 0.5 * m * z2 * cos(alpha);
@@ -91,21 +63,21 @@ void Profile::calculate()
     psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;
     result.clear();
 
-    int n = 100; // Количество разбиений (должно быть четным)
-    int n2 = 50; // Количество радиусов
-    double dW = bw / n; // Шаг торцовых сечений
+ /*   int n = 100; // Количество разбиений (должно быть четным)
+    int n2 = 50; // Количество радиусов*/
+    double dW = bw / n_W; // Шаг торцовых сечений
     double rav2 = (rf2 + ra2 - c * m) / 2;
-    double dr = (rf2 - ra2 - c * m) / n2; // Шаг радиусов
+    double dr = (rf2 - ra2 - c * m) / n_r; // Шаг радиусов
 
     QList<double> list;
 
 
 
     QMap<double, double> S;
-    QList<double> X;
+    QList<double> X, Y;
     double Wi = W0;
     // Расчет коэффициентов смещения
-    for (int i=0; i <= n; i++)
+    for (int i=0; i <= n_W; i++)
     {
         double delta_oi = E; // Угол аксоидного конуса шестерни
         double alpha1 = atan(tan(alpha) * cos(delta_oi));
@@ -132,7 +104,8 @@ void Profile::calculate()
         Wi += dW;
     }
 
-    X = square_metod(S);
+    X = square_method(S);
+   // Y = gauss_zeidel_method(S);
     // Задание модификации
     if(dx != 0 || dx_0 != 0 || dx_bw != 0)
     {
@@ -142,15 +115,48 @@ void Profile::calculate()
         S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0] + dx;
         S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] - dx_bw;
 
-        X = square_metod(S);
+        X = square_method(S);
+  //      Y = gauss_zeidel_method(S);
     }
 
     double w0 = -X[1] / (2 * X[2]);
 
     Wi = W0;
 
+   /* image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
+    image.fill(0);
+    QPainter painter(&image);
+
+    painter.setBrush(Qt::white);
+    //painter.drawRect(width(), 0, -10, 10);
+
+   // painter.drawRoundedRect(QRect(0,0,width(),height()),0.5,0.5);
+
+    double r = (rf2 - c * m) / cos(E) - (ra2 / cos(E) - bw * tan(E));
+
+    QTransform transform;
+    painter.setRenderHint(painter.Antialiasing, true);
+
+    double scale_x = painter.window().width() / bw;
+    double scale_y = painter.window().height() / r;
+    double scale;
+    transform.scale(1, -1);
+    transform.translate(bw * (scale_x - scale_y) / 2, - painter.window().height());
+
+    if (scale_x < scale_y)
+    {
+        scale = scale_x;
+    }
+    else
+    {
+        scale = scale_y;
+    }
+
+    transform.scale(scale, scale);
+    painter.setTransform(transform);*/
+
     // Расчет коэффициентов смещения
-    for (int i=0; i <= n; i++)
+    for (int i=0; i <= n_W; i++)
     {
         double wi = Wi - W0;
         double delta_oi = -atan(m * (2 * X[2] * wi + X[1]));
@@ -164,7 +170,7 @@ void Profile::calculate()
         double ry1_min = ra2 / cos(E) - (W0 + bw) * tan(E);
         double ry2 = ra2;
 
-        for (int j=0; j <= n2; j++)
+        for (int j=0; j <= n_r; j++)
         {
 
             double ry1 = ry2 / cos(E) - Wi * tan(E);
@@ -180,14 +186,46 @@ void Profile::calculate()
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             result[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
+            double delta_s = (s_pr - s_tr) / 2;
+     //       emit addToDebugConsole("wtf bleat???");
+      //      emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number((s_pr - s_tr) / 2));
 
+         /*   if (delta_s < 0) // Условие попадания в инерционную зону
+            {
+                painter.setPen(Qt::white);
+            }
+            else if (delta_s >= 0 && delta_s <= 0.0085)
+                        {
+                            painter.setPen(QColor(255 - 255/0.0085 * delta_s,255 - 255/0.0085 * delta_s,255));
+                        }
+          /*  else if (j.value() >= 0 && j.value() <= 0.003)
+            {
+                painter.setPen(QColor(160,160,255));
+            }
+            else if (j.value() >= 0.003 && j.value() < 0.006)
+            {
+                painter.setPen(QColor(70,70,255));
+            }
+            else if (j.value() >= 0.006 && j.value() <= 0.0085)
+            {
+                painter.setPen(QColor(0,0,255));
+            }*/
+         /*   else
+            {
+                painter.setPen(Qt::red);
+            }
+            painter.drawPoint(QPointF(wi,ry1-ry1_min));
+
+        //    qDebug() << ry1 - ry1_min;*/
             ry2 += dr;
         }
         Wi += dW;
     }
+    qDebug() << "we are here!";
+   // exec();
 }
 
-QList<double> Profile::square_metod(QMap<double, double> &S)
+QList<double> Profile::square_method(QMap<double, double> &S)
 {
     double sum_x = 0;
     double sum_x2 = 0;
@@ -242,9 +280,98 @@ QList<double> Profile::square_metod(QMap<double, double> &S)
             A_bkp[j][i] = B[j];
         }
         X.append(det(A_bkp) / detA);
-        qDebug() << "X(i)" << X[i] << det(A_bkp);
+ //       qDebug() << "X(i)" << X[i] << det(A_bkp);
     }
+
+    double sum = 0;
+  //  QMap<double, double>::iterator i;
+    for (i = S.begin(); i != S.end(); ++i)
+    {
+        sum += pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
+    }
+    qDebug() << "square" << sum;
+     return X;
+}
+
+QList<double> Profile::gauss_zeidel_method(QMap<double, double> &S)
+{
+    double sum_x = 0;
+    double sum_x2 = 0;
+    double sum_x3 = 0;
+    double sum_x4 = 0;
+    double sum_y = 0;
+    double sum_xy = 0;
+    double sum_x2y = 0;
+    QList<double> X, X_bkp; // Матрица результатов (коэффициенты уравнения)
+    X << 0.0 << 0.0 << 0.0;
+    X_bkp << 0.0 << 0.0 << 0.0;
+    int n = 0;
+    QMap<double, double>::iterator i;
+    for (i = S.begin(); i != S.end(); ++i)
+    {
+        sum_x += i.key();
+        sum_x2 += pow(i.key(), 2);
+        sum_x3 += pow(i.key(), 3);
+        sum_x4 += pow(i.key(), 4);
+        sum_y += i.value();
+        sum_xy += i.key() * i.value();
+        sum_x2y += pow(i.key(), 2) * i.value();
+        n++;
+    }
+    double A[3][3] = // Основная матрица
+    {
+        {n, sum_x, sum_x2},
+        {sum_x, sum_x2, sum_x3},
+        {sum_x2, sum_x3, sum_x4}
+    };
+
+    double B[3] = // Матрица коэффициентов
+    {
+        sum_y,
+        sum_xy,
+        sum_x2y
+    };
+  //  double X_bkp[3];
+    double max;
+    do
+    {
+        max = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            double var = 0;
+            //double var1 = 0;
+            for (int j = 0; j < 3; j++)
+            {
+                if (i != j)
+                {
+                    var += (A[i][j] * X[j]);
+                }
+          /*      else
+                {
+                    var1 += (A[i][j] * X_bkp[j]);
+                }*/
+            }
+
+            X_bkp[i] = X[i];
+            X[i] = (B[i] - var) / A[i][i];
+
+            if(fabs(X[i] - X_bkp[i]) > max)
+            {
+                max=fabs(X[i] - X_bkp[i]);
+            }
+     //        qDebug() << "heeeeeeeeeeeeeeeey" << X[0] << X[1] << X[2];
+       }
+       }while(max > eps);
+   //     qDebug() << "heeeeeeeeeeeeeeeey" << X[0] << X[1] << X[2];
+        double sum = 0;
+    //    QMap<double, double>::iterator i;
+        for (i = S.begin(); i != S.end(); ++i)
+        {
+            sum += pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
+        }
+        qDebug() << "zeidel" << sum;
     return X;
+
 }
 
 QList<double> Profile::a_tw (double ry1, double Wi)

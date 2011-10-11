@@ -33,7 +33,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
   //  ui->label_dx->setText(QString::number(ui->dx->value() / 100.0,'f',2)); // Установка значения модификации в label_dx
     connect(ui->MainButton, SIGNAL(clicked()), ui->PaintContactArea, SLOT(update()));
-    connect(ui->PaintContactArea, SIGNAL(addToDebugConsole(QString)), this, SLOT(addToDebugConsole(QString)));
+    connect(&profile, SIGNAL(addToDebugConsole(QString)), this, SLOT(addToDebugConsole(QString)));
+    connect(&profile, SIGNAL(finished()), this, SLOT(drawArea()));
+    QSettings settings("tm_profile", "zb-susu");
+     settings.beginGroup("properties");
+     QStringList groups = settings.childGroups();
+     for (int i = 0; i < groups.count(); i++)
+     {
+         new QListWidgetItem(groups[i], ui->settingsList);
+
+     }
 }
 
 MainWindow::~MainWindow()
@@ -81,6 +90,7 @@ void MainWindow::setVars()
     profile.rb2 = 0.5 * m * z2 * cos(alpha);
     profile.delta2 = atan(sin(E) / (cos(E) - i21));
     profile.psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;*/
+
     profile.d0 = ui->d0->value();
     profile.bw = ui->bw->value();
     profile.ra2 = ui->ra2->value();
@@ -88,6 +98,10 @@ void MainWindow::setVars()
     profile.dx = ui->dx->value();
     profile.dx_0 = ui->dx_0->value();
     profile.dx_bw = ui->dx_bw->value();
+
+    profile.n_W = ui->n_W->value();
+    profile.n_r = ui->n_r->value();
+   // profile.eps = ui->eps->value();
  //   profile.calculate();
 
 }
@@ -100,12 +114,15 @@ void MainWindow::on_pushButton_clicked()
         ui->ra2->setValue(profile.ra2);
         ui->rf2->setValue(profile.rf2);
     }
+    qDebug() <<
+                ui->settingsList->currentItem()
+                ->text();
 }
 
 void MainWindow::on_MainButton_clicked()
 {
     setVars();
-    profile.calculate();
+    profile.start();
     ui->textBrowser->clear();
   /*  QMapIterator<double, QMap<double,double> > i(profile.result);
     while (i.hasNext())
@@ -118,7 +135,7 @@ void MainWindow::on_MainButton_clicked()
             ui->textBrowser->append("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
         }
     }*/
-    ui->PaintContactArea->drawImage(&profile);
+
 }
 
 void MainWindow::saveProperties()
@@ -156,7 +173,7 @@ void MainWindow::saveProperties()
 
 }
 
-void MainWindow::loadProperties()
+void MainWindow::loadProperties(QString value = "")
 {
    QSettings settings("tm_profile", "zb-susu");
     settings.beginGroup("properties");
@@ -165,12 +182,21 @@ void MainWindow::loadProperties()
     {
         qDebug() << groups[i];
     }
-    const QString name = "m_" + QString::number(ui->m->value()) +
+    if (value == "")
+    {
+        const QString name = "m_" + QString::number(ui->m->value()) +
                          "|z1_" + QString::number(ui->z1->value()) +
                          "|z2_" + QString::number(ui->z2->value()) +
                          "|bw_" + QString::number(ui->bw->value());
-    settings.beginGroup(name);
-    qDebug() << name;
+
+        settings.beginGroup(name);
+    }
+    else
+    {
+        settings.beginGroup(value);
+    }
+
+
     restoreState(settings.value("MainWindow").toByteArray());
     ui->m->setValue(settings.value("m").toDouble());
     ui->z1->setValue(settings.value("z1").toDouble());
@@ -224,5 +250,11 @@ void MainWindow::on_pushButton_3_clicked()
  void MainWindow::addToDebugConsole(QString text)
  {
      ui->textBrowser->append(text);
+ }
+
+ void MainWindow::drawArea()
+ {
+     qDebug() << "fffff";
+     ui->PaintContactArea->drawImage(&profile);
  }
 

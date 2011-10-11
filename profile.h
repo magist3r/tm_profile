@@ -19,14 +19,21 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef PROFILE_H
 #define PROFILE_H
 #include <QMap>
+#include <QThread>
+#include <QImage>
+#include <QPainter>
 
 //extern double m, z1, z2, x2, W0, E, alpha, c, ha, z0, x0, da0, i21, rb2, delta2, psi_b2, d0, bw, ra2, rf2, dx, dx_0, dx_bw;
 
-class Profile
+class Profile : public QThread
 {
+    Q_OBJECT
+
 public:
-    Profile();
-//    ~Profile();
+    Profile(QObject *parent = 0);
+
+//    Profile();
+    ~Profile();
 
     double m; // Модуль зацепления
     double z1; // Число зубьев шестерни
@@ -52,15 +59,21 @@ public:
     double rf2; // Радиус впадин колеса
 
     static const double eps = 0.000001; // Требуемая точность расчётов
+    double n_W;
+    double n_r;
     double dx; // Величина модификации
     double dx_0;
     double dx_bw;
 
     QMap<double, QMap<double,double> > result;
 
+    QImage image;
+
     bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
-    void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+   // void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+signals:
+    void addToDebugConsole(QString text);
 
 private:
 
@@ -70,11 +83,15 @@ private:
     double delta2;
     double psi_b2;
 
-    QList<double> square_metod(QMap<double, double> &S);
+    QList<double> square_method(QMap<double, double> &S);
+
+    QList<double> gauss_zeidel_method(QMap<double, double> &S);
 
     QList<double> a_tw(double ry1, double Wi); // Подбор угла профиля в торцовом сечении
 
     double det(double A[3][3]); // Расчет определителя матрицы
+protected:
+      void run();
 };
 
 /*void radius();
