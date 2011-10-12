@@ -78,7 +78,7 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 void PaintArea::drawImage(Profile *profile)
 {
   //  image = profile->image;
-     image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
+    image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
     QPainter painter(&image);
 
@@ -121,26 +121,36 @@ void PaintArea::drawImage(Profile *profile)
             {
                 painter.setPen(Qt::white);
             }
-            else if (j.value() >= 0 && j.value() <= 0.0085)
-                        {
-                            painter.setPen(QColor(255 - 255/0.0085 * j.value(),255 - 255/0.0085 * j.value(),255));
-                        }
-          /*  else if (j.value() >= 0 && j.value() <= 0.003)
-            {
-                painter.setPen(QColor(160,160,255));
-            }
-            else if (j.value() >= 0.003 && j.value() < 0.006)
-            {
-                painter.setPen(QColor(70,70,255));
-            }
-            else if (j.value() >= 0.006 && j.value() <= 0.0085)
-            {
-                painter.setPen(QColor(0,0,255));
-            }*/
-            else
+            else if (j.value() > 0.085)
             {
                 painter.setPen(Qt::red);
             }
+
+            if (profile->useSmooth)
+            {
+                if (j.value() >= 0 && j.value() <= 0.0085)
+                {
+                    painter.setPen(QColor(255 - 255/0.0085 * j.value(),255 - 255/0.0085 * j.value(),255));
+                }
+            }
+            else
+            {
+                if (j.value() >= 0 && j.value() <= 0.003)
+                {
+                    painter.setPen(QColor(160,160,255));
+                }
+                else if (j.value() >= 0.003 && j.value() < 0.006)
+                {
+                    painter.setPen(QColor(70,70,255));
+                }
+                else if (j.value() >= 0.006 && j.value() <= 0.0085)
+                {
+                    painter.setPen(QColor(0,0,255));
+                }
+            }
+
+
+
             painter.drawPoint(QPointF(i.key(),j.key()));
 
          }

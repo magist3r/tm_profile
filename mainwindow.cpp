@@ -41,8 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
      for (int i = 0; i < groups.count(); i++)
      {
          new QListWidgetItem(groups[i], ui->settingsList);
-
      }
+     ui->radioButton->setChecked(true);
+
 }
 
 MainWindow::~MainWindow()
@@ -99,8 +100,10 @@ void MainWindow::setVars()
     profile.dx_0 = ui->dx_0->value();
     profile.dx_bw = ui->dx_bw->value();
 
-    profile.n_W = ui->n_W->value();
-    profile.n_r = ui->n_r->value();
+    profile.n_W = ui->detalization->value();
+    profile.n_r = ui->detalization->value();
+
+    profile.useSmooth = ui->radioButton->isChecked();
    // profile.eps = ui->eps->value();
  //   profile.calculate();
 
@@ -114,9 +117,7 @@ void MainWindow::on_pushButton_clicked()
         ui->ra2->setValue(profile.ra2);
         ui->rf2->setValue(profile.rf2);
     }
-    qDebug() <<
-                ui->settingsList->currentItem()
-                ->text();
+
 }
 
 void MainWindow::on_MainButton_clicked()
@@ -168,6 +169,8 @@ void MainWindow::saveProperties()
     settings.setValue("dx", ui->dx->value());
     settings.setValue("dx_0", ui->dx_0->value());
     settings.setValue("dx_bw", ui->dx_bw->value());
+    settings.setValue("detalization", ui->detalization->value());
+
     settings.endGroup();
     settings.endGroup();
 
@@ -178,10 +181,10 @@ void MainWindow::loadProperties(QString value = "")
    QSettings settings("tm_profile", "zb-susu");
     settings.beginGroup("properties");
     QStringList groups = settings.childGroups();
-    for (int i = 0; i < groups.count(); i++)
+/*    for (int i = 0; i < groups.count(); i++)
     {
         qDebug() << groups[i];
-    }
+    }*/
     if (value == "")
     {
         const QString name = "m_" + QString::number(ui->m->value()) +
@@ -217,6 +220,7 @@ void MainWindow::loadProperties(QString value = "")
     ui->dx->setValue(settings.value("dx").toDouble());
     ui->dx_0->setValue(settings.value("dx_0").toDouble());
     ui->dx_bw->setValue(settings.value("dx_bw").toDouble());
+    ui->detalization->setValue(settings.value("detalization").toInt());
     settings.endGroup();
     settings.endGroup();
 
@@ -237,14 +241,25 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    if (ui->m->value() == 0 || ui->z1->value() == 0 || ui->z2->value() == 0 || ui->bw->value() == 0)
+  /*  if (ui->m->value() == 0 || ui->z1->value() == 0 || ui->z2->value() == 0 || ui->bw->value() == 0)
     {
 
     }
     else
     {
-        loadProperties();
-    }
+        qDebug() <<
+                    ui->settingsList->currentItem()
+                    ->text();*/
+        if (ui->settingsList->currentItem() != 0)
+        {
+            loadProperties(ui->settingsList->currentItem()->text());
+        }
+        else
+        {
+            loadProperties();
+        }
+
+
 }
 
  void MainWindow::addToDebugConsole(QString text)

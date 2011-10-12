@@ -65,6 +65,8 @@ public:
     double dx_0;
     double dx_bw;
 
+    bool useSmooth;
+
     QMap<double, QMap<double,double> > result;
 
     QImage image;
