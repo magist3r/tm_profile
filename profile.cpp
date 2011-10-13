@@ -74,7 +74,7 @@ void Profile::run()
 
 
     QMap<double, double> S;
-    QList<double> X, Y;
+    QList<double> Y;
     double Wi = W0;
     // Расчет коэффициентов смещения
     for (int i=0; i <= n_W; i++)
@@ -104,22 +104,22 @@ void Profile::run()
         Wi += dW;
     }
 
-    X = square_method(S);
+    xt_w = square_method(S);
    // Y = gauss_zeidel_method(S);
     // Задание модификации
     if(dx != 0 || dx_0 != 0 || dx_bw != 0)
     {
         S.clear();
 
-        S[0] = X[2] * 0 + X[1] * 0 + X[0] - dx_0;
-        S[bw/2] = X[2] * pow(bw/2,2) + X[1] * bw/2 + X[0] + dx;
-        S[bw] = X[2] * pow(bw,2) + X[1] * bw + X[0] - dx_bw;
+        S[0] = xt_w[2] * 0 + xt_w[1] * 0 + xt_w[0] - dx_0;
+        S[bw/2] = xt_w[2] * pow(bw/2,2) + xt_w[1] * bw/2 + xt_w[0] + dx;
+        S[bw] = xt_w[2] * pow(bw,2) + xt_w[1] * bw + xt_w[0] - dx_bw;
 
-        X = square_method(S);
+        xt_w = square_method(S);
   //      Y = gauss_zeidel_method(S);
     }
 
-    double w0 = -X[1] / (2 * X[2]);
+    double w0 = -xt_w[1] / (2 * xt_w[2]);
 
     Wi = W0;
 
@@ -159,8 +159,8 @@ void Profile::run()
     for (int i=0; i <= n_W; i++)
     {
         double wi = Wi - W0;
-        double delta_oi = -atan(m * (2 * X[2] * wi + X[1]));
-        double xt = X[2] * pow(wi, 2) + X[1] * wi + X[0];
+        double delta_oi = -atan(m * (2 * xt_w[2] * wi + xt_w[1]));
+        double xt = xt_w[2] * pow(wi, 2) + xt_w[1] * wi + xt_w[0];
         double aw0 = m * (0.5 * z1 + xt) + 0.5 * d0 * cos(delta_oi);
         double ha_2 = ha / cos(delta_oi);
         double c_2 = c / cos(delta_oi);
@@ -188,7 +188,10 @@ void Profile::run()
             result[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
             double delta_s = (s_pr - s_tr) / 2;
      //       emit addToDebugConsole("wtf bleat???");
-      //      emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number((s_pr - s_tr) / 2));
+            if (diagnosticMode)
+            {
+                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number((s_pr - s_tr) / 2));
+            }
 
          /*   if (delta_s < 0) // Условие попадания в инерционную зону
             {

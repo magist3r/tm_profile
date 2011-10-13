@@ -66,6 +66,9 @@ public:
     double dx_bw;
 
     bool useSmooth;
+    bool diagnosticMode;
+
+    QList<double> xt_w;
 
     QMap<double, QMap<double,double> > result;
 

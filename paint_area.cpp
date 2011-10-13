@@ -121,7 +121,7 @@ void PaintArea::drawImage(Profile *profile)
             {
                 painter.setPen(Qt::white);
             }
-            else if (j.value() > 0.085)
+            else if (j.value() > 0.0085)
             {
                 painter.setPen(Qt::red);
             }

@@ -269,7 +269,21 @@ void MainWindow::on_pushButton_3_clicked()
 
  void MainWindow::drawArea()
  {
-     qDebug() << "fffff";
-     ui->PaintContactArea->drawImage(&profile);
- }
+     if (profile.diagnosticMode)
+     {
+         profile.diagnosticMode = false;
+     }
+     else
+     {
+         ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
+         ui->PaintContactArea->drawImage(&profile);
+         if (ui->diagnostic->isChecked())
+         {
+             profile.diagnosticMode = true;
+             profile.n_r = 5;
+             profile.n_W = 5;
+             profile.start();
+         }
+     }
+}
 
