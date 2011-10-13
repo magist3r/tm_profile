@@ -32,9 +32,6 @@ public:
 
     void drawImage(Profile *profile);
 
-//signals:
- //   void addToDebugConsole(QString text);
-
 private:
     QImage image;
 

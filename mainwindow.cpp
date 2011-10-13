@@ -20,7 +20,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "ui_mainwindow.h"
 #include "profile.h"
 #include "math.h"
-#include "paint_area.h"
 #include <QSettings>
 #include <QDebug>
 
@@ -31,19 +30,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-  //  ui->label_dx->setText(QString::number(ui->dx->value() / 100.0,'f',2)); // Установка значения модификации в label_dx
-    connect(ui->MainButton, SIGNAL(clicked()), ui->PaintContactArea, SLOT(update()));
+
     connect(&profile, SIGNAL(addToDebugConsole(QString)), this, SLOT(addToDebugConsole(QString)));
     connect(&profile, SIGNAL(finished()), this, SLOT(drawArea()));
-    QSettings settings("tm_profile", "zb-susu");
-     settings.beginGroup("properties");
-     QStringList groups = settings.childGroups();
-     for (int i = 0; i < groups.count(); i++)
-     {
-         new QListWidgetItem(groups[i], ui->settingsList);
-     }
-     ui->radioButton->setChecked(true);
 
+    QSettings settings("tm_profile", "zb-susu");
+    settings.beginGroup("properties");
+    QStringList groups = settings.childGroups();
+    for (int i = 0; i < groups.count(); i++)
+    {
+        new QListWidgetItem(groups[i], ui->settingsList);
+    }
+    ui->radioButton->setChecked(true);
 }
 
 MainWindow::~MainWindow()
@@ -53,28 +51,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::setVars()
 {
-   /* m = ui->m->value();
-    z1 = ui->z1->value();
-    z2 = ui->z2->value();
-    x2 = ui->x2->value();
-    E = ui->E->value() * M_PI / 180;
-    W0 = ui->W0->value();
-    alpha = ui->alpha->value() * M_PI / 180;
-    ha = ui->ha->value();
-    c = ui->c->value();
-    z0 = ui->z0->value();
-    x0 = ui->x0->value();
-    da0 = ui->da0->value();
-
-    d0 = ui->d0->value();
-    bw = ui->bw->value();
-    ra2 = ui->ra2->value();
-    rf2 = ui->rf2->value();
-    dx = ui->dx->value();
-    dx_0 = ui->dx_0->value();
-    dx_bw = ui->dx_bw->value();*/
-
-
     profile.m = ui->m->value();
     profile.z1 = ui->z1->value();
     profile.z2 = ui->z2->value();
@@ -87,10 +63,6 @@ void MainWindow::setVars()
     profile.z0 = ui->z0->value();
     profile.x0 = ui->x0->value();
     profile.da0 = ui->da0->value();
-  /*  profile.i21 = z1 / z2;
-    profile.rb2 = 0.5 * m * z2 * cos(alpha);
-    profile.delta2 = atan(sin(E) / (cos(E) - i21));
-    profile.psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;*/
 
     profile.d0 = ui->d0->value();
     profile.bw = ui->bw->value();
@@ -104,9 +76,6 @@ void MainWindow::setVars()
     profile.n_r = ui->detalization->value();
 
     profile.useSmooth = ui->radioButton->isChecked();
-   // profile.eps = ui->eps->value();
- //   profile.calculate();
-
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -125,18 +94,6 @@ void MainWindow::on_MainButton_clicked()
     setVars();
     profile.start();
     ui->textBrowser->clear();
-  /*  QMapIterator<double, QMap<double,double> > i(profile.result);
-    while (i.hasNext())
-    {
-        i.next();
-        QMapIterator<double,double> j(i.value());
-        while (j.hasNext())
-        {
-            j.next();
-            ui->textBrowser->append("Wi= " + QString::number(i.key()) + " | ry= " +  QString::number(j.key()) + " | delta_s = " + QString::number(j.value()));
-        }
-    }*/
-
 }
 
 void MainWindow::saveProperties()
@@ -173,37 +130,31 @@ void MainWindow::saveProperties()
 
     settings.endGroup();
     settings.endGroup();
-
 }
 
 void MainWindow::loadProperties(QString value = "")
 {
    QSettings settings("tm_profile", "zb-susu");
-    settings.beginGroup("properties");
-    QStringList groups = settings.childGroups();
-/*    for (int i = 0; i < groups.count(); i++)
-    {
-        qDebug() << groups[i];
-    }*/
-    if (value == "")
-    {
-        const QString name = "m_" + QString::number(ui->m->value()) +
+   settings.beginGroup("properties");
+
+   if (value == "")
+   {
+       const QString name = "m_" + QString::number(ui->m->value()) +
                          "|z1_" + QString::number(ui->z1->value()) +
                          "|z2_" + QString::number(ui->z2->value()) +
                          "|bw_" + QString::number(ui->bw->value());
 
-        settings.beginGroup(name);
-    }
-    else
-    {
-        settings.beginGroup(value);
-    }
+       settings.beginGroup(name);
+   }
+   else
+   {
+       settings.beginGroup(value);
+   }
 
-
-    restoreState(settings.value("MainWindow").toByteArray());
-    ui->m->setValue(settings.value("m").toDouble());
-    ui->z1->setValue(settings.value("z1").toDouble());
-    ui->z2->setValue(settings.value("z2").toDouble());
+   restoreState(settings.value("MainWindow").toByteArray());
+   ui->m->setValue(settings.value("m").toDouble());
+   ui->z1->setValue(settings.value("z1").toDouble());
+   ui->z2->setValue(settings.value("z2").toDouble());
     ui->x0->setValue(settings.value("x0").toDouble());
     ui->x2->setValue(settings.value("x2").toDouble());
     ui->alpha->setValue(settings.value("alpha").toDouble());
@@ -236,54 +187,42 @@ void MainWindow::on_pushButton_2_clicked()
     {
         saveProperties();
     }
-
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
-  /*  if (ui->m->value() == 0 || ui->z1->value() == 0 || ui->z2->value() == 0 || ui->bw->value() == 0)
+    if (ui->settingsList->currentItem() != 0)
     {
-
+         loadProperties(ui->settingsList->currentItem()->text());
     }
     else
     {
-        qDebug() <<
-                    ui->settingsList->currentItem()
-                    ->text();*/
-        if (ui->settingsList->currentItem() != 0)
-        {
-            loadProperties(ui->settingsList->currentItem()->text());
-        }
-        else
-        {
-            loadProperties();
-        }
-
-
+         loadProperties();
+    }
 }
 
- void MainWindow::addToDebugConsole(QString text)
- {
-     ui->textBrowser->append(text);
- }
+void MainWindow::addToDebugConsole(QString text)
+{
+    ui->textBrowser->append(text);
+}
 
- void MainWindow::drawArea()
- {
-     if (profile.diagnosticMode)
-     {
-         profile.diagnosticMode = false;
-     }
-     else
-     {
-         ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
-         ui->PaintContactArea->drawImage(&profile);
-         if (ui->diagnostic->isChecked())
-         {
-             profile.diagnosticMode = true;
-             profile.n_r = 5;
-             profile.n_W = 5;
-             profile.start();
-         }
-     }
+void MainWindow::drawArea()
+{
+    if (profile.diagnosticMode)
+    {
+        profile.diagnosticMode = false;
+    }
+    else
+    {
+        ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
+        ui->PaintContactArea->drawImage(&profile);
+        if (ui->diagnostic->isChecked())
+        {
+            profile.diagnosticMode = true;
+            profile.n_r = 5;
+            profile.n_W = 5;
+            profile.start();
+        }
+    }
 }
 

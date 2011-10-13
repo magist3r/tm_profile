@@ -26,47 +26,6 @@ void PaintArea::paintEvent(QPaintEvent *)
 {
    QPainter painter(this);
    painter.drawImage(0,0, image);
-
-    /*QTransform transform;
-    transform.scale(40,-40);*/
-   // painter.setTransform(transform);
-
- /*   QMap<double, QMap<double,double> > out_list;
-    if (ra2 == 0)
-    {
-        return;
-    }
-    //out_list = pr_profile(ra2, rf2);
-
-
-    painter.setTransform(transform);
-
-
-
-    QMapIterator<double, QMap<double,double> > i(out_list);
-    while (i.hasNext())
-    {
-        i.next();
-        QMapIterator<double,double> j(i.value());
-        while (j.hasNext())
-        {
-            j.next();
-            if (j.value() < 0) // Условие попадания в инерционную зону
-            {
-                painter.setPen(Qt::white);
-            }
-            else if (j.value() >= 0 && j.value() <= 0.0085)
-            {
-                painter.setPen(Qt::black);
-            }
-            else
-            {
-                painter.setPen(Qt::red);
-            }
-            painter.drawPoint(QPointF(i.key(),j.key()));
-        }
-    }*/
-
 }
 
 PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
@@ -77,15 +36,12 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 
 void PaintArea::drawImage(Profile *profile)
 {
-  //  image = profile->image;
     image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
     QPainter painter(&image);
 
     painter.setBrush(Qt::white);
-    painter.drawRect(width(), 0, -10, 10);
-
-   // painter.drawRoundedRect(QRect(0,0,width(),height()),0.5,0.5);
+//    painter.drawRect(width(), 0, -10, 10);
 
     double r = (profile->rf2 - profile->c * profile->m) / cos(profile->E) - (profile->ra2 / cos(profile->E) - profile->bw * tan(profile->E));
 
@@ -148,15 +104,10 @@ void PaintArea::drawImage(Profile *profile)
                     painter.setPen(QColor(0,0,255));
                 }
             }
-
-
-
             painter.drawPoint(QPointF(i.key(),j.key()));
-
          }
     }
     image.save("./img.png", "PNG");
     this->update();
-    //QPainter painter()
 }
 

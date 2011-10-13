@@ -32,7 +32,6 @@ class Profile : public QThread
 public:
     Profile(QObject *parent = 0);
 
-//    Profile();
     ~Profile();
 
     double m; // Модуль зацепления
@@ -72,8 +71,6 @@ public:
 
     QMap<double, QMap<double,double> > result;
 
-    QImage image;
-
     bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
    // void calculate(); // Расчет толщин зубьев практического и теоретического профилей
@@ -90,23 +87,11 @@ private:
 
     QList<double> square_method(QMap<double, double> &S);
 
-    QList<double> gauss_zeidel_method(QMap<double, double> &S);
-
     QList<double> a_tw(double ry1, double Wi); // Подбор угла профиля в торцовом сечении
 
     double det(double A[3][3]); // Расчет определителя матрицы
 protected:
-      void run();
+    void run();
 };
-
-/*void radius();
-
-QMap<double, QMap<double,double> > pr_profile(double ra2, double rf2);
-
-QList<double> square_metod(QMap<double, double> S);
-
-QList<double> a_tw(double ry1, double Wi);
-
-double det(double A[3][3]);*/
 
 #endif // PROFILE_H
