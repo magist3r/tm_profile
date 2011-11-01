@@ -32,6 +32,8 @@ public:
 
     void drawImage(Profile *profile);
 
+    double delta;
+
 private:
     QImage image;
 

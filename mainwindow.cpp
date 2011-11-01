@@ -215,6 +215,7 @@ void MainWindow::drawArea()
     else
     {
         ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
+        ui->PaintContactArea->delta = ui->delta->value();
         ui->PaintContactArea->drawImage(&profile);
         if (ui->diagnostic->isChecked())
         {

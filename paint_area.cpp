@@ -38,6 +38,9 @@ void PaintArea::drawImage(Profile *profile)
 {
     image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
+
+    double delta_image = delta * sqrt(profile->m);
+
     QPainter painter(&image);
 
     painter.setBrush(Qt::white);
@@ -77,29 +80,29 @@ void PaintArea::drawImage(Profile *profile)
             {
                 painter.setPen(Qt::white);
             }
-            else if (j.value() > 0.0085)
+            else if (j.value() > delta_image)
             {
                 painter.setPen(Qt::red);
             }
 
             if (profile->useSmooth)
             {
-                if (j.value() >= 0 && j.value() <= 0.0085)
+                if (j.value() >= 0 && j.value() <= delta_image)
                 {
-                    painter.setPen(QColor(255 - 255/0.0085 * j.value(),255 - 255/0.0085 * j.value(),255));
+                    painter.setPen(QColor(255 - 255/delta_image * j.value(),255 - 255/delta_image * j.value(),255));
                 }
             }
             else
             {
-                if (j.value() >= 0 && j.value() <= 0.003)
+                if (j.value() >= 0 && j.value() <= delta_image / 3)
                 {
                     painter.setPen(QColor(160,160,255));
                 }
-                else if (j.value() >= 0.003 && j.value() < 0.006)
+                else if (j.value() >= delta_image / 3 && j.value() < delta_image * 2 / 3 )
                 {
                     painter.setPen(QColor(70,70,255));
                 }
-                else if (j.value() >= 0.006 && j.value() <= 0.0085)
+                else if (j.value() >= delta_image * 2 / 3 && j.value() <= delta_image)
                 {
                     painter.setPen(QColor(0,0,255));
                 }
