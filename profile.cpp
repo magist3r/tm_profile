@@ -118,6 +118,7 @@ void Profile::run()
 
     Wi = W0;
 
+    delta_s_max=0;
     // Расчет толщин зубьев
     for (int i=0; i <= n_W; i++)
     {
@@ -148,12 +149,15 @@ void Profile::run()
             double alpha_ty = acos(0.5 * d_b / ry1);
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
-            result[wi][ry1 - ry1_min] = (s_pr - s_tr) / 2;
             double delta_s = (s_pr - s_tr) / 2;
+            if (delta_s > delta_s_max){
+                delta_s_max = delta_s;
+            }
+            result[wi][ry1 - ry1_min] = delta_s;
 
             if (diagnosticMode)
             {
-                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number((s_pr - s_tr) / 2));
+                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number(delta_s));
             }
 
             ry2 += dr;

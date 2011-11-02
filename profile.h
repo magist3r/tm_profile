@@ -64,7 +64,10 @@ public:
     double dx_0;
     double dx_bw;
 
+    double delta_s_max;
+
     bool useSmooth;
+    bool useOldPaintMode;
     bool diagnosticMode;
 
     QList<double> xt_w;

@@ -57,17 +57,29 @@ void PaintArea::drawImage(Profile *profile)
     transform.scale(1, -1);
     transform.translate(profile->bw * (scale_x - scale_y) / 2, - painter.window().height());
 
-    if (scale_x < scale_y)
-    {
+    if (scale_x < scale_y){
         scale = scale_x;
     }
-    else
-    {
+    else{
         scale = scale_y;
     }
 
     transform.scale(scale, scale);
     painter.setTransform(transform);
+
+    double max_value;
+    double min_value;
+
+    if (profile->useOldPaintMode){
+        max_value = delta_image;
+        min_value = 0;
+    }
+    else{
+        max_value = profile->delta_s_max;
+        min_value = max_value - delta_image;
+    }
+    double delta_1_3 = min_value + delta_image / 3;
+    double delta_2_3 = min_value + delta_image * (2 / 3);
     QMapIterator<double, QMap<double,double> > i(profile->result);
     while (i.hasNext())
     {
@@ -76,40 +88,42 @@ void PaintArea::drawImage(Profile *profile)
         while (j.hasNext())
         {
             j.next();
-            if (j.value() < 0) // Условие попадания в инерционную зону
+            if (j.value() < min_value) // Условие попадания в инерционную зону
             {
                 painter.setPen(Qt::white);
             }
-            else if (j.value() > delta_image)
+            else if (j.value() > max_value)
             {
                 painter.setPen(Qt::red);
             }
 
             if (profile->useSmooth)
             {
-                if (j.value() >= 0 && j.value() <= delta_image)
+                if (j.value() >= min_value && j.value() <= max_value)
                 {
-                    painter.setPen(QColor(255 - 255/delta_image * j.value(),255 - 255/delta_image * j.value(),255));
+                    painter.setPen(QColor(255 - (255/delta_image) * (j.value() - min_value),255 - (255/delta_image) * (j.value() - min_value),255));
                 }
             }
             else
             {
-                if (j.value() >= 0 && j.value() <= delta_image / 3)
+                if (j.value() >= min_value && j.value() <= delta_1_3)
                 {
                     painter.setPen(QColor(160,160,255));
                 }
-                else if (j.value() >= delta_image / 3 && j.value() < delta_image * 2 / 3 )
+                else if (j.value() >= delta_1_3 && j.value() < delta_2_3)
                 {
                     painter.setPen(QColor(70,70,255));
                 }
-                else if (j.value() >= delta_image * 2 / 3 && j.value() <= delta_image)
+                else if (j.value() >= delta_2_3 && j.value() <= max_value)
                 {
                     painter.setPen(QColor(0,0,255));
                 }
             }
+
             painter.drawPoint(QPointF(i.key(),j.key()));
          }
     }
+  //   qDebug() << max_value << max_value / 3 << max_value * 2 / 3;
     image.save("./img.png", "PNG");
     this->update();
 }

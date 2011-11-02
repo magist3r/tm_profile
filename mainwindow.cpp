@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         new QListWidgetItem(groups[i], ui->settingsList);
     }
-    ui->radioButton->setChecked(true);
+    ui->radioButton_2->setChecked(true);
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +76,7 @@ void MainWindow::setVars()
     profile.n_r = ui->detalization->value();
 
     profile.useSmooth = ui->radioButton->isChecked();
+    profile.useOldPaintMode = ui->oldPaintMode->isChecked();
 }
 
 void MainWindow::on_pushButton_clicked()
