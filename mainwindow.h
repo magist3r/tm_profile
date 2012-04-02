@@ -48,6 +48,12 @@ private slots:
 
     void drawArea();
 
+    void drawArea_d_x2();
+
+    void on_pushButton_4_clicked();
+
+    void startSecondThread();
+
 private:
     void setVars();
 

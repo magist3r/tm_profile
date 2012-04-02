@@ -20,14 +20,24 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "math.h"
 #include <QDebug>
 
-Profile::Profile(QObject *parent) : QThread(parent)
+Profile::Profile(QObject *parent)
+{
+
+}
+
+Profile::Profile(const Profile&)
+{
+
+}
+
+Profile& Profile::operator=(const Profile&)
 {
 
 }
 
 Profile::~Profile()
 {
-    wait();
+
 }
 
 bool Profile::getRadius()
@@ -55,13 +65,15 @@ bool Profile::getRadius()
     return true;
 }
 
-void Profile::run()
+void Profile::calculate()
 {
     i21 = z1 / z2;
     rb2 = 0.5 * m * z2 * cos(alpha);
     delta2 = atan(sin(E) / (cos(E) - i21));
     psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;
     result.clear();
+    result_s_tr.clear();
+    result_s_pr.clear();
 
     double dW = bw / n_W; // Шаг торцовых сечений
     double rav2 = (rf2 + ra2 - c * m) / 2;
@@ -154,6 +166,8 @@ void Profile::run()
                 delta_s_max = delta_s;
             }
             result[wi][ry1 - ry1_min] = delta_s;
+            result_s_tr[wi][ry1 - ry1_min] = s_tr;
+            result_s_pr[wi][ry1 - ry1_min] = s_pr;
 
             if (diagnosticMode)
             {

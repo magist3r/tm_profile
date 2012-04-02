@@ -23,10 +23,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     profile.cpp \
-    paint_area.cpp
+    paint_area.cpp \
+    mythread.cpp
 
 HEADERS  += mainwindow.h \
     profile.h \
-    paint_area.h
+    paint_area.h \
+    mythread.h
 
 FORMS    += mainwindow.ui

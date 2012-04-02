@@ -25,12 +25,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 //extern double m, z1, z2, x2, W0, E, alpha, c, ha, z0, x0, da0, i21, rb2, delta2, psi_b2, d0, bw, ra2, rf2, dx, dx_0, dx_bw;
 
-class Profile : public QThread
+class Profile : public QObject
 {
     Q_OBJECT
 
 public:
     Profile(QObject *parent = 0);
+    Profile(const Profile&);
+    Profile& operator=(const Profile&);
 
     ~Profile();
 
@@ -73,10 +75,12 @@ public:
     QList<double> xt_w;
 
     QMap<double, QMap<double,double> > result;
+    QMap<double, QMap<double,double> > result_s_tr;
+    QMap<double, QMap<double,double> > result_s_pr;
 
     bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
-   // void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+    void calculate(); // Расчет толщин зубьев практического и теоретического профилей
 signals:
     void addToDebugConsole(QString text);
 
@@ -93,8 +97,7 @@ private:
     QList<double> a_tw(double ry1, double Wi); // Подбор угла профиля в торцовом сечении
 
     double det(double A[3][3]); // Расчет определителя матрицы
-protected:
-    void run();
+
 };
 
 #endif // PROFILE_H
