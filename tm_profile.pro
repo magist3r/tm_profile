@@ -32,3 +32,5 @@ HEADERS  += mainwindow.h \
     mythread.h
 
 FORMS    += mainwindow.ui
+
+CONFIG += static

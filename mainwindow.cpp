@@ -240,32 +240,57 @@ void MainWindow::drawArea_d_x2()
 {
     //ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
     ui->PaintContactArea->delta = ui->delta->value();
-    //QMap<double,double> map = profile.result_s_tr.upperBound(0).value();
-    QMap<double,double> s_tr_w0 = s_tr_map.begin().value();
+    double r_av_0 = (s_tr_map.begin().value().begin().key() + s_tr_map.begin().value().end().key()) / 2;
+    double s_0 = s_tr_map.begin().value().upperBound(r_av_0).value() / 2;
+    qDebug() << r_av_0 << s_0;
+   // QMap<double,double> s_tr_w0 = s_tr_map.begin().value();
     QMapIterator<double, QMap<double,double> > i(profile.result_s_pr);
+    QMapIterator<double, QMap<double,double> > i2(s_tr_map);
     ui->textBrowser->clear();
-    double max, draw;
-     while (i.hasNext()) {
+    profile.result.clear();
+    double w_draw;
+    bool draw = false;
+    while (i.hasNext()) {
         i.next();
-        QMapIterator<double,double> j(i.value());
-        QMapIterator<double,double> k(s_tr_w0);
-        double s1 = 0, s2 = 0;
-        int n = 0, m = 0;
-        while (j.hasNext()) {
-            j.next();
-            s1+=j.value();
-            n++;
-            if (k.hasNext()) {
-                k.next();
-                s2+=k.value();
-                m++;
-                //if ( fabs(j.value() - k.value()) / 2 < 0.05)
-                //    n++;
-            }
+        double r_av = (i.value().begin().key() + i.value().end().key()) / 2;
+        double s = i.value().upperBound(r_av).value() / 2;
+        if (i2.hasNext()) {
+            i2.next();
+            double r_av2 = (i2.value().begin().key() + i.value().end().key()) / 2;
+            double s2 = i2.value().upperBound(r_av).value() / 2;
+            ui->textBrowser->append("W = " + QString::number(i.key()));
+            ui->textBrowser->append("PR: r_av = " + QString::number(r_av) + "; s = " + QString::number(s));
+            ui->textBrowser->append("TR: r_av = " + QString::number(r_av2) + "; s = " + QString::number(s2));
         }
 
-        ui->textBrowser->append(QString::number(s1/n) + "    " + QString::number(s2/m));
-     }
+        if (!draw && (fabs(s - s_0) < 0.001) ) {
+            draw = true;
+            w_draw = i.key();
+            qDebug() << w_draw;
+        }
+
+        if(draw) {
+            QMapIterator<double,double> j(i.value());
+            QMapIterator<double,double> k(s_tr_map.value(i.key() - w_draw));
+            while (j.hasNext()) {
+                j.next();
+
+                double first_s = j.value();
+                //qDebug() << first_s;
+
+
+                if (k.hasNext()) {
+                    k.next();
+                    double second_s = k.value();
+             //       qDebug() << first_s << second_s;
+                    profile.result[i.key() - w_draw][j.key()] = (first_s - second_s) / 2;
+                }
+
+       //   qDebug() << s_pr << j.value();
+            }
+        }
+    }
+    ui->textBrowser->append("W0 = " + QString::number(w_draw));
 /*
 
     double s_tr_0 = s_tr_map.begin().value().upperBound(2).value();
@@ -340,7 +365,7 @@ void MainWindow::startSecondThread()
 {
     s_tr_map = profile.result_s_tr;
     profile.x2 = profile.x2 + ui->delta_x2->value() * 1.0 / 100;
-    qDebug() << profile.x2;
+  //  qDebug() << profile.x2;
     MyThread thread(profile);
     connect(&thread, SIGNAL(finished()), this, SLOT(drawArea_d_x2()));
     thread.start();
