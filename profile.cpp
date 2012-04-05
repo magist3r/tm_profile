@@ -162,9 +162,9 @@ void Profile::calculate()
             double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             double delta_s = (s_pr - s_tr) / 2;
-            if (delta_s > delta_s_max){
+            if (delta_s > delta_s_max)
                 delta_s_max = delta_s;
-            }
+
             result[wi][ry1 - ry1_min] = delta_s;
             result_s_tr[wi][ry1 - ry1_min] = s_tr;
             result_s_pr[wi][ry1 - ry1_min] = s_pr;

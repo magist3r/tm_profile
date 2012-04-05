@@ -273,7 +273,6 @@ void MainWindow::drawArea_d_x2()
             if ((fabs(s2 - s_max) < 0.001)
                 && (s_prev != s2)
                 && (fabs(s_prev - s_max) > fabs(s2 - s_max)) ) {
-                qDebug() << "AAAAAAAAAAAA";
                 w_end = i2.key();
             }
 
@@ -283,12 +282,20 @@ void MainWindow::drawArea_d_x2()
             ui->textBrowser->append("PR2: r_av = " + QString::number(r_av2) + "; s = " + QString::number(s2));
         }
     }
+    i.toBack();
     double delta_w = w_end - w_begin;
-    qDebug() << w_begin << w_end << s_max;
+    qDebug() << delta_w;
+    if (delta_w == 0) {
+        ui->textBrowser->append("Delta_w NOT FOUND (delta_w = 0)");
+        return;
+    }
+
+    double delta_s_max = 0;
     QMapIterator<double, QMap<double,double> > ii(profile.result_s_tr);
     while (ii.hasNext()) {
         ii.next();
-        if (ii.key() + delta_w < s_tr_map.end().key()) {
+        //qDebug() << "AAAAAAAAAAAA" << s_tr_map.lowerBound(.key();
+        if ((ii.key() + delta_w) < profile.bw) {
             QMapIterator<double,double> j(ii.value());
             QMapIterator<double,double> k(s_tr_map.value(ii.key() + delta_w));
             while (j.hasNext()) {
@@ -301,8 +308,12 @@ void MainWindow::drawArea_d_x2()
                 if (k.hasNext()) {
                     k.next();
                     double second_s = k.value();
-             //       qDebug() << first_s << second_s;
-                    profile.result[ii.key()][j.key()] = (first_s - second_s) / 2;
+                    double delta_s = (first_s - second_s) / 2;
+                    if (delta_s > delta_s_max)
+                        delta_s_max = delta_s;
+
+                    qDebug() << first_s << second_s;
+                    profile.result[ii.key() + delta_w][j.key()] = delta_s;
                 }
 
        //   qDebug() << s_pr << j.value();
@@ -310,7 +321,8 @@ void MainWindow::drawArea_d_x2()
         } else
             break;
     }
-    //ui->textBrowser->append("W0 = " + QString::number(w_draw));
+    ui->textBrowser->append("delta_W = " + QString::number(delta_w));
+    profile.delta_s_max = delta_s_max;
 /*
 
     double s_tr_0 = s_tr_map.begin().value().upperBound(2).value();
