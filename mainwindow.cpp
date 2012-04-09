@@ -251,7 +251,7 @@ void MainWindow::drawArea_d_x2()
     profile.result.clear();
     double w_begin = 0;
     double w_end = 0;
-    double r_prev, s_prev;
+    double s_prev;
     bool draw = false;
     double s_max = 0;
     while (i.hasNext()) {
@@ -277,12 +277,12 @@ void MainWindow::drawArea_d_x2()
             }
 
 
-            ui->textBrowser->append("W = " + QString::number(i.key()));
+      /*      ui->textBrowser->append("W = " + QString::number(i.key()));
             ui->textBrowser->append("PR1: r_av = " + QString::number(r_av) + "; s = " + QString::number(s));
-            ui->textBrowser->append("PR2: r_av = " + QString::number(r_av2) + "; s = " + QString::number(s2));
+            ui->textBrowser->append("PR2: r_av = " + QString::number(r_av2) + "; s = " + QString::number(s2));*/
         }
     }
-    i.toBack();
+
     double delta_w = w_end - w_begin;
     qDebug() << delta_w;
     if (delta_w == 0) {
@@ -292,12 +292,13 @@ void MainWindow::drawArea_d_x2()
 
     double delta_s_max = 0;
     QMapIterator<double, QMap<double,double> > ii(profile.result_s_tr);
-    while (ii.hasNext()) {
-        ii.next();
+    ii.toBack();
+    while (ii.hasPrevious()) {
+        ii.previous();
         //qDebug() << "AAAAAAAAAAAA" << s_tr_map.lowerBound(.key();
-        if ((ii.key() + delta_w) < profile.bw) {
+        if ((ii.key() - delta_w) > 0) {
             QMapIterator<double,double> j(ii.value());
-            QMapIterator<double,double> k(s_tr_map.value(ii.key() + delta_w));
+            QMapIterator<double,double> k(s_tr_map.value(ii.key() - delta_w));
             while (j.hasNext()) {
                 j.next();
 
@@ -311,9 +312,13 @@ void MainWindow::drawArea_d_x2()
                     double delta_s = (first_s - second_s) / 2;
                     if (delta_s > delta_s_max)
                         delta_s_max = delta_s;
-
-                    qDebug() << first_s << second_s;
-                    profile.result[ii.key() + delta_w][j.key()] = delta_s;
+                    if (ui->diagnostic->isChecked()) {
+                        ui->textBrowser->append("W = " + QString::number(ii.key()));
+                        ui->textBrowser->append("PR1: s = " + QString::number(first_s) + "; PR2: s = " + QString::number(second_s));
+                        ui->textBrowser->append("delta_s = " + QString::number(delta_s));
+                    }
+                    //qDebug() << first_s << second_s;
+                    profile.result[ii.key() - delta_w][j.key()] = delta_s;
                 }
 
        //   qDebug() << s_pr << j.value();
