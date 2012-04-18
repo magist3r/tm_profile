@@ -228,7 +228,7 @@ void MainWindow::drawArea()
         if (ui->diagnostic->isChecked())
         {
             profile.diagnosticMode = true;
-            profile.n_r = 5;
+            profile.n_r = 4;
             profile.n_W = 5;
             MyThread thread(profile);
             connect(&thread, SIGNAL(finished()), this, SLOT(drawArea()));
@@ -401,6 +401,7 @@ void MainWindow::on_pushButton_4_clicked()
 void MainWindow::startSecondThread()
 {
     s_tr_map = profile.result_s_tr;
+    profile.result_s_tr.clear();
     profile.x2 = profile.x2 + ui->delta_x2->value() * 1.0 / 100;
   //  qDebug() << profile.x2;
     MyThread thread(profile);

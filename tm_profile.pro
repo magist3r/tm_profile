@@ -14,6 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+# Add more folders to ship with the application, here
+folder_01.source = qml/tm_profile
+folder_01.target = qml
+DEPLOYMENTFOLDERS = folder_01
+
+QML_IMPORT_PATH =
+
 QT       += core gui
 
 TARGET = tm_profile
@@ -25,6 +32,9 @@ SOURCES += main.cpp\
     profile.cpp \
     paint_area.cpp \
     mythread.cpp
+
+include(qmlapplicationviewer/qmlapplicationviewer.pri)
+qtcAddDeployment()
 
 HEADERS  += mainwindow.h \
     profile.h \

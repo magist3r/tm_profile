@@ -171,7 +171,7 @@ void Profile::calculate()
 
             if (diagnosticMode)
             {
-                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | delta_s = " + QString::number(delta_s));
+                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | s_tr = " + QString::number(s_tr) + " | delta_s = " + QString::number(delta_s));
             }
 
             ry2 += dr;

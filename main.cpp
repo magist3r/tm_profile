@@ -18,11 +18,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui/QApplication>
 #include "mainwindow.h"
+#include "qmlapplicationviewer.h"
 
-int main(int argc, char *argv[])
+Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QScopedPointer<QApplication> app(createApplication(argc, argv));
+    QmlApplicationViewer viewer;
+
+    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));
+    viewer.showExpanded();
+
     MainWindow w;
     w.show();
-    return a.exec();
+    return app->exec();
 }
