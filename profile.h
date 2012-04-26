@@ -28,6 +28,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 class Profile : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(double m READ m WRITE setM)  // Module
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1) // Number of teeth of pinion
+    Q_PROPERTY(double z2 READ z2 WRITE setZ2) // Number of teeth of gear
+    Q_PROPERTY(double x2 READ x2 WRITE setX2)
+    Q_PROPERTY(double W0 READ W0 WRITE setW0)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+
+
 
 public:
     Profile(QObject *parent = 0);
@@ -36,43 +52,7 @@ public:
 
     ~Profile();
 
-    double m; // Модуль зацепления
-    double z1; // Число зубьев шестерни
-    double z2; // Число зубьев колеса
-    double x2; // Коэффициент смещения колеса
-    double W0; // Аппликата большего торцового сечения венца шестерни
-    double E; // Межосевой угол
-    double bw; // Ширина зубчатого венца
 
-    // Параметры исходного контура
-    double alpha; // Угол профиля
-    double c; // Коэффициент радиального зазора
-    double ha; // Коэффициент высоты зуба
-
-    // Параметры зуборезного долбяка
-    double z0; // Число зубьев инструмента
-    double x0; // Коэффициент смещения
-    double da0; // Диаметр вершин зубьев
-
-    double d0; // Делительный диаметр фрезы
-
-    double ra2; // Радиус вершин зубьев колеса
-    double rf2; // Радиус впадин колеса
-
-    static const double eps = 0.000001; // Требуемая точность расчётов
-    double n_W;
-    double n_r;
-    double dx; // Величина модификации
-    double dx_0;
-    double dx_bw;
-
-    double delta_s_max;
-
-    bool useSmooth;
-    bool useOldPaintMode;
-    bool diagnosticMode;
-
-    QList<double> xt_w;
 
     QMap<double, QMap<double,double> > result;
     QMap<double, QMap<double,double> > result_s_tr;
@@ -81,16 +61,67 @@ public:
     bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
     void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+    double m_m() const
+    {
+        return m_m;
+    }
+
+    double z1() const
+    {
+        return m_z1;
+    }
+
+    double z2() const
+    {
+        return m_z2;
+    }
+
+    double x2() const
+    {
+        return m_x2;
+    }
+
+    double W0() const
+    {
+        return m_W0;
+    }
+
+public slots:
+    void setM(double arg)
+    {
+        m_m = arg;
+    }
+
+    void setZ1(double arg)
+    {
+        m_z1 = arg;
+    }
+
+    void setZ2(double arg)
+    {
+        m_z2 = arg;
+    }
+
+    void setX2(double arg)
+    {
+        m_x2 = arg;
+    }
+
+    void setW0(double arg)
+    {
+        m_W0 = arg;
+    }
+
 signals:
     void addToDebugConsole(QString text);
 
 private:
 
     // Расчетные величины
-    double i21; // Передаточное отношение
-    double rb2; // Радиус основной окружности колеса
-    double delta2;
-    double psi_b2;
+    double m_i21; // Передаточное отношение
+    double m_rb2; // Радиус основной окружности колеса
+    double m_delta2;
+    double m_psi_b2;
 
     QList<double> square_method(const QMap<double, double> &S);
 
@@ -98,6 +129,44 @@ private:
 
     double det(const double A[3][3]); // Расчет определителя матрицы
 
+    double m_m;
+
+    double m_z1; // Число зубьев шестерни
+    double m_z2; // Число зубьев колеса
+    double m_x2; // Коэффициент смещения колеса
+    double m_W0; // Аппликата большего торцового сечения венца шестерни
+    double m_E; // Межосевой угол
+    double m_bw; // Ширина зубчатого венца
+
+    // Параметры исходного контура
+    double m_alpha; // Угол профиля
+    double m_c; // Коэффициент радиального зазора
+    double m_ha; // Коэффициент высоты зуба
+
+    // Параметры зуборезного долбяка
+    double m_z0; // Число зубьев инструмента
+    double m_x0; // Коэффициент смещения
+    double m_da0; // Диаметр вершин зубьев
+
+    double m_d0; // Делительный диаметр фрезы
+
+    double m_ra2; // Радиус вершин зубьев колеса
+    double m_rf2; // Радиус впадин колеса
+
+    static const double m_eps = 0.000001; // Требуемая точность расчётов
+    double m_nW;
+    double m_nr;
+    double m_dx; // Величина модификации
+    double m_dx_0;
+    double m_dx_bw;
+
+    double m_delta_s_max;
+
+    bool m_useSmooth;
+    bool m_useOldPaintMode;
+    bool m_diagnosticMode;
+
+    QList<double> m_xt_w;
 };
 
 #endif // PROFILE_H

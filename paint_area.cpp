@@ -36,26 +36,27 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 
 void PaintArea::drawImage(Profile *profile)
 {
+//    QImage
     image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
 
-    double delta_image = delta * sqrt(profile->m);
+    double delta_image = delta * sqrt(profile->m_m);
 
     QPainter painter(&image);
 
     painter.setBrush(Qt::white);
 //    painter.drawRect(width(), 0, -10, 10);
 
-    double r = (profile->rf2 - profile->c * profile->m) / cos(profile->E) - (profile->ra2 / cos(profile->E) - profile->bw * tan(profile->E));
+    double r = (profile->m_rf2 - profile->m_c * profile->m_m) / cos(profile->m_E) - (profile->m_ra2 / cos(profile->m_E) - profile->m_bw * tan(profile->m_E));
 
     QTransform transform;
     painter.setRenderHint(painter.Antialiasing, true);
 
-    double scale_x = painter.window().width() / profile->bw;
+    double scale_x = painter.window().width() / profile->m_bw;
     double scale_y = painter.window().height() / r;
     double scale;
     transform.scale(1, -1);
-    transform.translate(profile->bw * (scale_x - scale_y) / 2, - painter.window().height());
+    transform.translate(profile->m_bw * (scale_x - scale_y) / 2, - painter.window().height());
 
     if (scale_x < scale_y){
         scale = scale_x;
@@ -70,12 +71,12 @@ void PaintArea::drawImage(Profile *profile)
     double max_value;
     double min_value;
 
-    if (profile->useOldPaintMode){
+    if (profile->m_useOldPaintMode){
         max_value = delta_image;
         min_value = 0;
     }
     else{
-        max_value = profile->delta_s_max;
+        max_value = profile->m_delta_s_max;
         min_value = max_value - delta_image;
     }
     double delta_1_3 = min_value + delta_image / 3;
@@ -97,7 +98,7 @@ void PaintArea::drawImage(Profile *profile)
                 painter.setPen(Qt::red);
             }
 
-            if (profile->useSmooth)
+            if (profile->m_useSmooth)
             {
                 if (j.value() >= min_value && j.value() <= max_value)
                 {
@@ -121,6 +122,7 @@ void PaintArea::drawImage(Profile *profile)
             }
 
             painter.drawPoint(QPointF(i.key(),j.key()));
+
          }
     }
   //   qDebug() << max_value << max_value / 3 << max_value * 2 / 3;

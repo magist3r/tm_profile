@@ -44,11 +44,11 @@ bool Profile::getRadius()
 {
     double alpha_w02;
 
-    double inv_alpha_w02 = ((x2 - x0) / (z2 - z0)) * 2 * tan(alpha) + tan(alpha) - alpha;
+    double inv_alpha_w02 = ((m_x2 - m_x0) / (m_z2 - m_z0)) * 2 * tan(m_alpha) + tan(m_alpha) - m_alpha;
 
     double alpha_n = M_PI / 180;
     double alpha_k = 89 * M_PI / 180;
-    while (alpha_k - alpha_n > eps)
+    while (alpha_k - alpha_n > m_eps)
     {
          alpha_w02 = (alpha_n + alpha_k) / 2;
          if ((inv_alpha_w02 - (tan(alpha_w02) - alpha_w02)) > 0)
@@ -60,24 +60,24 @@ bool Profile::getRadius()
             alpha_k = alpha_w02;
          }
     }
-    rf2 = (m * (z2 - z0) * (cos(alpha)/cos(alpha_w02)) + da0) / 2;
-    ra2 = rf2 - m * (2 * ha + c);
+    m_rf2 = (m_m * (m_z2 - m_z0) * (cos(m_alpha)/cos(alpha_w02)) + m_da0) / 2;
+    m_ra2 = m_rf2 - m_m * (2 * m_ha + m_c);
     return true;
 }
 
 void Profile::calculate()
 {
-    i21 = z1 / z2;
-    rb2 = 0.5 * m * z2 * cos(alpha);
-    delta2 = atan(sin(E) / (cos(E) - i21));
-    psi_b2 = M_PI / (2 * z2) + 2 * x2 * tan(alpha) / z2 + tan(alpha) - alpha;
+    m_i21 = m_z1 / m_z2;
+    m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha);
+    m_delta2 = atan(sin(m_E) / (cos(m_E) - m_i21));
+    m_psi_b2 = M_PI / (2 * m_z2) + 2 * m_x2 * tan(m_alpha) / m_z2 + tan(m_alpha) - m_alpha;
     result.clear();
     result_s_tr.clear();
     result_s_pr.clear();
 
-    double dW = bw / n_W; // Шаг торцовых сечений
-    double rav2 = (rf2 + ra2 - c * m) / 2;
-    double dr = (rf2 - ra2 - c * m) / n_r; // Шаг радиусов
+    double dW = m_bw / m_nW; // Шаг торцовых сечений
+    double rav2 = (m_rf2 + m_ra2 - m_c * m_m) / 2;
+    double dr = (m_rf2 - m_ra2 - m_c * m_m) / m_nr; // Шаг радиусов
 
     double x_tr = 0.0, y_tr = 0.0;
 
@@ -85,75 +85,75 @@ void Profile::calculate()
 
     QMap<double, double> S;
 
-    double Wi = W0;
+    double Wi = m_W0;
     // Расчет коэффициентов смещения
-    for (int i=0; i <= n_W; i++)
+    for (int i=0; i <= m_nW; i++)
     {
-        double delta_oi = E; // Угол аксоидного конуса шестерни
-        double alpha1 = atan(tan(alpha) * cos(delta_oi));
-        double rb1 = 0.5 * m * z1 * cos(alpha1);
+        double delta_oi = m_E; // Угол аксоидного конуса шестерни
+        double alpha1 = atan(tan(m_alpha) * cos(delta_oi));
+        double rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
 
-        double ry1 = rav2 / cos(E) - (Wi + 0.1 * m) * tan(E);
-        a_tw(ry1, Wi + 0.1 * m, x_tr, y_tr);
+        double ry1 = rav2 / cos(m_E) - (Wi + 0.1 * m_m) * tan(m_E);
+        a_tw(ry1, Wi + 0.1 * m_m, x_tr, y_tr);
         double psi_yi = x_tr / ry1;
         double alpha_y1 = acos(rb1 / ry1);
-        double xt1 = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
+        double xt1 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
-        ry1 = rav2 / cos(E) - (Wi) * tan(E);
+        ry1 = rav2 / cos(m_E) - (Wi) * tan(m_E);
         a_tw(ry1, Wi, x_tr, y_tr);
         psi_yi = x_tr / ry1;
         alpha_y1 = acos(rb1 / ry1);
-        double xt2 = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
+        double xt2 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
         delta_oi = atan(10 * (xt2 - xt1));
-        alpha1 = atan(tan(alpha) * cos(delta_oi));
-        rb1 = 0.5 * m * z1 * cos(alpha1);
+        alpha1 = atan(tan(m_alpha) * cos(delta_oi));
+        rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
         alpha_y1 = acos(rb1 / ry1);
-        double xt = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
+        double xt = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
-        S[Wi - W0] = xt;
+        S[Wi - m_W0] = xt;
 
         Wi += dW;
     }
 
-    xt_w = square_method(S);
+    m_xt_w = square_method(S);
 
     // Задание модификации
-    if(dx != 0 || dx_0 != 0 || dx_bw != 0)
+    if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
         S.clear();
 
-        S[0] = xt_w[2] * 0 + xt_w[1] * 0 + xt_w[0] - dx_0;
-        S[bw/2] = xt_w[2] * pow(bw/2,2) + xt_w[1] * bw/2 + xt_w[0] + dx;
-        S[bw] = xt_w[2] * pow(bw,2) + xt_w[1] * bw + xt_w[0] - dx_bw;
+        S[0] = m_xt_w[2] * 0 + m_xt_w[1] * 0 + m_xt_w[0] - m_dx_0;
+        S[m_bw/2] = m_xt_w[2] * pow(m_bw/2,2) + m_xt_w[1] * m_bw/2 + m_xt_w[0] + m_dx;
+        S[m_bw] = m_xt_w[2] * pow(m_bw,2) + m_xt_w[1] * m_bw + m_xt_w[0] - m_dx_bw;
 
-        xt_w = square_method(S);
+        m_xt_w = square_method(S);
     }
 
-    double w0 = -xt_w[1] / (2 * xt_w[2]);
+    double w0 = -m_xt_w[1] / (2 * m_xt_w[2]);
 
-    Wi = W0;
+    Wi = m_W0;
 
-    delta_s_max=0;
+    m_delta_s_max=0;
     // Расчет толщин зубьев
-    for (int i=0; i <= n_W; i++)
+    for (int i=0; i <= m_nW; i++)
     {
-        double wi = Wi - W0;
-        double delta_oi = -atan(m * (2 * xt_w[2] * wi + xt_w[1]));
-        double xt = xt_w[2] * pow(wi, 2) + xt_w[1] * wi + xt_w[0];
-        double aw0 = m * (0.5 * z1 + xt) + 0.5 * d0 * cos(delta_oi);
-        double ha_2 = ha / cos(delta_oi);
-        double c_2 = c / cos(delta_oi);
-        double d = m * z1;
-        double alpha_t = atan(tan(alpha) * cos(delta_oi));
+        double wi = Wi - m_W0;
+        double delta_oi = -atan(m_m * (2 * m_xt_w[2] * wi + m_xt_w[1]));
+        double xt = m_xt_w[2] * pow(wi, 2) + m_xt_w[1] * wi + m_xt_w[0];
+        double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
+        double ha_2 = m_ha / cos(delta_oi);
+        double c_2 = m_c / cos(delta_oi);
+        double d = m_m * m_z1;
+        double alpha_t = atan(tan(m_alpha) * cos(delta_oi));
         double d_b = d * cos(alpha_t);
-        double ry1_min = ra2 / cos(E) - (W0 + bw) * tan(E);
-        double ry2 = ra2;
+        double ry1_min = m_ra2 / cos(m_E) - (m_W0 + m_bw) * tan(m_E);
+        double ry2 = m_ra2;
 
-        for (int j=0; j <= n_r; j++)
+        for (int j=0; j <= m_nr; j++)
         {
 
-            double ry1 = ry2 / cos(E) - Wi * tan(E);
+            double ry1 = ry2 / cos(m_E) - Wi * tan(m_E);
 
             // Теоретический профиль
             a_tw(ry1, Wi, x_tr, y_tr);
@@ -161,17 +161,17 @@ void Profile::calculate()
 
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
-            double st = m * (M_PI / 2 + 2 * xt * tan(alpha) * cos(delta_oi));
+            double st = m_m * (M_PI / 2 + 2 * xt * tan(m_alpha) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             double delta_s = (s_pr - s_tr) / 2;
-            if (delta_s > delta_s_max)
-                delta_s_max = delta_s;
+            if (delta_s > m_delta_s_max)
+                m_delta_s_max = delta_s;
 
             result[wi][ry1 - ry1_min] = delta_s;
             result_s_tr[wi][ry1 - ry1_min] = s_tr;
             result_s_pr[wi][ry1 - ry1_min] = s_pr;
 
-            if (diagnosticMode)
+            if (m_diagnosticMode)
             {
                 emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | s_tr = " + QString::number(s_tr) + " | delta_s = " + QString::number(delta_s));
             }
@@ -253,14 +253,14 @@ void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)
 {
     double vy2, p, q, alpha_tw, phi1;
     double alpha_tw_n = M_PI / 180;
-    double alpha_tw_k = acos((Wi/rb2 - sqrt(pow(Wi/rb2,2) - 2 * sin(2*E) / tan(delta2))) / (2 * sin(E)));
-    while (alpha_tw_k - alpha_tw_n > eps)
+    double alpha_tw_k = acos((Wi/m_rb2 - sqrt(pow(Wi/m_rb2,2) - 2 * sin(2*m_E) / tan(m_delta2))) / (2 * sin(m_E)));
+    while (alpha_tw_k - alpha_tw_n > m_eps)
     {
         alpha_tw = (alpha_tw_n + alpha_tw_k) / 2;
-        vy2 = (Wi / (rb2 * sin(E)) - (1 / (tan(E) * tan(delta2) * cos(alpha_tw))) - cos(alpha_tw)) / sin(alpha_tw);
-        p = cos(E) * (cos(alpha_tw) + vy2 * sin(alpha_tw)) - sin(E) / (cos(alpha_tw) * tan(delta2));
+        vy2 = (Wi / (m_rb2 * sin(m_E)) - (1 / (tan(m_E) * tan(m_delta2) * cos(alpha_tw))) - cos(alpha_tw)) / sin(alpha_tw);
+        p = cos(m_E) * (cos(alpha_tw) + vy2 * sin(alpha_tw)) - sin(m_E) / (cos(alpha_tw) * tan(m_delta2));
         q = sin(alpha_tw) - vy2 * cos(alpha_tw);
-        if ((rb2 * sqrt(pow(q,2) + pow(p,2)) - ry1) > 0)
+        if ((m_rb2 * sqrt(pow(q,2) + pow(p,2)) - ry1) > 0)
         {
              alpha_tw_n = alpha_tw;
         }
@@ -269,9 +269,9 @@ void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)
              alpha_tw_k = alpha_tw;
         }
     }
-    phi1 = (alpha_tw + psi_b2 - vy2) / i21;
-    x_tr = rb2 * (p * sin(phi1) - q * cos(phi1));
-    y_tr = rb2 * (p * cos(phi1) + q * sin(phi1));
+    phi1 = (alpha_tw + m_psi_b2 - vy2) / m_i21;
+    x_tr = m_rb2 * (p * sin(phi1) - q * cos(phi1));
+    y_tr = m_rb2 * (p * cos(phi1) + q * sin(phi1));
     return;
 }
 

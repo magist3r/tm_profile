@@ -53,32 +53,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::setVars()
 {
-    profile.m = ui->m->value();
-    profile.z1 = ui->z1->value();
-    profile.z2 = ui->z2->value();
-    profile.x2 = ui->x2->value();
-    profile.E = ui->E->value() * M_PI / 180;
-    profile.W0 = ui->W0->value();
-    profile.alpha = ui->alpha->value() * M_PI / 180;
-    profile.ha = ui->ha->value();
-    profile.c = ui->c->value();
-    profile.z0 = ui->z0->value();
-    profile.x0 = ui->x0->value();
-    profile.da0 = ui->da0->value();
+    profile.m_m = ui->m->value();
+    profile.m_z1 = ui->z1->value();
+    profile.m_z2 = ui->z2->value();
+    profile.m_x2 = ui->x2->value();
+    profile.m_E = ui->E->value() * M_PI / 180;
+    profile.m_W0 = ui->W0->value();
+    profile.m_alpha = ui->alpha->value() * M_PI / 180;
+    profile.m_ha = ui->ha->value();
+    profile.m_c = ui->c->value();
+    profile.m_z0 = ui->z0->value();
+    profile.m_x0 = ui->x0->value();
+    profile.m_da0 = ui->da0->value();
 
-    profile.d0 = ui->d0->value();
-    profile.bw = ui->bw->value();
-    profile.ra2 = ui->ra2->value();
-    profile.rf2 = ui->rf2->value();
-    profile.dx = ui->dx->value();
-    profile.dx_0 = ui->dx_0->value();
-    profile.dx_bw = ui->dx_bw->value();
+    profile.m_d0 = ui->d0->value();
+    profile.m_bw = ui->bw->value();
+    profile.m_ra2 = ui->ra2->value();
+    profile.m_rf2 = ui->rf2->value();
+    profile.m_dx = ui->dx->value();
+    profile.m_dx_0 = ui->dx_0->value();
+    profile.m_dx_bw = ui->dx_bw->value();
 
-    profile.n_W = ui->detalization->value();
-    profile.n_r = ui->detalization->value();
+    profile.m_nW = ui->detalization->value();
+    profile.m_nr = ui->detalization->value();
 
-    profile.useSmooth = ui->radioButton->isChecked();
-    profile.useOldPaintMode = ui->oldPaintMode->isChecked();
+    profile.m_useSmooth = ui->radioButton->isChecked();
+    profile.m_useOldPaintMode = ui->oldPaintMode->isChecked();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -86,8 +86,8 @@ void MainWindow::on_pushButton_clicked()
     setVars();
     if (profile.getRadius())
     {
-        ui->ra2->setValue(profile.ra2);
-        ui->rf2->setValue(profile.rf2);
+        ui->ra2->setValue(profile.m_ra2);
+        ui->rf2->setValue(profile.m_rf2);
     }
 
 }
@@ -216,20 +216,20 @@ void MainWindow::addToDebugConsole(QString text)
 
 void MainWindow::drawArea()
 {
-    if (profile.diagnosticMode)
+    if (profile.m_diagnosticMode)
     {
-        profile.diagnosticMode = false;
+        profile.m_diagnosticMode = false;
     }
     else
     {
-        ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
+        ui->label_xt_w->setText("xt(w) = " + QString::number(profile.m_xt_w[2]) + "w^2 " + QString::number(profile.m_xt_w[1]) + "w +" + QString::number(profile.m_xt_w[0]));
         ui->PaintContactArea->delta = ui->delta->value();
         ui->PaintContactArea->drawImage(&profile);
         if (ui->diagnostic->isChecked())
         {
-            profile.diagnosticMode = true;
-            profile.n_r = 4;
-            profile.n_W = 5;
+            profile.m_diagnosticMode = true;
+            profile.m_nr = 4;
+            profile.m_nW = 5;
             MyThread thread(profile);
             connect(&thread, SIGNAL(finished()), this, SLOT(drawArea()));
             thread.start();
@@ -327,7 +327,7 @@ void MainWindow::drawArea_d_x2()
             break;
     }
     ui->textBrowser->append("delta_W = " + QString::number(delta_w));
-    profile.delta_s_max = delta_s_max;
+    profile.m_delta_s_max = delta_s_max;
 /*
 
     double s_tr_0 = s_tr_map.begin().value().upperBound(2).value();
@@ -402,7 +402,7 @@ void MainWindow::startSecondThread()
 {
     s_tr_map = profile.result_s_tr;
     profile.result_s_tr.clear();
-    profile.x2 = profile.x2 + ui->delta_x2->value() * 1.0 / 100;
+    profile.m_x2 = profile.m_x2 + ui->delta_x2->value() * 1.0 / 100;
   //  qDebug() << profile.x2;
     MyThread thread(profile);
     connect(&thread, SIGNAL(finished()), this, SLOT(drawArea_d_x2()));
