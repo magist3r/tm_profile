@@ -92,11 +92,11 @@ private:
     double delta2;
     double psi_b2;
 
-    QList<double> square_method(QMap<double, double> &S);
+    QList<double> square_method(const QMap<double, double> &S);
 
-    QList<double> a_tw(double ry1, double Wi); // Подбор угла профиля в торцовом сечении
+    void a_tw(double ry1, double Wi, double &x_tr, double &y_tr); // Подбор угла профиля в торцовом сечении
 
-    double det(double A[3][3]); // Расчет определителя матрицы
+    double det(const double A[3][3]); // Расчет определителя матрицы
 
 };
 

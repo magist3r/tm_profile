@@ -79,6 +79,8 @@ void Profile::calculate()
     double rav2 = (rf2 + ra2 - c * m) / 2;
     double dr = (rf2 - ra2 - c * m) / n_r; // Шаг радиусов
 
+    double x_tr = 0.0, y_tr = 0.0;
+
     QList<double> list;
 
     QMap<double, double> S;
@@ -92,12 +94,14 @@ void Profile::calculate()
         double rb1 = 0.5 * m * z1 * cos(alpha1);
 
         double ry1 = rav2 / cos(E) - (Wi + 0.1 * m) * tan(E);
-        double psi_yi = a_tw(ry1, Wi + 0.1 * m).value(0) / ry1;
+        a_tw(ry1, Wi + 0.1 * m, x_tr, y_tr);
+        double psi_yi = x_tr / ry1;
         double alpha_y1 = acos(rb1 / ry1);
         double xt1 = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
         ry1 = rav2 / cos(E) - (Wi) * tan(E);
-        psi_yi = a_tw(ry1, Wi).value(0) / ry1;
+        a_tw(ry1, Wi, x_tr, y_tr);
+        psi_yi = x_tr / ry1;
         alpha_y1 = acos(rb1 / ry1);
         double xt2 = (z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
@@ -152,9 +156,7 @@ void Profile::calculate()
             double ry1 = ry2 / cos(E) - Wi * tan(E);
 
             // Теоретический профиль
-            list = a_tw(ry1, Wi);
-            double x_tr = list[0];
-            double y_tr = list[1];
+            a_tw(ry1, Wi, x_tr, y_tr);
             double s_tr = 2 * ry1 * atan(x_tr / y_tr); // Толщина зуба теоретическая
 
             // Практический профиль
@@ -180,7 +182,7 @@ void Profile::calculate()
     }
 }
 
-QList<double> Profile::square_method(QMap<double, double> &S)
+QList<double> Profile::square_method(const QMap<double, double> &S)
 {
     double sum_x = 0;
     double sum_x2 = 0;
@@ -192,7 +194,7 @@ QList<double> Profile::square_method(QMap<double, double> &S)
     QList<double> X; // Матрица результатов (коэффициенты уравнения)
 
     int n = 0;
-    QMap<double, double>::iterator i;
+    QMap<double, double>::const_iterator i;
     for (i = S.begin(); i != S.end(); ++i)
     {
         sum_x += i.key();
@@ -247,11 +249,8 @@ QList<double> Profile::square_method(QMap<double, double> &S)
     return X;
 }
 
-QList<double> Profile::a_tw (double ry1, double Wi)
+void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)
 {
-
-    QList<double> out_list;
-
     double vy2, p, q, alpha_tw, phi1;
     double alpha_tw_n = M_PI / 180;
     double alpha_tw_k = acos((Wi/rb2 - sqrt(pow(Wi/rb2,2) - 2 * sin(2*E) / tan(delta2))) / (2 * sin(E)));
@@ -271,12 +270,12 @@ QList<double> Profile::a_tw (double ry1, double Wi)
         }
     }
     phi1 = (alpha_tw + psi_b2 - vy2) / i21;
-    out_list.append(rb2 * (p * sin(phi1) - q * cos(phi1)));
-    out_list.append(rb2 * (p * cos(phi1) + q * sin(phi1)));
-    return out_list;
+    x_tr = rb2 * (p * sin(phi1) - q * cos(phi1));
+    y_tr = rb2 * (p * cos(phi1) + q * sin(phi1));
+    return;
 }
 
-double Profile::det(double A[3][3])
+double Profile::det(const double A[3][3])
 {
    return A[0][0] * A[1][1] * A[2][2] +
           A[0][1] * A[1][2] * A[2][0] +
