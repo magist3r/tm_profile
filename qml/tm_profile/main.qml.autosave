@@ -1,7 +1,7 @@
 import QtQuick 1.1
 import QtDesktop 0.1
 
-Window {
+Rectangle {
   width: 200
   height: 200
 

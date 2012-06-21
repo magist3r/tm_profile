@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setVars()
 {
-    profile.m_m = ui->m->value();
+    /*profile.m_m = ui->m->value();
     profile.m_z1 = ui->z1->value();
     profile.m_z2 = ui->z2->value();
     profile.m_x2 = ui->x2->value();
@@ -78,18 +78,18 @@ void MainWindow::setVars()
     profile.m_nr = ui->detalization->value();
 
     profile.m_useSmooth = ui->radioButton->isChecked();
-    profile.m_useOldPaintMode = ui->oldPaintMode->isChecked();
+    profile.m_useOldPaintMode = ui->oldPaintMode->isChecked();*/
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    setVars();
+ /*   setVars();
     if (profile.getRadius())
     {
         ui->ra2->setValue(profile.m_ra2);
         ui->rf2->setValue(profile.m_rf2);
     }
-
+*/
 }
 
 void MainWindow::on_MainButton_clicked()
@@ -216,7 +216,7 @@ void MainWindow::addToDebugConsole(QString text)
 
 void MainWindow::drawArea()
 {
-    if (profile.m_diagnosticMode)
+    /*if (profile.m_diagnosticMode)
     {
         profile.m_diagnosticMode = false;
     }
@@ -234,18 +234,18 @@ void MainWindow::drawArea()
             connect(&thread, SIGNAL(finished()), this, SLOT(drawArea()));
             thread.start();
         }
-    }
+    }*/
 }
 
 void MainWindow::drawArea_d_x2()
 {
     //ui->label_xt_w->setText("xt(w) = " + QString::number(profile.xt_w[2]) + "w^2 " + QString::number(profile.xt_w[1]) + "w +" + QString::number(profile.xt_w[0]));
-    ui->PaintContactArea->delta = ui->delta->value();
+    //ui->PaintContactArea->delta = ui->delta->value();
    /* double r_av_0 = (s_tr_map.begin().value().begin().key() + s_tr_map.begin().value().end().key()) / 2;
     double s_0 = s_tr_map.begin().value().upperBound(r_av_0).value() / 2;*/
     //qDebug() << r_av_0 << s_0;
    // QMap<double,double> s_tr_w0 = s_tr_map.begin().value();
-    QMapIterator<double, QMap<double,double> > i(s_tr_map);
+  /*  QMapIterator<double, QMap<double,double> > i(s_tr_map);
     QMapIterator<double, QMap<double,double> > i2(profile.result_s_tr);
     ui->textBrowser->clear();
     profile.result.clear();
@@ -280,17 +280,17 @@ void MainWindow::drawArea_d_x2()
       /*      ui->textBrowser->append("W = " + QString::number(i.key()));
             ui->textBrowser->append("PR1: r_av = " + QString::number(r_av) + "; s = " + QString::number(s));
             ui->textBrowser->append("PR2: r_av = " + QString::number(r_av2) + "; s = " + QString::number(s2));*/
-        }
-    }
+  //      }
+   // }
 
-    double delta_w = w_end - w_begin;
+ /*   double delta_w = w_end - w_begin;
     qDebug() << delta_w;
     if (delta_w == 0) {
         ui->textBrowser->append("Delta_w NOT FOUND (delta_w = 0)");
         return;
     }
-
-    double delta_s_max = 0;
+*/
+ /*   double delta_s_max = 0;
     QMapIterator<double, QMap<double,double> > ii(profile.result_s_tr);
     ii.toBack();
     while (ii.hasPrevious()) {
@@ -400,11 +400,11 @@ void MainWindow::on_pushButton_4_clicked()
 
 void MainWindow::startSecondThread()
 {
-    s_tr_map = profile.result_s_tr;
+  /*  s_tr_map = profile.result_s_tr;
     profile.result_s_tr.clear();
     profile.m_x2 = profile.m_x2 + ui->delta_x2->value() * 1.0 / 100;
   //  qDebug() << profile.x2;
     MyThread thread(profile);
     connect(&thread, SIGNAL(finished()), this, SLOT(drawArea_d_x2()));
-    thread.start();
+    thread.start();*/
 }

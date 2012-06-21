@@ -33,14 +33,17 @@ class Profile : public QObject
     Q_PROPERTY(double z2 READ z2 WRITE setZ2) // Number of teeth of gear
     Q_PROPERTY(double x2 READ x2 WRITE setX2)
     Q_PROPERTY(double W0 READ W0 WRITE setW0)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
+    Q_PROPERTY(double E READ E WRITE setE)
+
+    Q_PROPERTY(double alpha READ alpha WRITE setAlpha)
+    Q_PROPERTY(double c READ c WRITE setC)
+    Q_PROPERTY(double ha READ ha WRITE setHa)
+
+    Q_PROPERTY(double z0 READ z0 WRITE setZ0)
+    Q_PROPERTY(double x0 READ x0 WRITE setX0)
+    Q_PROPERTY(double da0 READ da0 WRITE setDa0)
+
+    Q_PROPERTY(double d0 READ d0 WRITE setD0)
     Q_PROPERTY(double z1 READ z1 WRITE setZ1)
 
 
@@ -61,7 +64,7 @@ public:
     bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
     void calculate(); // Расчет толщин зубьев практического и теоретического профилей
-    double m_m() const
+    double m() const
     {
         return m_m;
     }
@@ -84,6 +87,46 @@ public:
     double W0() const
     {
         return m_W0;
+    }
+
+    double E() const
+    {
+        return m_E;
+    }
+
+    double alpha() const
+    {
+        return m_alpha;
+    }
+
+    double c() const
+    {
+        return m_c;
+    }
+
+    double ha() const
+    {
+        return m_ha;
+    }
+
+    double z0() const
+    {
+        return m_z0;
+    }
+
+    double x0() const
+    {
+        return m_x0;
+    }
+
+    double da0() const
+    {
+        return m_da0;
+    }
+
+    double d0() const
+    {
+        return m_d0;
     }
 
 public slots:
@@ -110,6 +153,46 @@ public slots:
     void setW0(double arg)
     {
         m_W0 = arg;
+    }
+
+    void setE(double arg)
+    {
+        m_E = arg;
+    }
+
+    void setAlpha(double arg)
+    {
+        m_alpha = arg;
+    }
+
+    void setC(double arg)
+    {
+        m_c = arg;
+    }
+
+    void setHa(double arg)
+    {
+        m_ha = arg;
+    }
+
+    void setZ0(double arg)
+    {
+        m_z0 = arg;
+    }
+
+    void setX0(double arg)
+    {
+        m_x0 = arg;
+    }
+
+    void setDa0(double arg)
+    {
+        m_da0 = arg;
+    }
+
+    void setD0(double arg)
+    {
+        m_d0 = arg;
     }
 
 signals:

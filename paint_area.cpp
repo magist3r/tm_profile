@@ -37,7 +37,7 @@ PaintArea::PaintArea(QWidget *parent) : QWidget(parent)
 void PaintArea::drawImage(Profile *profile)
 {
 //    QImage
-    image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
+ /*   image = QImage(321, 171, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
 
     double delta_image = delta * sqrt(profile->m_m);
@@ -127,6 +127,6 @@ void PaintArea::drawImage(Profile *profile)
     }
   //   qDebug() << max_value << max_value / 3 << max_value * 2 / 3;
     image.save("./img.png", "PNG");
-    this->update();
+    this->update();*/
 }
 
