@@ -42,7 +42,7 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-    void on_pushButton_3_clicked();
+ //   void on_pushButton_3_clicked();
 
     void addToDebugConsole(QString text);
 
@@ -57,9 +57,9 @@ private slots:
 private:
     void setVars();
 
-    void saveProperties();
+ //   void saveProperties();
 
-    void loadProperties(QString value);
+//    void loadProperties(QString value);
 
     Ui::MainWindow *ui;
 };

@@ -28,8 +28,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 class Profile : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(double m READ m WRITE setM NOTIFY onMChanged)  // Module
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1 NOTIFY onZ1Changed) // Number of teeth of pinion
+    Q_PROPERTY(double m READ m WRITE setM NOTIFY onmChanged)  // Module
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1 NOTIFY onz1Changed) // Number of teeth of pinion
     Q_PROPERTY(double z2 READ z2 WRITE setZ2 NOTIFY onZ2Changed) // Number of teeth of gear
     Q_PROPERTY(double bw READ bw WRITE setBw NOTIFY onBwChanged)
     Q_PROPERTY(double W0 READ W0 WRITE setW0 NOTIFY onW0Changed)
@@ -44,6 +44,8 @@ class Profile : public QObject
     Q_PROPERTY(double z0 READ z0 WRITE setZ0 NOTIFY onZ0Changed)
     Q_PROPERTY(double x0 READ x0 WRITE setX0 NOTIFY onX0Changed)
     Q_PROPERTY(double da0 READ da0 WRITE setDa0 NOTIFY onDa0Changed)
+
+    Q_PROPERTY(QStringList listOfParameters READ listOfParameters)
 
 public:
     Profile(QObject *parent = 0);
@@ -130,6 +132,14 @@ public:
     {
         return m_bw;
     }
+
+    void saveMainSettings();
+    void saveOtherSettings();
+    void saveLastSettings();
+
+    QStringList listOfParameters();
+
+
 
 public slots:
     void setBw(double arg)
@@ -244,6 +254,9 @@ public slots:
         }
     }
 
+    void convertSettings();
+    void loadSettings(QString value = "");
+
 signals:
     void addToDebugConsole(QString text);
 
@@ -274,6 +287,10 @@ signals:
     void onX0Changed(double arg);
 
     void onDa0Changed(double arg);
+
+    void onmChanged(double arg);
+
+    void onz1Changed(double arg);
 
 private:
 
@@ -327,6 +344,7 @@ private:
     bool m_diagnosticMode;
 
     QList<double> m_xt_w;
+    QStringList m_listOfParameters;
 };
 
 #endif // PROFILE_H

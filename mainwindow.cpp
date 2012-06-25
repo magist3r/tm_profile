@@ -113,11 +113,11 @@ void MainWindow::on_pushButton_2_clicked()
     }
     else
     {
-        saveProperties();
+        //saveProperties();
     }
 }
 
-void MainWindow::on_pushButton_3_clicked()
+/*void MainWindow::on_pushButton_3_clicked()
 {
 
     if (ui->settingsList->currentItem() != 0)
@@ -128,7 +128,7 @@ void MainWindow::on_pushButton_3_clicked()
     {
          loadProperties();
     }
-}
+}*/
 
 void MainWindow::addToDebugConsole(QString text)
 {

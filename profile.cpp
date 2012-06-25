@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "profile.h"
 #include "math.h"
+#include <QSettings>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -285,16 +286,14 @@ double Profile::det(const double A[3][3])
           A[2][1] * A[1][2] * A[0][0];
 }
 
-void Profile::saveSettings()
+void Profile::saveMainSettings()
 {
-    QSettings settings("zb-susu", "tm_profile");
-    settings.beginGroup("MainParameters");
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
     const QString name = "m_" + QString::number(m_m) +
                          "|z1_" + QString::number(m_z1) +
                          "|z2_" + QString::number(m_z2) +
                          "|bw_" + QString::number(m_bw);
     settings.beginGroup(name);
-    //settings.setValue("MainWindow", saveState());
     settings.setValue("m", m_m);
     settings.setValue("z1", m_z1);
     settings.setValue("z2", m_z2);
@@ -303,53 +302,109 @@ void Profile::saveSettings()
     settings.setValue("E", m_E);
     settings.setValue("x2", m_x2);
     settings.setValue("d0", m_d0);
-
     settings.setValue("ra2", m_ra2);
     settings.setValue("rf2", m_rf2);
-
-    settings.endGroup();
-
-    settings.setValue("alpha", ui->alpha->value());
-    settings.setValue("c", ui->c->value());
-    settings.setValue("z0", ui->z0->value());
-    settings.setValue("x0", ui->x0->value());
-    settings.setValue("da0", ui->da0->value());
-    settings.setValue("ha", ui->ha->value());
-
-
-
-
-
-    settings.setValue("dx", ui->dx->value());
-    settings.setValue("dx_0", ui->dx_0->value());
-    settings.setValue("dx_bw", ui->dx_bw->value());
-    settings.setValue("detalization", ui->detalization->value());
-
-
     settings.endGroup();
 }
 
-void MainWindow::loadProperties(QString value = "")
+void Profile::saveOtherSettings()
 {
-   QSettings settings("tm_profile", "zb-susu");
-   settings.beginGroup("properties");
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+    settings.beginGroup("OtherSettings");
+    settings.setValue("alpha", m_alpha);
+    settings.setValue("c", m_c);
+    settings.setValue("z0", m_z0);
+    settings.setValue("x0", m_x0);
+    settings.setValue("da0", m_da0);
+    settings.setValue("ha", m_ha);
+    settings.endGroup();
+}
+
+void Profile::saveLastSettings()
+{
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+    settings.beginGroup("LastSettings");
+    settings.setValue("dx", m_dx);
+    settings.setValue("dx_0", m_dx_0);
+    settings.setValue("dx_bw", m_dx_bw);
+    //settings.setValue("detalization", m_detalization);
+    settings.endGroup();
+}
+
+QStringList Profile::listOfParameters()
+{
+    if (m_listOfParameters.empty()) {
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+        QRegExp rx("m_*");
+        rx.setPatternSyntax(QRegExp::Wildcard);
+        m_listOfParameters = settings.childGroups().filter(rx);
+
+    }
+    return m_listOfParameters;
+}
+
+void Profile::convertSettings()
+{
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+    QSettings settings2("tm_profile", "zb-susu");
+
+    settings2.beginGroup("properties");
+    QStringList groups = settings2.childGroups();
+    for (int i = 0; i < groups.count(); i++)
+    {
+        settings2.beginGroup(groups[i]);
+        settings.beginGroup(groups[i]);
+        settings.setValue("m", settings2.value("m"));
+        settings.setValue("z1", settings2.value("z1"));
+        settings.setValue("z2", settings2.value("z2"));
+        settings.setValue("bw", settings2.value("bw"));
+        settings.setValue("W0", settings2.value("W0"));
+        settings.setValue("E", settings2.value("E"));
+        settings.setValue("x2", settings2.value("x2"));
+        settings.setValue("d0", settings2.value("d0"));
+        settings.setValue("ra2", settings2.value("ra2"));
+        settings.setValue("rf2", settings2.value("rf2"));
+        settings.endGroup();
+        settings2.endGroup();
+    }
+    settings2.endGroup();
+}
+
+void Profile::loadSettings(QString value)
+{
+   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+   qDebug() << value;
 
    if (value == "")
    {
-       const QString name = "m_" + QString::number(ui->m->value()) +
-                         "|z1_" + QString::number(ui->z1->value()) +
-                         "|z2_" + QString::number(ui->z2->value()) +
-                         "|bw_" + QString::number(ui->bw->value());
-
-       settings.beginGroup(name);
+       settings.beginGroup("LastSettings");
    }
    else
    {
        settings.beginGroup(value);
    }
+   if (value == "OtherSettings") {
 
-   restoreState(settings.value("MainWindow").toByteArray());
-   ui->m->setValue(settings.value("m").toDouble());
+   }
+   else {
+       setM(settings.value("m").toDouble());
+       qDebug() << settings.value("m").toDouble();
+       setZ1(settings.value("z1").toDouble());
+       setZ2(settings.value("z2").toDouble());
+       setBw(settings.value("bw").toDouble());
+       setW0(settings.value("W0").toDouble());
+       setE(settings.value("E").toDouble());
+       setX2(settings.value("x2").toDouble());
+       setD0(settings.value("d0").toDouble());
+       //setrsettings.setValue("ra2", m_ra2);
+       //settings.setValue("rf2", m_rf2);
+   }
+
+   settings.endGroup();
+}
+
+
+   /*  ui->m->setValue(settings.value("m").toDouble());
    ui->z1->setValue(settings.value("z1").toDouble());
    ui->z2->setValue(settings.value("z2").toDouble());
     ui->x0->setValue(settings.value("x0").toDouble());
@@ -372,4 +427,4 @@ void MainWindow::loadProperties(QString value = "")
     settings.endGroup();
     settings.endGroup();
 
-}
+}*/

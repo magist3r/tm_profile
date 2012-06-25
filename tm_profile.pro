@@ -31,8 +31,7 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     profile.cpp \
     paint_area.cpp \
-    mythread.cpp \
-    settings.cpp
+    mythread.cpp
 
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
@@ -40,7 +39,6 @@ qtcAddDeployment()
 HEADERS  += mainwindow.h \
     profile.h \
     paint_area.h \
-    mythread.h \
-    settings.h
+    mythread.h
 
 FORMS    += mainwindow.ui
