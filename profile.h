@@ -28,25 +28,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 class Profile : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(double m READ m WRITE setM)  // Module
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1) // Number of teeth of pinion
-    Q_PROPERTY(double z2 READ z2 WRITE setZ2) // Number of teeth of gear
-    Q_PROPERTY(double x2 READ x2 WRITE setX2)
-    Q_PROPERTY(double W0 READ W0 WRITE setW0)
-    Q_PROPERTY(double E READ E WRITE setE)
+    Q_PROPERTY(double m READ m WRITE setM NOTIFY onMChanged)  // Module
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1 NOTIFY onZ1Changed) // Number of teeth of pinion
+    Q_PROPERTY(double z2 READ z2 WRITE setZ2 NOTIFY onZ2Changed) // Number of teeth of gear
+    Q_PROPERTY(double bw READ bw WRITE setBw NOTIFY onBwChanged)
+    Q_PROPERTY(double W0 READ W0 WRITE setW0 NOTIFY onW0Changed)
+    Q_PROPERTY(double E READ E WRITE setE NOTIFY onEChanged)
+    Q_PROPERTY(double x2 READ x2 WRITE setX2 NOTIFY onX2Changed)
+    Q_PROPERTY(double d0 READ d0 WRITE setD0 NOTIFY onD0Changed)
 
-    Q_PROPERTY(double alpha READ alpha WRITE setAlpha)
-    Q_PROPERTY(double c READ c WRITE setC)
-    Q_PROPERTY(double ha READ ha WRITE setHa)
+    Q_PROPERTY(double alpha READ alpha WRITE setAlpha NOTIFY onAlphaChanged)
+    Q_PROPERTY(double c READ c WRITE setC NOTIFY onCChanged)
+    Q_PROPERTY(double ha READ ha WRITE setHa NOTIFY onHaChanged)
 
-    Q_PROPERTY(double z0 READ z0 WRITE setZ0)
-    Q_PROPERTY(double x0 READ x0 WRITE setX0)
-    Q_PROPERTY(double da0 READ da0 WRITE setDa0)
-
-    Q_PROPERTY(double d0 READ d0 WRITE setD0)
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1)
-
-
+    Q_PROPERTY(double z0 READ z0 WRITE setZ0 NOTIFY onZ0Changed)
+    Q_PROPERTY(double x0 READ x0 WRITE setX0 NOTIFY onX0Changed)
+    Q_PROPERTY(double da0 READ da0 WRITE setDa0 NOTIFY onDa0Changed)
 
 public:
     Profile(QObject *parent = 0);
@@ -129,74 +126,154 @@ public:
         return m_d0;
     }
 
+    double bw() const
+    {
+        return m_bw;
+    }
+
 public slots:
+    void setBw(double arg)
+    {
+        if (m_bw != arg) {
+            m_bw = arg;
+            emit onBwChanged(arg);
+        }
+    }
+
     void setM(double arg)
     {
-        m_m = arg;
+        if (m_m != arg) {
+            m_m = arg;
+            emit onMChanged(arg);
+        }
     }
 
     void setZ1(double arg)
     {
-        m_z1 = arg;
+        if (m_z1 != arg) {
+            m_z1 = arg;
+            emit onZ1Changed(arg);
+        }
     }
 
     void setZ2(double arg)
     {
-        m_z2 = arg;
-    }
-
-    void setX2(double arg)
-    {
-        m_x2 = arg;
+        if (m_z2 != arg) {
+            m_z2 = arg;
+            emit onZ2Changed(arg);
+        }
     }
 
     void setW0(double arg)
     {
-        m_W0 = arg;
+        if (m_W0 != arg) {
+            m_W0 = arg;
+            emit onW0Changed(arg);
+        }
     }
 
     void setE(double arg)
     {
-        m_E = arg;
+        if (m_E != arg) {
+            m_E = arg;
+            emit onEChanged(arg);
+        }
     }
 
-    void setAlpha(double arg)
+    void setX2(double arg)
     {
-        m_alpha = arg;
-    }
-
-    void setC(double arg)
-    {
-        m_c = arg;
-    }
-
-    void setHa(double arg)
-    {
-        m_ha = arg;
-    }
-
-    void setZ0(double arg)
-    {
-        m_z0 = arg;
-    }
-
-    void setX0(double arg)
-    {
-        m_x0 = arg;
-    }
-
-    void setDa0(double arg)
-    {
-        m_da0 = arg;
+        if (m_x2 != arg) {
+            m_x2 = arg;
+            emit onX2Changed(arg);
+        }
     }
 
     void setD0(double arg)
     {
-        m_d0 = arg;
+        if (m_d0 != arg) {
+            m_d0 = arg;
+            emit onD0Changed(arg);
+        }
+    }
+
+    void setAlpha(double arg)
+    {
+        if (m_alpha != arg) {
+            m_alpha = arg;
+            emit onAlphaChanged(arg);
+        }
+    }
+
+    void setC(double arg)
+    {
+        if (m_c != arg) {
+            m_c = arg;
+            emit onCChanged(arg);
+        }
+    }
+
+    void setHa(double arg)
+    {
+        if (m_ha != arg) {
+            m_ha = arg;
+            emit onHaChanged(arg);
+        }
+    }
+
+    void setZ0(double arg)
+    {
+        if (m_z0 != arg) {
+            m_z0 = arg;
+            emit onZ0Changed(arg);
+        }
+    }
+
+    void setX0(double arg)
+    {
+        if (m_x0 != arg) {
+            m_x0 = arg;
+            emit onX0Changed(arg);
+        }
+    }
+
+    void setDa0(double arg)
+    {
+        if (m_da0 != arg) {
+            m_da0 = arg;
+            emit onDa0Changed(arg);
+        }
     }
 
 signals:
     void addToDebugConsole(QString text);
+
+    void onMChanged(double arg);
+
+    void onZ1Changed(double arg);
+
+    void onZ2Changed(double arg);
+
+    void onBwChanged(double arg);
+
+    void onW0Changed(double arg);
+
+    void onEChanged(double arg);
+
+    void onX2Changed(double arg);
+
+    void onD0Changed(double arg);
+
+    void onAlphaChanged(double arg);
+
+    void onCChanged(double arg);
+
+    void onHaChanged(double arg);
+
+    void onZ0Changed(double arg);
+
+    void onX0Changed(double arg);
+
+    void onDa0Changed(double arg);
 
 private:
 

@@ -17,13 +17,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QtGui/QApplication>
-#include "mainwindow.h"
+#include <QtDeclarative>
+#include "profile.h"
 #include "qmlapplicationviewer.h"
+#include "mainwindow.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
     QmlApplicationViewer viewer;
+
+    qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
 
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));

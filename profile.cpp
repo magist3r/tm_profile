@@ -284,3 +284,92 @@ double Profile::det(const double A[3][3])
           A[1][0] * A[0][1] * A[2][2] -
           A[2][1] * A[1][2] * A[0][0];
 }
+
+void Profile::saveSettings()
+{
+    QSettings settings("zb-susu", "tm_profile");
+    settings.beginGroup("MainParameters");
+    const QString name = "m_" + QString::number(m_m) +
+                         "|z1_" + QString::number(m_z1) +
+                         "|z2_" + QString::number(m_z2) +
+                         "|bw_" + QString::number(m_bw);
+    settings.beginGroup(name);
+    //settings.setValue("MainWindow", saveState());
+    settings.setValue("m", m_m);
+    settings.setValue("z1", m_z1);
+    settings.setValue("z2", m_z2);
+    settings.setValue("bw", m_bw);
+    settings.setValue("W0", m_W0);
+    settings.setValue("E", m_E);
+    settings.setValue("x2", m_x2);
+    settings.setValue("d0", m_d0);
+
+    settings.setValue("ra2", m_ra2);
+    settings.setValue("rf2", m_rf2);
+
+    settings.endGroup();
+
+    settings.setValue("alpha", ui->alpha->value());
+    settings.setValue("c", ui->c->value());
+    settings.setValue("z0", ui->z0->value());
+    settings.setValue("x0", ui->x0->value());
+    settings.setValue("da0", ui->da0->value());
+    settings.setValue("ha", ui->ha->value());
+
+
+
+
+
+    settings.setValue("dx", ui->dx->value());
+    settings.setValue("dx_0", ui->dx_0->value());
+    settings.setValue("dx_bw", ui->dx_bw->value());
+    settings.setValue("detalization", ui->detalization->value());
+
+
+    settings.endGroup();
+}
+
+void MainWindow::loadProperties(QString value = "")
+{
+   QSettings settings("tm_profile", "zb-susu");
+   settings.beginGroup("properties");
+
+   if (value == "")
+   {
+       const QString name = "m_" + QString::number(ui->m->value()) +
+                         "|z1_" + QString::number(ui->z1->value()) +
+                         "|z2_" + QString::number(ui->z2->value()) +
+                         "|bw_" + QString::number(ui->bw->value());
+
+       settings.beginGroup(name);
+   }
+   else
+   {
+       settings.beginGroup(value);
+   }
+
+   restoreState(settings.value("MainWindow").toByteArray());
+   ui->m->setValue(settings.value("m").toDouble());
+   ui->z1->setValue(settings.value("z1").toDouble());
+   ui->z2->setValue(settings.value("z2").toDouble());
+    ui->x0->setValue(settings.value("x0").toDouble());
+    ui->x2->setValue(settings.value("x2").toDouble());
+    ui->alpha->setValue(settings.value("alpha").toDouble());
+    ui->c->setValue(settings.value("c").toDouble());
+    ui->z0->setValue(settings.value("z0").toDouble());
+    ui->da0->setValue(settings.value("da0").toDouble());
+    ui->ha->setValue(settings.value("ha").toDouble());
+    ui->E->setValue(settings.value("E").toDouble());
+    ui->W0->setValue(settings.value("W0").toDouble());
+    ui->d0->setValue(settings.value("d0").toDouble());
+    ui->bw->setValue(settings.value("bw").toDouble());
+    ui->ra2->setValue(settings.value("ra2").toDouble());
+    ui->rf2->setValue(settings.value("rf2").toDouble());
+    ui->dx->setValue(settings.value("dx").toDouble());
+    ui->dx_0->setValue(settings.value("dx_0").toDouble());
+    ui->dx_bw->setValue(settings.value("dx_bw").toDouble());
+    ui->detalization->setValue(settings.value("detalization").toInt());
+    settings.endGroup();
+    settings.endGroup();
+
+}
