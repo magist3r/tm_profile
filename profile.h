@@ -255,6 +255,7 @@ public slots:
     }
 
     void convertSettings();
+    void onCalculate();
     void loadSettings(QString value = "");
 
 signals:

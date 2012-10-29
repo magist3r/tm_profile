@@ -118,7 +118,7 @@ void Profile::calculate()
     }
 
     m_xt_w = square_method(S);
-
+    qDebug() << "Calculating..";
     // Задание модификации
     if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
@@ -368,6 +368,11 @@ void Profile::convertSettings()
         settings2.endGroup();
     }
     settings2.endGroup();
+}
+
+void Profile::onCalculate()
+{
+    calculate();
 }
 
 void Profile::loadSettings(QString value)

@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import QtDesktop 0.1
 import org.tm_profile.profile 1.0
+//import "qml/tm_profile/Fields.qml"
 
 Rectangle {
     id:mainWindow
@@ -13,6 +14,7 @@ Rectangle {
 
     Profile {
       id: profile
+
     /*  onMChanged: repeater1.itemAt(0).children[1].value = profile.m
       onZ1Changed: repeater1.itemAt(1).children[1].value = profile.z1
       onZ2Changed: repeater1.itemAt(2).children[1].value = profile.z2
@@ -88,8 +90,17 @@ Rectangle {
                           text: qsTr("Convert")
                           onClicked: profile.convertSettings()
                       }
+                      Button {
+                          id: calculate
+                          width: 96
+                          text: qsTr("Calculate")
+                          onClicked: profile.onCalculate();
+                      }
                   }
               }
+
+
+
 
               Column {
                   anchors.right: parent.right
@@ -105,7 +116,7 @@ Rectangle {
 
                           Repeater {
                               id: repeater1
-                              model: [ "m", "z1", "z2", "bw", "d0" ]
+                              model: [ "m", "z1", "z2", "bw", "W0", "E", "x2", "d0"  ]
                               // "W0", "E", "x2",
                               Row {
                                   spacing: 5
@@ -126,14 +137,39 @@ Rectangle {
                       }
                   }
               }
+
+
           }
       }
 
 
 
       Tab {
+          title: qsTr("Add. parameters")
+          Fields {
+              id: field1
+              _title: qsTr("blabla");
+              _model: [ "alpha", "c", "ha"]
+              _columns: 1
+              _anchors_left: parent.left
+          }
 
+          Fields {
+              id: field2
+              _title: qsTr("blablabla");
+              _model: [ "z0", "x0", "da0"]
+              _columns: 1
+              _anchors_left: field1.right
+          }
+          Fields {
+              _title: qsTr("blablabla");
+              _model: [ "ra2", "rf2"]
+              _columns: 1
+              _anchors_left: field2.right
+          }
 }
+
+
 
       Tab {
           title: "Par"
