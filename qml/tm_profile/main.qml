@@ -101,8 +101,16 @@ Rectangle {
 
 
 
+              Fields {
+                  _title: qsTr("Main parameters")
+                  _columns: 2
+                  _model: [ "m", "z1", "z2", "bw", "W0", "E", "x2", "d0"  ]
+                  _anchors_right: parent.right
+                  _width: parent.width - leftcol.width
 
-              Column {
+              }
+
+            /*Column {
                   anchors.right: parent.right
                   GroupBox {
                       title: qsTr("Main parameters")
@@ -136,7 +144,7 @@ Rectangle {
                           }
                       }
                   }
-              }
+              }*/
 
 
           }
@@ -148,24 +156,36 @@ Rectangle {
           title: qsTr("Add. parameters")
           Fields {
               id: field1
-              _title: qsTr("blabla");
+              _title: qsTr("blabla")
               _model: [ "alpha", "c", "ha"]
               _columns: 1
               _anchors_left: parent.left
+              _width: parent.width / parent.children.length
           }
 
           Fields {
               id: field2
-              _title: qsTr("blablabla");
+              _title: qsTr("blablabla")
               _model: [ "z0", "x0", "da0"]
               _columns: 1
               _anchors_left: field1.right
+              _width: parent.width / parent.children.length
           }
           Fields {
-              _title: qsTr("blablabla");
-              _model: [ "ra2", "rf2"]
+              id:field3
+              _title: qsTr("blablabla")
+              _model: [ "ra2"]
               _columns: 1
               _anchors_left: field2.right
+              _width: parent.width / parent.children.length
+          }
+
+          Fields {
+              _title: qsTr("blablabla")
+              _model: [ "rf2"]
+              _columns: 1
+              _anchors_left: field3.right
+              _width: parent.width / parent.children.length
           }
 }
 
