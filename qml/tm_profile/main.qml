@@ -101,14 +101,14 @@ Rectangle {
 
 
 
-              Fields {
+          /*    Fields {
                   _title: qsTr("Main parameters")
                   _columns: 2
                   _model: [ "m", "z1", "z2", "bw", "W0", "E", "x2", "d0"  ]
                   _anchors_right: parent.right
                   _width: parent.width - leftcol.width
 
-              }
+              }*/
 
             /*Column {
                   anchors.right: parent.right
@@ -154,51 +154,103 @@ Rectangle {
 
       Tab {
           title: qsTr("Add. parameters")
+          GroupBox {
           Fields {
-              id: field1
-              _title: qsTr("blabla")
+
               _model: [ "alpha", "c", "ha"]
-              _columns: 1
-              _anchors_left: parent.left
-              _width: parent.width / parent.children.length
+          }
+              title: qsTr("blabla")
+id: field1
+              width: parent.width / parent.children.length
           }
 
+          GroupBox {
           Fields {
-              id: field2
-              _title: qsTr("blablabla")
+
               _model: [ "z0", "x0", "da0"]
-              _columns: 1
-              _anchors_left: field1.right
-              _width: parent.width / parent.children.length
           }
-          Fields {
-              id:field3
-              _title: qsTr("blablabla")
-              _model: [ "ra2"]
-              _columns: 1
-              _anchors_left: field2.right
-              _width: parent.width / parent.children.length
+id: field2
+               anchors.left: field1.right
+               title: qsTr("blablabla")
+              width: parent.width / parent.children.length
           }
 
+          GroupBox {
           Fields {
-              _title: qsTr("blablabla")
-              _model: [ "rf2"]
-              _columns: 1
-              _anchors_left: field3.right
-              _width: parent.width / parent.children.length
+
+              _model: [ "ra2"]
           }
+          id:field3
+
+             title: qsTr("blablabla")
+              anchors.left: field2.right
+              width: parent.width / parent.children.length
+          }
+
+
 }
 
 
 
       Tab {
           title: "Par"
-          Text {
-              text: "blalal"
+      //   Grid {
+       //       id: grid
+       //       columns:1
+     //     Column {
+       //       anchors.fill: parent
+        //      spacing: 10
+
+
+          Repeater {
+              model: 3
+
+
+        // {
+          /*  anchors {
+                     //  top: parent.top
+                        left: parent.left
+                        right: parent.right
+                       margins: 10
+                    }*/
+//Row {
+    //anchors.fill: parent
+          RowLayout {
+              y: parent.y + index * (height + 3)
+              anchors {
+
+                                      left: parent.left
+                                      right: parent.right
+                                     margins: 10
+                                  }
+              height: 30
+     //         anchors.left: grid.left
+     //         anchors.right: grid.right
+
+              Rectangle {
+                //  width: 100
+                  height: parent.height
+                  color: "red"
+                  Layout.minimumHeight: 200
+                  Layout.maximumHeight: 400
+                  Layout.verticalSizePolicy: Layout.Expanding
+
+              }
+              Rectangle {
+                //  width: 100
+                  height: parent.height
+                  color: "blue"
+                  Layout.minimumHeight: 200
+                  Layout.maximumHeight: 400
+                  Layout.verticalSizePolicy: Layout.Expanding
+
+              }
           }
+//}
+//}
       }
   }
-
+ }
 
 
 
