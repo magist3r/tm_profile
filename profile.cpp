@@ -23,6 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 Profile::Profile(QObject *parent)
 {
+    m_m = 2;
+    m_d0 = 2.21;
 
 }
 

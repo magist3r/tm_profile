@@ -45,7 +45,7 @@ class Profile : public QObject
     Q_PROPERTY(double x0 READ x0 WRITE setX0 NOTIFY onX0Changed)
     Q_PROPERTY(double da0 READ da0 WRITE setDa0 NOTIFY onDa0Changed)
 
-    Q_PROPERTY(QStringList listOfParameters READ listOfParameters)
+    Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
 public:
     Profile(QObject *parent = 0);
@@ -292,6 +292,8 @@ signals:
     void onmChanged(double arg);
 
     void onz1Changed(double arg);
+
+    void onListOfParametersChanged(QStringList arg);
 
 private:
 
