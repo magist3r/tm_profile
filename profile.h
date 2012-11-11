@@ -309,6 +309,8 @@ private:
 
     double det(const double A[3][3]); // Расчет определителя матрицы
 
+    void drawPoint(QPainter &painter, double delta_s, double wi, double r);
+
     double m_m;
 
     double m_z1; // Число зубьев шестерни
@@ -345,6 +347,9 @@ private:
     bool m_useSmooth;
     bool m_useOldPaintMode;
     bool m_diagnosticMode;
+
+    QImage *m_image1;
+    QImage *m_image2;
 
     QList<double> m_xt_w;
     QStringList m_listOfParameters;

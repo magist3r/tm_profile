@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui/QApplication>
 #include <QtDeclarative>
 #include "profile.h"
+#include "calcthread.h"
 #include "qmlapplicationviewer.h"
 #include "mainwindow.h"
 
@@ -28,12 +29,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
 
     qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
+    qmlRegisterType<CalcThread>("org.tm_profile.calc", 1, 0, "Calc");
 
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));
     viewer.showExpanded();
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
     return app->exec();
 }

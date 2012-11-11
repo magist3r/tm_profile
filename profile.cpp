@@ -23,6 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 Profile::Profile(QObject *parent)
 {
+    m_image1 = new QImage(320, 240, QImage::Format_ARGB32_Premultiplied);
+
     m_m = 2;
     m_d0 = 2.21;
 
@@ -70,6 +72,11 @@ bool Profile::getRadius()
 
 void Profile::calculate()
 {
+    m_image1->fill(0);
+    QPainter painter(m_image1);
+    painter.setBrush(Qt::white);
+    painter.setRenderHint(painter.Antialiasing, true);
+
     m_i21 = m_z1 / m_z2;
     m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha);
     m_delta2 = atan(sin(m_E) / (cos(m_E) - m_i21));
@@ -173,7 +180,7 @@ void Profile::calculate()
             result[wi][ry1 - ry1_min] = delta_s;
             result_s_tr[wi][ry1 - ry1_min] = s_tr;
             result_s_pr[wi][ry1 - ry1_min] = s_pr;
-
+            drawPoint(painter,delta_s, wi, ry1 - ry1_min);
             if (m_diagnosticMode)
             {
                 emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | s_tr = " + QString::number(s_tr) + " | delta_s = " + QString::number(delta_s));
@@ -183,6 +190,7 @@ void Profile::calculate()
         }
         Wi += dW;
     }
+    m_image1->save("image1.png");
 }
 
 QList<double> Profile::square_method(const QMap<double, double> &S)
@@ -285,7 +293,21 @@ double Profile::det(const double A[3][3])
           A[1][0] * A[2][1] * A[0][2] -
           A[2][0] * A[1][1] * A[0][2] -
           A[1][0] * A[0][1] * A[2][2] -
-          A[2][1] * A[1][2] * A[0][0];
+           A[2][1] * A[1][2] * A[0][0];
+}
+
+void Profile::drawPoint(QPainter &painter, double delta_s, double wi, double r)
+{
+    double delta = 6 * sqrt(m_m);
+    if (delta_s < 0)
+        painter.setPen(Qt::white);
+    else if (delta_s > delta)
+        painter.setPen(Qt::red);
+    else
+        painter.setPen(Qt::blue);
+
+    painter.drawPoint(wi, r);
+
 }
 
 void Profile::saveMainSettings()

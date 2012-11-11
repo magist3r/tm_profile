@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import QtDesktop 0.1
 
+
 Column {
 
     Button {
@@ -32,6 +33,9 @@ Column {
         id: calculate
         width: 96
         text: qsTr("Calculate")
-        onClicked: profile.onCalculate();
+        onClicked: {
+            calc.setProfile(profile);
+            calc.start();
+        }
     }
 }

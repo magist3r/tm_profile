@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import QtDesktop 0.1
 import org.tm_profile.profile 1.0
+import org.tm_profile.calc 1.0
 //import "qml/tm_profile/Fields.qml"
 
 Rectangle {
@@ -13,6 +14,10 @@ Rectangle {
     height: 360 + tabs.margins * 2
 
     Profile { id: profile }
+    Calc {
+        id: calc
+        profile: profile
+    }
 
     TabFrame {
         id: tabs
