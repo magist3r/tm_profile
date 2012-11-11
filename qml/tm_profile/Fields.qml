@@ -27,6 +27,7 @@ Repeater {
             anchors.left: label.right
             anchors.right: parent.right
             value: profile[modelData]
+            onValueChanged: profile[modelData] = item.value
             Component.onCompleted: profile[modelData + "Changed"].connect(function () { item.value = profile[modelData]})
         }
     }

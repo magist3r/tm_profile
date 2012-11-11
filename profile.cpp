@@ -26,7 +26,15 @@ Profile::Profile(QObject *parent)
     m_image1 = new QImage(320, 240, QImage::Format_ARGB32_Premultiplied);
 
     m_m = 2;
-    m_d0 = 2.21;
+    m_z0 = 19;
+    m_x0 = 0.105;
+    m_da0 = 43.42;
+    setAlpha(20);
+    m_ha = 1;
+    m_c = 0.25;
+    m_nr = 200;
+    m_nW = 200;
+
 
 }
 
@@ -49,7 +57,7 @@ bool Profile::getRadius()
 {
     double alpha_w02;
 
-    double inv_alpha_w02 = ((m_x2 - m_x0) / (m_z2 - m_z0)) * 2 * tan(m_alpha) + tan(m_alpha) - m_alpha;
+    double inv_alpha_w02 = ((m_x2 - m_x0) / (m_z2 - m_z0)) * 2 * tan(m_alpha_rad) + tan(m_alpha_rad) - m_alpha_rad;
 
     double alpha_n = M_PI / 180;
     double alpha_k = 89 * M_PI / 180;
@@ -65,8 +73,8 @@ bool Profile::getRadius()
             alpha_k = alpha_w02;
          }
     }
-    m_rf2 = (m_m * (m_z2 - m_z0) * (cos(m_alpha)/cos(alpha_w02)) + m_da0) / 2;
-    m_ra2 = m_rf2 - m_m * (2 * m_ha + m_c);
+    setRf2((m_m * (m_z2 - m_z0) * (cos(m_alpha_rad)/cos(alpha_w02)) + m_da0) / 2);
+    setRa2(m_rf2 - m_m * (2 * m_ha + m_c));
     return true;
 }
 
@@ -75,12 +83,18 @@ void Profile::calculate()
     m_image1->fill(0);
     QPainter painter(m_image1);
     painter.setBrush(Qt::white);
-    painter.setRenderHint(painter.Antialiasing, true);
+    //painter.setRenderHint(painter.);
+   // painter.setRenderHint(painter.Antialiasing, true);
+    QTransform trans;
+    trans.translate(0, m_image1->height());
+    trans.scale(50, -50);
+    painter.setTransform(trans);
+
 
     m_i21 = m_z1 / m_z2;
-    m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha);
-    m_delta2 = atan(sin(m_E) / (cos(m_E) - m_i21));
-    m_psi_b2 = M_PI / (2 * m_z2) + 2 * m_x2 * tan(m_alpha) / m_z2 + tan(m_alpha) - m_alpha;
+    m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha_rad);
+    m_delta2 = atan(sin(m_E_rad) / (cos(m_E_rad) - m_i21));
+    m_psi_b2 = M_PI / (2 * m_z2) + 2 * m_x2 * tan(m_alpha_rad) / m_z2 + tan(m_alpha_rad) - m_alpha_rad;
     result.clear();
     result_s_tr.clear();
     result_s_pr.clear();
@@ -99,24 +113,24 @@ void Profile::calculate()
     // Расчет коэффициентов смещения
     for (int i=0; i <= m_nW; i++)
     {
-        double delta_oi = m_E; // Угол аксоидного конуса шестерни
-        double alpha1 = atan(tan(m_alpha) * cos(delta_oi));
+        double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
+        double alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
         double rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
 
-        double ry1 = rav2 / cos(m_E) - (Wi + 0.1 * m_m) * tan(m_E);
+        double ry1 = rav2 / cos(m_E_rad) - (Wi + 0.1 * m_m) * tan(m_E_rad);
         a_tw(ry1, Wi + 0.1 * m_m, x_tr, y_tr);
         double psi_yi = x_tr / ry1;
         double alpha_y1 = acos(rb1 / ry1);
         double xt1 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
-        ry1 = rav2 / cos(m_E) - (Wi) * tan(m_E);
+        ry1 = rav2 / cos(m_E_rad) - (Wi) * tan(m_E_rad);
         a_tw(ry1, Wi, x_tr, y_tr);
         psi_yi = x_tr / ry1;
         alpha_y1 = acos(rb1 / ry1);
         double xt2 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
         delta_oi = atan(10 * (xt2 - xt1));
-        alpha1 = atan(tan(m_alpha) * cos(delta_oi));
+        alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
         rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
         alpha_y1 = acos(rb1 / ry1);
         double xt = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
@@ -127,7 +141,7 @@ void Profile::calculate()
     }
 
     m_xt_w = square_method(S);
-    qDebug() << "Calculating..";
+    qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
     // Задание модификации
     if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
@@ -155,15 +169,15 @@ void Profile::calculate()
         double ha_2 = m_ha / cos(delta_oi);
         double c_2 = m_c / cos(delta_oi);
         double d = m_m * m_z1;
-        double alpha_t = atan(tan(m_alpha) * cos(delta_oi));
+        double alpha_t = atan(tan(m_alpha_rad) * cos(delta_oi));
         double d_b = d * cos(alpha_t);
-        double ry1_min = m_ra2 / cos(m_E) - (m_W0 + m_bw) * tan(m_E);
+        double ry1_min = m_ra2 / cos(m_E_rad) - (m_W0 + m_bw) * tan(m_E_rad);
         double ry2 = m_ra2;
 
         for (int j=0; j <= m_nr; j++)
         {
 
-            double ry1 = ry2 / cos(m_E) - Wi * tan(m_E);
+            double ry1 = ry2 / cos(m_E_rad) - Wi * tan(m_E_rad);
 
             // Теоретический профиль
             a_tw(ry1, Wi, x_tr, y_tr);
@@ -171,7 +185,7 @@ void Profile::calculate()
 
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
-            double st = m_m * (M_PI / 2 + 2 * xt * tan(m_alpha) * cos(delta_oi));
+            double st = m_m * (M_PI / 2 + 2 * xt * tan(m_alpha_rad) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
             double delta_s = (s_pr - s_tr) / 2;
             if (delta_s > m_delta_s_max)
@@ -180,11 +194,13 @@ void Profile::calculate()
             result[wi][ry1 - ry1_min] = delta_s;
             result_s_tr[wi][ry1 - ry1_min] = s_tr;
             result_s_pr[wi][ry1 - ry1_min] = s_pr;
-            drawPoint(painter,delta_s, wi, ry1 - ry1_min);
-            if (m_diagnosticMode)
-            {
-                emit addToDebugConsole("Wi= " + QString::number(wi) + " | ry= " + QString::number(ry1) + " | s_tr = " + QString::number(s_tr) + " | delta_s = " + QString::number(delta_s));
-            }
+            // drawPoint(painter,delta_s, wi, ry1 - ry1_min);
+            painter.setPen(getPointColor(delta_s));
+            painter.drawPoint(QPointF(wi, ry1 - ry1_min));
+    /*        if (m_diagnosticMode)
+            {*/
+            qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
+    //        }
 
             ry2 += dr;
         }
@@ -219,7 +235,7 @@ QList<double> Profile::square_method(const QMap<double, double> &S)
     }
     double A[3][3] = // Основная матрица
     {
-        {n, sum_x, sum_x2},
+        {n * 1.0, sum_x, sum_x2},
         {sum_x, sum_x2, sum_x3},
         {sum_x2, sum_x3, sum_x4}
     };
@@ -264,12 +280,12 @@ void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)
 {
     double vy2, p, q, alpha_tw, phi1;
     double alpha_tw_n = M_PI / 180;
-    double alpha_tw_k = acos((Wi/m_rb2 - sqrt(pow(Wi/m_rb2,2) - 2 * sin(2*m_E) / tan(m_delta2))) / (2 * sin(m_E)));
+    double alpha_tw_k = acos((Wi/m_rb2 - sqrt(pow(Wi/m_rb2,2) - 2 * sin(2*m_E_rad) / tan(m_delta2))) / (2 * sin(m_E_rad)));
     while (alpha_tw_k - alpha_tw_n > m_eps)
     {
         alpha_tw = (alpha_tw_n + alpha_tw_k) / 2;
-        vy2 = (Wi / (m_rb2 * sin(m_E)) - (1 / (tan(m_E) * tan(m_delta2) * cos(alpha_tw))) - cos(alpha_tw)) / sin(alpha_tw);
-        p = cos(m_E) * (cos(alpha_tw) + vy2 * sin(alpha_tw)) - sin(m_E) / (cos(alpha_tw) * tan(m_delta2));
+        vy2 = (Wi / (m_rb2 * sin(m_E_rad)) - (1 / (tan(m_E_rad) * tan(m_delta2) * cos(alpha_tw))) - cos(alpha_tw)) / sin(alpha_tw);
+        p = cos(m_E_rad) * (cos(alpha_tw) + vy2 * sin(alpha_tw)) - sin(m_E_rad) / (cos(alpha_tw) * tan(m_delta2));
         q = sin(alpha_tw) - vy2 * cos(alpha_tw);
         if ((m_rb2 * sqrt(pow(q,2) + pow(p,2)) - ry1) > 0)
         {
@@ -296,18 +312,15 @@ double Profile::det(const double A[3][3])
            A[2][1] * A[1][2] * A[0][0];
 }
 
-void Profile::drawPoint(QPainter &painter, double delta_s, double wi, double r)
+QColor Profile::getPointColor(double delta_s)
 {
     double delta = 6 * sqrt(m_m);
     if (delta_s < 0)
-        painter.setPen(Qt::white);
+        return Qt::white;
     else if (delta_s > delta)
-        painter.setPen(Qt::red);
+        return Qt::red;
     else
-        painter.setPen(Qt::blue);
-
-    painter.drawPoint(wi, r);
-
+        return Qt::blue;
 }
 
 void Profile::saveMainSettings()
@@ -318,6 +331,7 @@ void Profile::saveMainSettings()
                          "|z2_" + QString::number(m_z2) +
                          "|bw_" + QString::number(m_bw);
     settings.beginGroup(name);
+    qDebug() << m_m << m_z1 << m_z2 << m_bw;
     settings.setValue("m", m_m);
     settings.setValue("z1", m_z1);
     settings.setValue("z2", m_z2);
@@ -448,7 +462,7 @@ void Profile::loadSettings(QString value)
     ui->d0->setValue(settings.value("d0").toDouble());
     ui->bw->setValue(settings.value("bw").toDouble());
     ui->ra2->setValue(settings.value("ra2").toDouble());
-    ui->rf2->setValue(settings.value("rf2").toDouble());
+    ui->rf2->setValuesave image not transparent(settings.value("rf2").toDouble());
     ui->dx->setValue(settings.value("dx").toDouble());
     ui->dx_0->setValue(settings.value("dx_0").toDouble());
     ui->dx_bw->setValue(settings.value("dx_bw").toDouble());

@@ -15,6 +15,7 @@ Column {
         id: savebtn
         width: 96
         text: qsTr("Save")
+        onClicked: profile.saveMainSettings();
     }
 
     Button {
@@ -34,8 +35,16 @@ Column {
         width: 96
         text: qsTr("Calculate")
         onClicked: {
-            calc.setProfile(profile);
-            calc.start();
+            profile.calculate();
         }
     }
+    Button {
+        id: calculateR
+        width: 96
+        text: qsTr("CalculateR")
+        onClicked: {
+            profile.getRadius();
+        }
+    }
+
 }

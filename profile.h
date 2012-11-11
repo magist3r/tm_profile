@@ -22,28 +22,33 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QThread>
 #include <QImage>
 #include <QPainter>
+#include <QDebug>
+#include <math.h>
 
 //extern double m, z1, z2, x2, W0, E, alpha, c, ha, z0, x0, da0, i21, rb2, delta2, psi_b2, d0, bw, ra2, rf2, dx, dx_0, dx_bw;
 
 class Profile : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(double m READ m WRITE setM NOTIFY onmChanged)  // Module
-    Q_PROPERTY(double z1 READ z1 WRITE setZ1 NOTIFY onz1Changed) // Number of teeth of pinion
-    Q_PROPERTY(double z2 READ z2 WRITE setZ2 NOTIFY onZ2Changed) // Number of teeth of gear
-    Q_PROPERTY(double bw READ bw WRITE setBw NOTIFY onBwChanged)
-    Q_PROPERTY(double W0 READ W0 WRITE setW0 NOTIFY onW0Changed)
-    Q_PROPERTY(double E READ E WRITE setE NOTIFY onEChanged)
-    Q_PROPERTY(double x2 READ x2 WRITE setX2 NOTIFY onX2Changed)
-    Q_PROPERTY(double d0 READ d0 WRITE setD0 NOTIFY onD0Changed)
+    Q_PROPERTY(double m READ m WRITE setM NOTIFY mChanged)  // Module
+    Q_PROPERTY(double z1 READ z1 WRITE setZ1 NOTIFY z1Changed) // Number of teeth of pinion
+    Q_PROPERTY(double z2 READ z2 WRITE setZ2 NOTIFY z2Changed) // Number of teeth of gear
+    Q_PROPERTY(double bw READ bw WRITE setBw NOTIFY bwChanged)
+    Q_PROPERTY(double W0 READ W0 WRITE setW0 NOTIFY W0Changed)
+    Q_PROPERTY(double E READ E WRITE setE NOTIFY EChanged)
+    Q_PROPERTY(double x2 READ x2 WRITE setX2 NOTIFY x2Changed)
+    Q_PROPERTY(double d0 READ d0 WRITE setD0 NOTIFY d0Changed)
 
-    Q_PROPERTY(double alpha READ alpha WRITE setAlpha NOTIFY onAlphaChanged)
-    Q_PROPERTY(double c READ c WRITE setC NOTIFY onCChanged)
-    Q_PROPERTY(double ha READ ha WRITE setHa NOTIFY onHaChanged)
+    Q_PROPERTY(double alpha READ alpha WRITE setAlpha NOTIFY alphaChanged)
+    Q_PROPERTY(double c READ c WRITE setC NOTIFY cChanged)
+    Q_PROPERTY(double ha READ ha WRITE setHa NOTIFY haChanged)
 
-    Q_PROPERTY(double z0 READ z0 WRITE setZ0 NOTIFY onZ0Changed)
-    Q_PROPERTY(double x0 READ x0 WRITE setX0 NOTIFY onX0Changed)
-    Q_PROPERTY(double da0 READ da0 WRITE setDa0 NOTIFY onDa0Changed)
+    Q_PROPERTY(double z0 READ z0 WRITE setZ0 NOTIFY z0Changed)
+    Q_PROPERTY(double x0 READ x0 WRITE setX0 NOTIFY x0Changed)
+    Q_PROPERTY(double da0 READ da0 WRITE setDa0 NOTIFY da0Changed)
+
+    Q_PROPERTY(double ra2 READ ra2 WRITE setRa2 NOTIFY ra2Changed)
+    Q_PROPERTY(double rf2 READ rf2 WRITE setRf2 NOTIFY rf2Changed)
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
@@ -60,9 +65,9 @@ public:
     QMap<double, QMap<double,double> > result_s_tr;
     QMap<double, QMap<double,double> > result_s_pr;
 
-    bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
+    Q_INVOKABLE bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
-    void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+    Q_INVOKABLE void calculate(); // Расчет толщин зубьев практического и теоретического профилей
     double m() const
     {
         return m_m;
@@ -133,7 +138,7 @@ public:
         return m_bw;
     }
 
-    void saveMainSettings();
+    Q_INVOKABLE void saveMainSettings();
     void saveOtherSettings();
     void saveLastSettings();
 
@@ -141,20 +146,31 @@ public:
 
 
 
+    double ra2() const
+    {
+        return m_ra2;
+    }
+
+    double rf2() const
+    {
+        return m_rf2;
+    }
+
 public slots:
     void setBw(double arg)
     {
         if (m_bw != arg) {
             m_bw = arg;
-            emit onBwChanged(arg);
+            emit bwChanged(arg);
         }
     }
 
     void setM(double arg)
     {
+        qDebug() << "i am here!";
         if (m_m != arg) {
             m_m = arg;
-            emit onMChanged(arg);
+            emit mChanged(arg);
         }
     }
 
@@ -162,7 +178,7 @@ public slots:
     {
         if (m_z1 != arg) {
             m_z1 = arg;
-            emit onZ1Changed(arg);
+            emit z1Changed(arg);
         }
     }
 
@@ -170,7 +186,7 @@ public slots:
     {
         if (m_z2 != arg) {
             m_z2 = arg;
-            emit onZ2Changed(arg);
+            emit z2Changed(arg);
         }
     }
 
@@ -178,7 +194,7 @@ public slots:
     {
         if (m_W0 != arg) {
             m_W0 = arg;
-            emit onW0Changed(arg);
+            emit W0Changed(arg);
         }
     }
 
@@ -186,7 +202,8 @@ public slots:
     {
         if (m_E != arg) {
             m_E = arg;
-            emit onEChanged(arg);
+            m_E_rad = M_PI * arg / 180;
+            emit EChanged(arg);
         }
     }
 
@@ -194,7 +211,7 @@ public slots:
     {
         if (m_x2 != arg) {
             m_x2 = arg;
-            emit onX2Changed(arg);
+            emit x2Changed(arg);
         }
     }
 
@@ -202,7 +219,7 @@ public slots:
     {
         if (m_d0 != arg) {
             m_d0 = arg;
-            emit onD0Changed(arg);
+            emit d0Changed(arg);
         }
     }
 
@@ -210,7 +227,8 @@ public slots:
     {
         if (m_alpha != arg) {
             m_alpha = arg;
-            emit onAlphaChanged(arg);
+            m_alpha_rad = M_PI * arg / 180;
+            emit alphaChanged(arg);
         }
     }
 
@@ -218,7 +236,7 @@ public slots:
     {
         if (m_c != arg) {
             m_c = arg;
-            emit onCChanged(arg);
+            emit cChanged(arg);
         }
     }
 
@@ -226,7 +244,7 @@ public slots:
     {
         if (m_ha != arg) {
             m_ha = arg;
-            emit onHaChanged(arg);
+            emit haChanged(arg);
         }
     }
 
@@ -234,7 +252,7 @@ public slots:
     {
         if (m_z0 != arg) {
             m_z0 = arg;
-            emit onZ0Changed(arg);
+            emit z0Changed(arg);
         }
     }
 
@@ -242,7 +260,7 @@ public slots:
     {
         if (m_x0 != arg) {
             m_x0 = arg;
-            emit onX0Changed(arg);
+            emit x0Changed(arg);
         }
     }
 
@@ -250,7 +268,7 @@ public slots:
     {
         if (m_da0 != arg) {
             m_da0 = arg;
-            emit onDa0Changed(arg);
+            emit da0Changed(arg);
         }
     }
 
@@ -258,42 +276,58 @@ public slots:
     void onCalculate();
     void loadSettings(QString value = "");
 
+    void setRa2(double arg)
+    {
+        if (m_ra2 != arg) {
+            m_ra2 = arg;
+            emit ra2Changed(arg);
+        }
+    }
+
+    void setRf2(double arg)
+    {
+        if (m_rf2 != arg) {
+            m_rf2 = arg;
+            emit rf2Changed(arg);
+        }
+    }
+
 signals:
     void addToDebugConsole(QString text);
 
-    void onMChanged(double arg);
+    void mChanged(double arg);
 
-    void onZ1Changed(double arg);
+    void z1Changed(double arg);
 
-    void onZ2Changed(double arg);
+    void z2Changed(double arg);
 
-    void onBwChanged(double arg);
+    void bwChanged(double arg);
 
-    void onW0Changed(double arg);
+    void W0Changed(double arg);
 
-    void onEChanged(double arg);
+    void EChanged(double arg);
 
-    void onX2Changed(double arg);
+    void x2Changed(double arg);
 
-    void onD0Changed(double arg);
+    void d0Changed(double arg);
 
-    void onAlphaChanged(double arg);
+    void alphaChanged(double arg);
 
-    void onCChanged(double arg);
+    void cChanged(double arg);
 
-    void onHaChanged(double arg);
+    void haChanged(double arg);
 
-    void onZ0Changed(double arg);
+    void z0Changed(double arg);
 
-    void onX0Changed(double arg);
+    void x0Changed(double arg);
 
-    void onDa0Changed(double arg);
-
-    void onmChanged(double arg);
-
-    void onz1Changed(double arg);
+    void da0Changed(double arg);
 
     void onListOfParametersChanged(QStringList arg);
+
+    void ra2Changed(double arg);
+
+    void rf2Changed(double arg);
 
 private:
 
@@ -309,7 +343,7 @@ private:
 
     double det(const double A[3][3]); // Расчет определителя матрицы
 
-    void drawPoint(QPainter &painter, double delta_s, double wi, double r);
+    QColor getPointColor(double delta_s);
 
     double m_m;
 
@@ -318,10 +352,12 @@ private:
     double m_x2; // Коэффициент смещения колеса
     double m_W0; // Аппликата большего торцового сечения венца шестерни
     double m_E; // Межосевой угол
+    double m_E_rad;
     double m_bw; // Ширина зубчатого венца
 
     // Параметры исходного контура
     double m_alpha; // Угол профиля
+    double m_alpha_rad;
     double m_c; // Коэффициент радиального зазора
     double m_ha; // Коэффициент высоты зуба
 

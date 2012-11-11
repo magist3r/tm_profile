@@ -1,7 +1,7 @@
 import QtQuick 1.1
 import QtDesktop 0.1
 import org.tm_profile.profile 1.0
-import org.tm_profile.calc 1.0
+import org.tm_profile.thread 1.0
 //import "qml/tm_profile/Fields.qml"
 
 Rectangle {
@@ -14,9 +14,11 @@ Rectangle {
     height: 360 + tabs.margins * 2
 
     Profile { id: profile }
-    Calc {
-        id: calc
-        profile: profile
+    Worker { id: worker }
+
+    Connections {
+        target: worker
+        onFinished: console.log("finished!!")
     }
 
     TabFrame {
@@ -58,6 +60,7 @@ Rectangle {
                         text: qsTr("Parameters:")
                         font.pointSize: 10
                         anchors.verticalCenter: list.verticalCenter
+
                     }
 
                     ComboBox {
@@ -65,7 +68,8 @@ Rectangle {
                         model: profile.listOfParameters
                         anchors.left: label1.right
                         anchors.right: parent.right
-                        onPressedChanged: console.log(list.selectedText)
+                        onSelectedTextChanged: profile.loadSettings(list.selectedText)
+                        Component.onCompleted: profile.loadSettings(list.selectedText)
                     }
                 }
 
@@ -148,7 +152,7 @@ id: field2
           GroupBox {
           Fields {
 
-              model: [ "ra2"]
+              model: [ "ra2", "rf2" ]
           }
           id:field3
 
@@ -156,7 +160,6 @@ id: field2
               anchors.left: field2.right
               width: parent.width / parent.children.length
           }
-
 
 }
 
