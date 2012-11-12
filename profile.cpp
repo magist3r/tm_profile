@@ -90,6 +90,11 @@ void Profile::calculate()
     trans.scale(50, -50);
     painter.setTransform(trans);
 
+    double im_height = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad) + ((m_W0 + m_bw) * tan(m_E_rad));
+    double im_width = m_bw;
+
+    qDebug() << im_height << im_width;
+
 
     m_i21 = m_z1 / m_z2;
     m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha_rad);
@@ -141,7 +146,7 @@ void Profile::calculate()
     }
 
     m_xt_w = square_method(S);
-    qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
+  //  qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
     // Задание модификации
     if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
@@ -199,7 +204,7 @@ void Profile::calculate()
             painter.drawPoint(QPointF(wi, ry1 - ry1_min));
     /*        if (m_diagnosticMode)
             {*/
-            qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
+           qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
     //        }
 
             ry2 += dr;
