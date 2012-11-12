@@ -30,15 +30,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     profile.cpp \
-    calcthread.cpp \
-    paintarea.cpp
+    paintarea.cpp \
+    imagegenerator.cpp
 
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS  += mainwindow.h \
     profile.h \
-    calcthread.h \
-    paintarea.h
+    paintarea.h \
+    imagegenerator.h
 
 FORMS    += mainwindow.ui

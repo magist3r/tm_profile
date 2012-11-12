@@ -1,7 +1,6 @@
 import QtQuick 1.1
 import QtDesktop 0.1
-import org.tm_profile.profile 1.0
-import org.tm_profile.thread 1.0
+//import org.tm_profile.profile 1.0
 //import "qml/tm_profile/Fields.qml"
 
 Rectangle {
@@ -13,13 +12,12 @@ Rectangle {
     width: 538 + tabs.margins * 2
     height: 360 + tabs.margins * 2
 
-    Profile { id: profile }
-    Worker { id: worker }
+   // Profile { id: profile }
 
-    Connections {
-        target: worker
-        onFinished: console.log("finished!!")
-    }
+   /* Connections {
+        target: profile
+        onCalculateFinished: imageGenerator.onCalculated(_result, _delta_s_max)
+    }*/
 
     TabFrame {
         id: tabs

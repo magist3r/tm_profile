@@ -23,6 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QImage>
 #include <QPainter>
 #include <QDebug>
+
 #include <math.h>
 
 //extern double m, z1, z2, x2, W0, E, alpha, c, ha, z0, x0, da0, i21, rb2, delta2, psi_b2, d0, bw, ra2, rf2, dx, dx_0, dx_bw;
@@ -51,6 +52,8 @@ class Profile : public QObject
     Q_PROPERTY(double rf2 READ rf2 WRITE setRf2 NOTIFY rf2Changed)
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
+
+
 
 public:
     Profile(QObject *parent = 0);
@@ -328,6 +331,9 @@ signals:
     void ra2Changed(double arg);
 
     void rf2Changed(double arg);
+
+    void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height);
+
 
 private:
 

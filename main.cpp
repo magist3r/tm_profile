@@ -18,9 +18,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui/QApplication>
 #include <QtDeclarative>
-#include <QThread>
+#include <QMetaType>
 #include "profile.h"
-#include "calcthread.h"
+#include "imagegenerator.h"
 #include "qmlapplicationviewer.h"
 #include "mainwindow.h"
 
@@ -28,9 +28,21 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
     QmlApplicationViewer viewer;
+    QDeclarativeEngine engine;
 
-    qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
-    qmlRegisterType<QThread>("org.tm_profile.thread", 1, 0, "Worker");
+    Profile *profile = new Profile();
+    ImageGenerator *generator = new ImageGenerator();
+    QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double)),
+                     generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double)));
+
+ //   engine.addImageProvider("images", generator);
+    viewer.rootContext()->setContextProperty("imageGenerator", generator);
+    viewer.rootContext()->setContextProperty("profile", profile);
+
+
+ //   qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
+    //qmlRegisterType<QThread>("org.tm_profile.thread", 1, 0, "Worker");
+
 
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));

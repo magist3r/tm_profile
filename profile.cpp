@@ -80,20 +80,20 @@ bool Profile::getRadius()
 
 void Profile::calculate()
 {
-    m_image1->fill(0);
-    QPainter painter(m_image1);
-    painter.setBrush(Qt::white);
+   // m_image1->fill(0);
+  // QPainter painter(m_image1);
+  //  painter.setBrush(Qt::white);
     //painter.setRenderHint(painter.);
    // painter.setRenderHint(painter.Antialiasing, true);
-    QTransform trans;
-    trans.translate(0, m_image1->height());
-    trans.scale(50, -50);
-    painter.setTransform(trans);
+  //  QTransform trans;
+  //  trans.translate(0, m_image1->height());
+  //  trans.scale(50, -50);
+  //  painter.setTransform(trans);
 
-    double im_height = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad) + ((m_W0 + m_bw) * tan(m_E_rad));
-    double im_width = m_bw;
+    double image_height = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad);
+    double image_width = m_bw;
 
-    qDebug() << im_height << im_width;
+    //qDebug() << im_height << im_width;
 
 
     m_i21 = m_z1 / m_z2;
@@ -146,9 +146,9 @@ void Profile::calculate()
     }
 
     m_xt_w = square_method(S);
-  //  qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
+    qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
     // Задание модификации
-    if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
+  /*  if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
         S.clear();
 
@@ -157,7 +157,7 @@ void Profile::calculate()
         S[m_bw] = m_xt_w[2] * pow(m_bw,2) + m_xt_w[1] * m_bw + m_xt_w[0] - m_dx_bw;
 
         m_xt_w = square_method(S);
-    }
+    }*/
 
     double w0 = -m_xt_w[1] / (2 * m_xt_w[2]);
 
@@ -200,18 +200,19 @@ void Profile::calculate()
             result_s_tr[wi][ry1 - ry1_min] = s_tr;
             result_s_pr[wi][ry1 - ry1_min] = s_pr;
             // drawPoint(painter,delta_s, wi, ry1 - ry1_min);
-            painter.setPen(getPointColor(delta_s));
-            painter.drawPoint(QPointF(wi, ry1 - ry1_min));
+          //  painter.setPen(getPointColor(delta_s));
+           // painter.drawPoint(QPointF(wi, ry1 - ry1_min));
     /*        if (m_diagnosticMode)
             {*/
-           qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
+   //        qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
     //        }
 
             ry2 += dr;
         }
         Wi += dW;
     }
-    m_image1->save("image1.png");
+    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height);
+ //   m_image1->save("image1.png");
 }
 
 QList<double> Profile::square_method(const QMap<double, double> &S)
@@ -271,13 +272,17 @@ QList<double> Profile::square_method(const QMap<double, double> &S)
         X.append(det(A_bkp) / detA);
     }
 
-   /* double sum = 0;
+    double sum = 0;
+    double otk = 0;
+    double max_otk;
     for (i = S.begin(); i != S.end(); ++i)
     {
-        sum += pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
+        otk = pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
+        max_otk = qMax(otk, max_otk);
+        sum += max_otk;
+        qDebug() << sum << otk;
     }
-    qDebug() << "square" << sum;*/
-
+    qDebug() << "square" << sum << max_otk;
     return X;
 }
 
@@ -444,7 +449,9 @@ void Profile::loadSettings(QString value)
        setE(settings.value("E").toDouble());
        setX2(settings.value("x2").toDouble());
        setD0(settings.value("d0").toDouble());
-       //setrsettings.setValue("ra2", m_ra2);
+       setRa2(settings.value("ra2").toDouble());
+       setRf2(settings.value("rf2").toDouble());
+
        //settings.setValue("rf2", m_rf2);
    }
 
@@ -476,3 +483,5 @@ void Profile::loadSettings(QString value)
     settings.endGroup();
 
 }*/
+
+
