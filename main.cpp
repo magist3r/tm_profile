@@ -30,10 +30,17 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QmlApplicationViewer viewer;
     QDeclarativeEngine engine;
 
+    QCoreApplication::setApplicationName("tm_profile");
+    QCoreApplication::setOrganizationName("zb-susu");
+
+    QDir datadir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+    if (!datadir.exists())
+        datadir.mkpath(datadir.path());
+
     Profile *profile = new Profile();
     ImageGenerator *generator = new ImageGenerator();
-    QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double)),
-                     generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double)));
+    QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
+                     generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
 
  //   engine.addImageProvider("images", generator);
     viewer.rootContext()->setContextProperty("imageGenerator", generator);
