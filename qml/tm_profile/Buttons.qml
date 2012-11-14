@@ -5,37 +5,22 @@ import QtDesktop 0.1
 Column {
 
     Button {
-        id: loadbtn
-        width: 96
-        text: qsTr("Load")
-        onClicked: profile.loadSettings(list.selectedText)
-    }
-
-    Button {
-        id: savebtn
-        width: 96
-        text: qsTr("Save")
-        onClicked: profile.saveMainSettings();
-    }
-
-    Button {
-        id: newbtn
-        width: 96
-        text: qsTr("New")
-    }
-
-    Button {
-        id: convertbtn
-        width: 96
-        text: qsTr("Convert")
-        onClicked: profile.convertSettings()
-    }
-    Button {
         id: calculate
         width: 96
         text: qsTr("Calculate")
+        tooltip: "Not all fields are not empty"
         onClicked: {
-            profile.calculate();
+
+            if (profile.areEmpty()) {
+                toolTipTriggered()
+                console.log("haha")
+
+            } else {
+                if (parametersChanged)
+                    profile.saveMainSettings()
+
+                profile.calculate();
+            }
         }
     }
     Button {
@@ -46,5 +31,9 @@ Column {
             profile.getRadius();
         }
     }
+
+
+
+
 
 }

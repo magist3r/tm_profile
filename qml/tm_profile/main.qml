@@ -3,16 +3,19 @@ import QtDesktop 0.1
 //import org.tm_profile.profile 1.0
 //import "qml/tm_profile/Fields.qml"
 
-Rectangle {
+ApplicationWindow {
     id:mainWindow
 
     SystemPalette { id: syspal }
     StyleItem{ id: styleitem }
-    color: syspal.window
+  //  color: syspal.window
     width: 538 + tabs.margins * 2
     height: 360 + tabs.margins * 2
 
-   // Profile { id: profile }
+
+    property bool parametersChanged: false
+
+    // Profile { id: profile }
 
    /* Connections {
         target: profile
@@ -78,7 +81,7 @@ Rectangle {
                     anchors.top: parameters.bottom
                     width: parent.width / 2
                     height: childrenRect.height
-                    Fields { model: [ "m", "z1", "z2", "bw" ] }
+                    Fields { model: [ "m", "z1", "z2", "bw", "ra2" ] }
                 }
 
                 Item {
@@ -87,7 +90,7 @@ Rectangle {
                     width: parent.width / 2
                     anchors.left: fields1.right
                     height: childrenRect.height
-                    Fields { model: [ "W0", "E", "x2", "d0" ] }
+                    Fields { model: [ "W0", "E", "x2", "d0", "rf2" ] }
                 }
 
 
@@ -113,6 +116,11 @@ Rectangle {
                     model: [ "m", "z1", "z2", "bw", "W0", "E", "x2", "d0"  ]
                 }*/
 
+
+            }
+
+            Item {
+                id: images
 
             }
 
@@ -147,24 +155,13 @@ id: field2
               width: parent.width / parent.children.length
           }
 
-          GroupBox {
-          Fields {
-
-              model: [ "ra2", "rf2" ]
-          }
-          id:field3
-
-             title: qsTr("blablabla")
-              anchors.left: field2.right
-              width: parent.width / parent.children.length
-          }
-
 }
 
 
 
 
   }
+
  }
 
 
