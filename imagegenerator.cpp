@@ -58,8 +58,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
         {
             j.next();
 
-            painter1.setPen(getColor(j.value(), delta, min_value1, max_value1));
-            painter2.setPen(getColor(j.value(), delta, min_value2, max_value2));
+            painter1.setPen(getColor(j.value(), min_value1, max_value1));
+            painter2.setPen(getColor(j.value(), min_value2, max_value2));
             painter1.drawPoint(QPointF(i.key(), j.key()));
             painter2.drawPoint(QPointF(i.key(), j.key()));
         }
@@ -71,13 +71,23 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     image2.save(savePath + image_basename + "_2.png");
 }
 
-QColor ImageGenerator::getColor(double delta_s, double delta, double min, double max)
+QColor ImageGenerator::getColor(double delta_s, double min, double max)
 {
-    if (delta_s < min)
+    double delta = max - min;
+    double step = delta / 3;
+    double min2 = min - delta;
+
+    if (delta_s < min2)
+        return Qt::black;
+    else if (delta_s < (min2 + step))
+        return Qt::darkGray;
+    else if (delta_s < (min2 + 2 * step))
+        return Qt::gray;
+    else if (delta_s < min)
         return Qt::white;
-    else if (delta_s < (min + delta / 3))
+    else if (delta_s < (min + step))
         return Qt::green;
-    else if (delta_s < (min + delta * 2 / 3))
+    else if (delta_s < (min + 2 * step))
         return Qt::yellow;
     else if (delta_s < max)
         return Qt::red;

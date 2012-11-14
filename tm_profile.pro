@@ -21,7 +21,7 @@ DEPLOYMENTFOLDERS = folder_01
 
 QML_IMPORT_PATH =
 
-QT       += core gui
+QT       += core gui declarative
 
 TARGET = tm_profile
 TEMPLATE = app
