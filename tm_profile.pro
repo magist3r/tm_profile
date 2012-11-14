@@ -34,9 +34,6 @@ SOURCES += main.cpp\
     qmldesktopviewer.cpp \
     loggerwidget.cpp
 
-include(qmlapplicationviewer/qmlapplicationviewer.pri)
-qtcAddDeployment()
-
 HEADERS  += mainwindow.h \
     profile.h \
     imagegenerator.h \
@@ -44,3 +41,9 @@ HEADERS  += mainwindow.h \
     loggerwidget.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    qml/tm_profile/main.qml \
+    qml/tm_profile/Fields.qml \
+    qml/tm_profile/Buttons.qml \
+    qml/tm_profile/Alert.qml
