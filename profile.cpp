@@ -211,7 +211,7 @@ void Profile::calculate()
         }
         Wi += dW;
     }
-    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height);
+    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height, getBaseName());
  //   m_image1->save("image1.png");
 }
 
@@ -333,14 +333,24 @@ QColor Profile::getPointColor(double delta_s)
         return Qt::blue;
 }
 
+QString Profile::getBaseName()
+{
+    QString name = "m" + QString::number(m_m) +
+                   "_" + QString::number(m_z1) +
+                   "_" + QString::number(m_z2) +
+                   "_" + QString::number(m_bw);
+    return name;
+
+}
+
 void Profile::saveMainSettings()
 {
     QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
     const QString name = "m_" + QString::number(m_m) +
-                         "|z1_" + QString::number(m_z1) +
-                         "|z2_" + QString::number(m_z2) +
-                         "|bw_" + QString::number(m_bw);
-    settings.beginGroup(name);
+                         " z1_" + QString::number(m_z1) +
+                         " z2_" + QString::number(m_z2) +
+                         " bw_" + QString::number(m_bw);
+    settings.beginGroup(getBaseName());
     qDebug() << m_m << m_z1 << m_z2 << m_bw;
     settings.setValue("m", m_m);
     settings.setValue("z1", m_z1);
@@ -354,6 +364,30 @@ void Profile::saveMainSettings()
     settings.setValue("rf2", m_rf2);
     settings.endGroup();
 }
+
+bool Profile::areEmpty()
+{
+    if ( m() == 0 ||
+         z1() == 0 ||
+         z2() == 0 ||
+         bw() == 0 ||
+         W0() == 0 ||
+         E() == 0 ||
+         x2() == 0 ||
+         d0() == 0 ||
+         ra2() == 0 ||
+         rf2() == 0 ||
+         alpha() == 0 ||
+         ha() == 0 ||
+         c() == 0 ||
+         x0() == 0 ||
+         z0() == 0 ||
+         da0() == 0 )
+        return true;
+
+    return false;
+}
+
 
 void Profile::saveOtherSettings()
 {
@@ -383,7 +417,7 @@ QStringList Profile::listOfParameters()
 {
     if (m_listOfParameters.empty()) {
         QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-        QRegExp rx("m_*");
+        QRegExp rx("m*");
         rx.setPatternSyntax(QRegExp::Wildcard);
         m_listOfParameters = settings.childGroups().filter(rx);
 
@@ -456,6 +490,7 @@ void Profile::loadSettings(QString value)
    }
 
    settings.endGroup();
+
 }
 
 

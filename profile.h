@@ -142,6 +142,7 @@ public:
     }
 
     Q_INVOKABLE void saveMainSettings();
+    Q_INVOKABLE bool areEmpty();
     void saveOtherSettings();
     void saveLastSettings();
 
@@ -332,7 +333,7 @@ signals:
 
     void rf2Changed(double arg);
 
-    void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height);
+    void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height, QString image_basename);
 
 
 private:
@@ -350,6 +351,8 @@ private:
     double det(const double A[3][3]); // Расчет определителя матрицы
 
     QColor getPointColor(double delta_s);
+
+    QString getBaseName();
 
     double m_m;
 
