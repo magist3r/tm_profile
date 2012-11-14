@@ -15,7 +15,7 @@ public:
 signals:
     
 public slots:
-    void paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height);
+    void paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename);
 
 private:
     QColor getColor(double delta_s, double delta, double min, double max);

@@ -1,5 +1,6 @@
 #include "imagegenerator.h"
 #include <QPainter>
+#include <QDesktopServices>
 #include <QDebug>
 
 ImageGenerator::ImageGenerator(QObject *parent) :
@@ -7,7 +8,7 @@ ImageGenerator::ImageGenerator(QObject *parent) :
 {
 }
 
-void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height)
+void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename)
 {
     double width = 320;
     double height = 240;
@@ -64,8 +65,10 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
         }
     }
        //   qDebug() << max_value << max_value / 3 << max_value * 2 / 3;
-    image1.save("./image1.png", "PNG");
-    image2.save("./image2.png", "PNG");
+    QString savePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/";
+    qDebug() << savePath;
+    image1.save(savePath + image_basename + "_1.png");
+    image2.save(savePath + image_basename + "_2.png");
 }
 
 QColor ImageGenerator::getColor(double delta_s, double delta, double min, double max)
