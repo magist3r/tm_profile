@@ -5,9 +5,9 @@ import QtDesktop 0.1
 
 ApplicationWindow {
     id:mainWindow
+    title: qsTr("tm_profile - program for calculation of cylinder-bevel transmissions")
+    visible: true
 
-    SystemPalette { id: syspal }
-    StyleItem{ id: styleitem }
   //  color: syspal.window
     width: 538 + tabs.margins * 2
     height: 360 + tabs.margins * 2

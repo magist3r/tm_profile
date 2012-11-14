@@ -12,12 +12,14 @@ Column {
         onClicked: {
 
             if (profile.areEmpty()) {
-                toolTipTriggered()
+                Qt.createComponent("Alert.qml").createObject(mainWindow)
                 console.log("haha")
 
             } else {
-                if (parametersChanged)
+                if (parametersChanged) {
                     profile.saveMainSettings()
+                    parametersChanged = false
+                }
 
                 profile.calculate();
             }
@@ -31,6 +33,8 @@ Column {
             profile.getRadius();
         }
     }
+
+    Loader { id: loader }
 
 
 

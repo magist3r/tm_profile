@@ -30,13 +30,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     profile.cpp \
-    imagegenerator.cpp
+    imagegenerator.cpp \
+    qmldesktopviewer.cpp \
+    loggerwidget.cpp
 
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS  += mainwindow.h \
     profile.h \
-    imagegenerator.h
+    imagegenerator.h \
+    qmldesktopviewer.h \
+    loggerwidget.h
 
 FORMS    += mainwindow.ui

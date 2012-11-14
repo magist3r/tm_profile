@@ -21,14 +21,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QMetaType>
 #include "profile.h"
 #include "imagegenerator.h"
-#include "qmlapplicationviewer.h"
+#include "qmldesktopviewer.h"
 #include "mainwindow.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QScopedPointer<QApplication> app(createApplication(argc, argv));
-    QmlApplicationViewer viewer;
-    QDeclarativeEngine engine;
+    QApplication app(argc, argv);
+    QmlDesktopViewer *viewer = new QmlDesktopViewer();
+
+    QObject::connect(&app, SIGNAL(lastWindowClosed()), viewer, SLOT(quit()));
 
     QCoreApplication::setApplicationName("tm_profile");
     QCoreApplication::setOrganizationName("zb-susu");
@@ -43,19 +44,21 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
                      generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
 
  //   engine.addImageProvider("images", generator);
-    viewer.rootContext()->setContextProperty("imageGenerator", generator);
-    viewer.rootContext()->setContextProperty("profile", profile);
+    viewer->rootContext()->setContextProperty("imageGenerator", generator);
+    viewer->rootContext()->setContextProperty("profile", profile);
 
+    viewer->open("qml/tm_profile/main.qml");
+  //  viewer->
 
  //   qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
     //qmlRegisterType<QThread>("org.tm_profile.thread", 1, 0, "Worker");
 
 
-    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+   /* viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));
-    viewer.showExpanded();
+    viewer.showExpanded();*/
 
 //    MainWindow w;
 //    w.show();
-    return app->exec();
+    return app.exec();
 }
