@@ -22,8 +22,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     QPainter painter1(&image1);
     QPainter painter2(&image2);
 
-    painter1.setBrush(Qt::white);
-    painter2.setBrush(Qt::white);
+    painter1.setBrush(Qt::transparent);
+    painter2.setBrush(Qt::transparent);
     qDebug() << delta << delta_s_max;
 
     painter1.setRenderHint(QPainter::Antialiasing);
@@ -48,6 +48,9 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     double max_value2 = delta_s_max;
     double min_value2 = delta_s_max - delta;
 
+    double maxX;
+    double maxY;
+
     QMapIterator<double, QMap<double,double> > i(result);
     while (i.hasNext())
     {
@@ -62,9 +65,28 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
             painter2.setPen(getColor(j.value(), min_value2, max_value2));
             painter1.drawPoint(QPointF(i.key(), j.key()));
             painter2.drawPoint(QPointF(i.key(), j.key()));
+            maxX = qMax(i.key(), maxX);
+            maxY = qMax(j.key(), maxY);
+
         }
     }
-       //   qDebug() << max_value << max_value / 3 << max_value * 2 / 3;
+
+    // Draw border
+    painter1.setPen(Qt::black);
+    painter2.setPen(Qt::black);
+
+    QPointF points[4] = {
+        QPointF(maxX, 0.0),
+        QPointF(maxX, image_height),
+        QPointF(0.0, maxY),
+        QPointF(0.0, maxY - image_height)
+    };
+    painter1.drawConvexPolygon(points, 4);
+    painter2.drawConvexPolygon(points, 4);
+    painter1.end();
+    painter2.end();
+
+    // Save generated images
     QString savePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/";
     qDebug() << savePath;
     image1.save(savePath + image_basename + "_1.png");

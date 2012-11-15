@@ -154,11 +154,6 @@ ApplicationWindow {
 
                 Image {
                     id: _image1
-                    Rectangle {
-                        z: -1
-                        anchors.fill: parent
-                        border.color: "black"
-                    }
 
           //          width: 200
             //        height: 150
