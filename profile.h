@@ -51,6 +51,8 @@ class Profile : public QObject
     Q_PROPERTY(double ra2 READ ra2 WRITE setRa2 NOTIFY ra2Changed)
     Q_PROPERTY(double rf2 READ rf2 WRITE setRf2 NOTIFY rf2Changed)
 
+    Q_PROPERTY(QList<double> xt_w READ xt_w NOTIFY xt_wChanged)
+
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
 
@@ -158,6 +160,11 @@ public:
     double rf2() const
     {
         return m_rf2;
+    }
+
+    QList<double> xt_w() const
+    {
+        return m_xt_w;
     }
 
 public slots:
@@ -336,6 +343,8 @@ signals:
     void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height, QString image_basename);
 
 
+    void xt_wChanged(QList<double> arg);
+
 private:
 
     // Расчетные величины
@@ -353,6 +362,8 @@ private:
     QColor getPointColor(double delta_s);
 
     QString getBaseName();
+
+    void saveTrajectory();
 
     double m_m;
 

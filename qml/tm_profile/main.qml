@@ -105,10 +105,18 @@ ApplicationWindow {
                 }
                 }*/
 
-                Text {
-                    text: "sggvcdghvfjvfg"
-                    anchors.top: fields2.bottom
-                }
+//                Text {
+//                    id: traectory
+//                    text: {
+//                        if (profile.xt_w.isEmpty())
+//                            return "ssss"
+//                    }
+
+
+
+
+//                    anchors.top: fields2.bottom
+//                }
 
               /*  Fields {
                     start_y: parameters.y + parameters.height

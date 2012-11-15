@@ -146,6 +146,8 @@ void Profile::calculate()
     }
 
     m_xt_w = square_method(S);
+    //emit xt_wChanged(m_xt_w);
+    saveTrajectory();
     qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
     // Задание модификации
   /*  if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
@@ -343,13 +345,21 @@ QString Profile::getBaseName()
 
 }
 
+void Profile::saveTrajectory()
+{
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
+    settings.beginGroup(getBaseName());
+    settings.setValue("a", m_xt_w[2]);
+    settings.setValue("b", m_xt_w[1]);
+    settings.setValue("c", m_xt_w[0]);
+
+}
+
 void Profile::saveMainSettings()
 {
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-    const QString name = "m_" + QString::number(m_m) +
-                         " z1_" + QString::number(m_z1) +
-                         " z2_" + QString::number(m_z2) +
-                         " bw_" + QString::number(m_bw);
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
     settings.beginGroup(getBaseName());
     qDebug() << m_m << m_z1 << m_z2 << m_bw;
     settings.setValue("m", m_m);

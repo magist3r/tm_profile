@@ -21,6 +21,9 @@ DEPLOYMENTFOLDERS = folder_01
 
 QML_IMPORT_PATH =
 
+include(qmlapplicationviewer.pri)
+qtcAddDeployment()
+
 QT       += core gui declarative
 
 TARGET = tm_profile
@@ -46,4 +49,6 @@ OTHER_FILES += \
     qml/tm_profile/main.qml \
     qml/tm_profile/Fields.qml \
     qml/tm_profile/Buttons.qml \
-    qml/tm_profile/Alert.qml
+    qml/tm_profile/Alert.qml \
+    qmlapplicationviewer.pri
+
