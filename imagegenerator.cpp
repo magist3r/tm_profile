@@ -10,8 +10,8 @@ ImageGenerator::ImageGenerator(QObject *parent) :
 
 void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename)
 {
-    double width = 320;
-    double height = 240;
+    double width = 250;
+    double height = 200;
 
     QImage image1(width, height, QImage::Format_ARGB32_Premultiplied);
     QImage image2(width, height, QImage::Format_ARGB32_Premultiplied);
@@ -26,8 +26,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter2.setBrush(Qt::white);
     qDebug() << delta << delta_s_max;
 
-    //painter1.setRenderHint(QPainter::Antialiasing, true);
-    //painter2.setRenderHint(QPainter::Antialiasing, true);
+    painter1.setRenderHint(QPainter::Antialiasing);
+    painter2.setRenderHint(QPainter::Antialiasing);
 
     QTransform transform;
     transform.translate(0, height); // move (0,0) to bottom left corner
@@ -69,6 +69,7 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     qDebug() << savePath;
     image1.save(savePath + image_basename + "_1.png");
     image2.save(savePath + image_basename + "_2.png");
+    emit imagesGenerated(savePath + image_basename + "_1.png", savePath + image_basename + "_2.png");
 }
 
 QColor ImageGenerator::getColor(double delta_s, double min, double max)

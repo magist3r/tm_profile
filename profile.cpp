@@ -33,7 +33,7 @@ Profile::Profile(QObject *parent)
     m_ha = 1;
     m_c = 0.25;
     m_nr = 200;
-    m_nW = 200;
+    m_nW = 250;
 
 
 }

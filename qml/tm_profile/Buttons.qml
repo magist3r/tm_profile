@@ -6,6 +6,7 @@ Column {
 
     Button {
         id: calculate
+        signal calculating
         width: 96
         text: qsTr("Calculate")
         tooltip: "Not all fields are not empty"
@@ -20,7 +21,7 @@ Column {
                     profile.saveMainSettings()
                     parametersChanged = false
                 }
-
+                calculating()
                 profile.calculate();
             }
         }
