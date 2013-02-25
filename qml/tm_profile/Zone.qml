@@ -1,4 +1,4 @@
-import QtQuick 1.1
+import QtDesktop 1.0
 
 Image {
 

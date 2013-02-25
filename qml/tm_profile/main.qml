@@ -1,5 +1,5 @@
-import QtQuick 1.1
-import QtDesktop 0.1
+//import QtQuick 1.1
+import QtDesktop 1.0
 //import org.tm_profile.profile 1.0
 //import "qml/tm_profile/Fields.qml"
 
@@ -246,6 +246,61 @@ id: field2
           }
 
 }
+    Tab {
+        title: qsTr("Manual trajectory")
+
+        Repeater {
+            model: 11
+
+            Row {
+                y: index * (height + 10)
+
+            Label {
+                id: label
+                text: index / 2 + "="
+            }
+
+            SpinBox {
+                id: item
+             //  value:  [modelData]
+                property int f_index: index
+                onValueChanged: {
+                   // [modelData] = item.value
+                    console.log(profile.s_manual[0])
+                }
+            //    Component.onCompleted: profile.s_manual.append(0)
+            }}
+        }
+
+
+
+
+//        ListModel {
+//            id: listModel
+//            Component.onCompleted: {
+//                for (var i = 0; i < 9; i++) {
+//                    listModel.append({"bw": i/2, "xt": 0})
+//                }
+//            }
+
+//        }
+
+//        TableView {
+//            model: listModel
+//          TableColumn {
+
+//                role: "bw"
+//                title: "bw"
+//            }
+
+
+//                        TableColumn {
+//                            role: "xt"
+//                            title: "xt"
+//                        }
+
+//        }
+    }
 
 
 

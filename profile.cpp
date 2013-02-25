@@ -34,6 +34,8 @@ Profile::Profile(QObject *parent)
     m_c = 0.25;
     m_nr = 200;
     m_nW = 250;
+    for (int i=0;i<=10;i++)
+    m_s_manual.append(0);
 
 
 }
@@ -116,36 +118,40 @@ void Profile::calculate()
 
     double Wi = m_W0;
     // Расчет коэффициентов смещения
-    for (int i=0; i <= m_nW; i++)
-    {
-        double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
-        double alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
-        double rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
+    if (m_useS_manual) {
+        //m_xt_w = square_method(s_manual());
+    } else {
+        for (int i=0; i <= m_nW; i++) {
+            double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
+            double alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
+            double rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
 
-        double ry1 = rav2 / cos(m_E_rad) - (Wi + 0.1 * m_m) * tan(m_E_rad);
-        a_tw(ry1, Wi + 0.1 * m_m, x_tr, y_tr);
-        double psi_yi = x_tr / ry1;
-        double alpha_y1 = acos(rb1 / ry1);
-        double xt1 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
+            double ry1 = rav2 / cos(m_E_rad) - (Wi + 0.1 * m_m) * tan(m_E_rad);
+            a_tw(ry1, Wi + 0.1 * m_m, x_tr, y_tr);
+            double psi_yi = x_tr / ry1;
+            double alpha_y1 = acos(rb1 / ry1);
+            double xt1 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
-        ry1 = rav2 / cos(m_E_rad) - (Wi) * tan(m_E_rad);
-        a_tw(ry1, Wi, x_tr, y_tr);
-        psi_yi = x_tr / ry1;
-        alpha_y1 = acos(rb1 / ry1);
-        double xt2 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
+            ry1 = rav2 / cos(m_E_rad) - (Wi) * tan(m_E_rad);
+            a_tw(ry1, Wi, x_tr, y_tr);
+            psi_yi = x_tr / ry1;
+            alpha_y1 = acos(rb1 / ry1);
+            double xt2 = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1));
 
-        delta_oi = atan(10 * (xt2 - xt1));
-        alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
-        rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
-        alpha_y1 = acos(rb1 / ry1);
-        double xt = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
+            delta_oi = atan(10 * (xt2 - xt1));
+            alpha1 = atan(tan(m_alpha_rad) * cos(delta_oi));
+            rb1 = 0.5 * m_m * m_z1 * cos(alpha1);
+            alpha_y1 = acos(rb1 / ry1);
+            double xt = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
-        S[Wi - m_W0] = xt;
+            S[Wi - m_W0] = xt;
 
-        Wi += dW;
+            Wi += dW;
+        }
+
+        m_xt_w = square_method(S);
+
     }
-
-    m_xt_w = square_method(S);
     //emit xt_wChanged(m_xt_w);
     saveTrajectory();
     qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];

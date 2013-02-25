@@ -55,6 +55,9 @@ class Profile : public QObject
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
+    Q_PROPERTY(QList<double> s_manual READ s_manual WRITE setS_manual NOTIFY onS_manualChanged)
+    Q_PROPERTY(bool useS_manual READ useS_manual WRITE setUseS_manual NOTIFY onUseS_manualChanged)
+
 
 
 public:
@@ -165,6 +168,16 @@ public:
     QList<double> xt_w() const
     {
         return m_xt_w;
+    }
+
+    bool useS_manual() const
+    {
+        return m_useS_manual;
+    }
+
+    QList<double> s_manual() const
+    {
+        return m_s_manual;
     }
 
 public slots:
@@ -303,6 +316,22 @@ public slots:
         }
     }
 
+    void setUseS_manual(bool arg)
+    {
+        if (m_useS_manual != arg) {
+            m_useS_manual = arg;
+            emit onUseS_manualChanged(arg);
+        }
+    }
+
+    void setS_manual(QList<double> arg)
+    {
+        if (m_s_manual != arg) {
+            m_s_manual = arg;
+            emit onS_manualChanged(arg);
+        }
+    }
+
 signals:
     void addToDebugConsole(QString text);
 
@@ -344,6 +373,10 @@ signals:
 
 
     void xt_wChanged(QList<double> arg);
+
+    void onUseS_manualChanged(bool arg);
+
+    void onS_manualChanged(QList<double> arg);
 
 private:
 
@@ -409,6 +442,8 @@ private:
 
     QList<double> m_xt_w;
     QStringList m_listOfParameters;
+    bool m_useS_manual;
+    QList<double> m_s_manual;
 };
 
 #endif // PROFILE_H

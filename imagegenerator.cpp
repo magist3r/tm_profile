@@ -15,12 +15,15 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
 
     QImage image1(width, height, QImage::Format_ARGB32_Premultiplied);
     QImage image2(width, height, QImage::Format_ARGB32_Premultiplied);
+    QImage image3(width*2 + 50, height, QImage::Format_ARGB32_Premultiplied);
 
     image1.fill(0);
     image2.fill(0);
+    image3.fill(0);
 
     QPainter painter1(&image1);
     QPainter painter2(&image2);
+    QPainter painter3(&image3);
 
     painter1.setBrush(Qt::transparent);
     painter2.setBrush(Qt::transparent);
@@ -86,12 +89,17 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter1.end();
     painter2.end();
 
+    painter3.drawImage(0,0, image1);
+    painter3.drawImage(width+50,0, image2);
+    painter3.end();
+
     // Save generated images
-    QString savePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/";
-    qDebug() << savePath;
-    image1.save(savePath + image_basename + "_1.png");
-    image2.save(savePath + image_basename + "_2.png");
-    emit imagesGenerated(savePath + image_basename + "_1.png", savePath + image_basename + "_2.png");
+    //QString savePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/";
+   // qDebug() << savePath;
+   // image1.save(savePath + image_basename + "_1.png");
+   // image2.save(savePath + image_basename + "_2.png");
+   // image3.save(savePath + image_basename + "_3.png");
+    //emit imagesGenerated(savePath + image_basename + "_1.png", savePath + image_basename + "_2.png");
 }
 
 QColor ImageGenerator::getColor(double delta_s, double min, double max)

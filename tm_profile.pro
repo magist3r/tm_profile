@@ -24,7 +24,7 @@ QML_IMPORT_PATH =
 include(qmlapplicationviewer.pri)
 qtcAddDeployment()
 
-QT       += core gui declarative
+QT       += widgets qml quick
 
 TARGET = tm_profile
 TEMPLATE = app
