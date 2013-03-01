@@ -1,3 +1,4 @@
+import QtQuick 2.0
 import QtDesktop 1.0
 
 
@@ -11,7 +12,7 @@ Column {
         tooltip: "Not all fields are not empty"
         onClicked: {
 
-            if (profile.areEmpty()) {
+            if (profile.areEmpty() || isArrayEmpty()) {
                 Qt.createComponent("Alert.qml").createObject(mainWindow)
                 console.log("haha")
 
@@ -21,7 +22,7 @@ Column {
                     parametersChanged = false
                 }
                 calculating()
-                profile.calculate();
+                profile.calculate()
             }
         }
     }

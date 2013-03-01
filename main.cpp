@@ -37,9 +37,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("tm_profile");
     QCoreApplication::setOrganizationName("zb-susu");
 
-   // QDir datadir(QStandardPaths::standardLocations(QStandardPaths::DataLocation));
-   // if (!datadir.exists())
-   //     datadir.mkpath(datadir.path());
+    QDir datadir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+    if (!datadir.exists())
+        datadir.mkpath(datadir.path());
 
     Profile *profile = new Profile();
     ImageGenerator *generator = new ImageGenerator();

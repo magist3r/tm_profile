@@ -55,7 +55,7 @@ class Profile : public QObject
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
-    Q_PROPERTY(QList<double> s_manual READ s_manual WRITE setS_manual NOTIFY onS_manualChanged)
+    Q_PROPERTY(QVariantList s_manual READ s_manual WRITE setS_manual NOTIFY onS_manualChanged)
     Q_PROPERTY(bool useS_manual READ useS_manual WRITE setUseS_manual NOTIFY onUseS_manualChanged)
 
 
@@ -175,7 +175,7 @@ public:
         return m_useS_manual;
     }
 
-    QList<double> s_manual() const
+    QVariantList s_manual() const
     {
         return m_s_manual;
     }
@@ -324,7 +324,7 @@ public slots:
         }
     }
 
-    void setS_manual(QList<double> arg)
+    void setS_manual(QVariantList arg)
     {
         if (m_s_manual != arg) {
             m_s_manual = arg;
@@ -376,7 +376,7 @@ signals:
 
     void onUseS_manualChanged(bool arg);
 
-    void onS_manualChanged(QList<double> arg);
+    void onS_manualChanged(QVariantList arg);
 
 private:
 
@@ -386,7 +386,9 @@ private:
     double m_delta2;
     double m_psi_b2;
 
-    QList<double> square_method(const QMap<double, double> &S);
+    QList<double> squareMethod(const QMap<double, double> &S);
+
+    QList<double> squareMethod(const QVariantList &S);
 
     void a_tw(double ry1, double Wi, double &x_tr, double &y_tr); // Подбор угла профиля в торцовом сечении
 
@@ -443,7 +445,7 @@ private:
     QList<double> m_xt_w;
     QStringList m_listOfParameters;
     bool m_useS_manual;
-    QList<double> m_s_manual;
+    QVariantList m_s_manual;
 };
 
 #endif // PROFILE_H

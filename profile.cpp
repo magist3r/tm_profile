@@ -34,8 +34,7 @@ Profile::Profile(QObject *parent)
     m_c = 0.25;
     m_nr = 200;
     m_nW = 250;
-    for (int i=0;i<=10;i++)
-    m_s_manual.append(0);
+    setUseS_manual(false);
 
 
 }
@@ -119,7 +118,7 @@ void Profile::calculate()
     double Wi = m_W0;
     // Расчет коэффициентов смещения
     if (m_useS_manual) {
-        //m_xt_w = square_method(s_manual());
+        m_xt_w = squareMethod(s_manual());
     } else {
         for (int i=0; i <= m_nW; i++) {
             double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
@@ -149,7 +148,7 @@ void Profile::calculate()
             Wi += dW;
         }
 
-        m_xt_w = square_method(S);
+        m_xt_w = squareMethod(S);
 
     }
     //emit xt_wChanged(m_xt_w);
@@ -223,7 +222,7 @@ void Profile::calculate()
  //   m_image1->save("image1.png");
 }
 
-QList<double> Profile::square_method(const QMap<double, double> &S)
+QList<double> Profile::squareMethod(const QMap<double, double> &S)
 {
     double sum_x = 0;
     double sum_x2 = 0;
@@ -236,8 +235,7 @@ QList<double> Profile::square_method(const QMap<double, double> &S)
 
     int n = 0;
     QMap<double, double>::const_iterator i;
-    for (i = S.begin(); i != S.end(); ++i)
-    {
+    for (i = S.begin(); i != S.end(); ++i) {
         sum_x += i.key();
         sum_x2 += pow(i.key(), 2);
         sum_x3 += pow(i.key(), 3);
@@ -245,8 +243,10 @@ QList<double> Profile::square_method(const QMap<double, double> &S)
         sum_y += i.value();
         sum_xy += i.key() * i.value();
         sum_x2y += pow(i.key(), 2) * i.value();
+        qDebug() << i.key() << i.value();
         n++;
     }
+
     double A[3][3] = // Основная матрица
     {
         {n * 1.0, sum_x, sum_x2},
@@ -288,10 +288,19 @@ QList<double> Profile::square_method(const QMap<double, double> &S)
         otk = pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
         max_otk = qMax(otk, max_otk);
         sum += max_otk;
-        qDebug() << sum << otk;
+ //       qDebug() << sum << otk;
     }
-    qDebug() << "square" << sum << max_otk;
+  //  qDebug() << "square" << sum << max_otk;
     return X;
+    }
+
+QList<double> Profile::squareMethod(const QVariantList &S)
+{
+    QMap<double, double> map;
+    for (int i = 0; i <= 10; i++)
+        map[i * 1.0 / 2] = S[i].toDouble();
+
+    return squareMethod(map);
 }
 
 void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)

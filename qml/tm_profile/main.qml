@@ -1,4 +1,4 @@
-//import QtQuick 1.1
+import QtQuick 2.0
 import QtDesktop 1.0
 //import org.tm_profile.profile 1.0
 //import "qml/tm_profile/Fields.qml"
@@ -14,6 +14,17 @@ ApplicationWindow {
     minimumHeight: 480
 
     property bool parametersChanged: false
+    property var my_array: new Array(11)
+
+    function isArrayEmpty() {
+        if (checkbox.checked) {
+            for (var i=0; i<=10; i++) {
+                if (my_array[i] === 0 || my_array[i] === undefined)
+                    return true
+            }
+        }
+        return false
+    }
 
     // Profile { id: profile }
 
@@ -249,11 +260,18 @@ id: field2
     Tab {
         title: qsTr("Manual trajectory")
 
+        CheckBox {
+            id: checkbox
+            onCheckedChanged: profile.useS_manual = checked
+            text: "ololo"
+        }
+
         Repeater {
             model: 11
-
+            anchors.top: checkbox.bottom
             Row {
-                y: index * (height + 10)
+                visible: checkbox.checked
+                y: checkbox.height + index * (height + 10)
 
             Label {
                 id: label
@@ -262,13 +280,17 @@ id: field2
 
             SpinBox {
                 id: item
-             //  value:  [modelData]
+                value: my_array[index]
                 property int f_index: index
                 onValueChanged: {
-                   // [modelData] = item.value
-                    console.log(profile.s_manual[0])
+                    my_array[index] = item.value
+                    profile.s_manual = my_array
+                   //modelData = 50.0
+            //        console.log(index)
+           //         console.log(my_array[index])
+           //         console.log(profile.s_manual[index])
                 }
-            //    Component.onCompleted: profile.s_manual.append(0)
+            //    Component.onCompleted: profile.s_manual[f_index] = 0.0
             }}
         }
 
