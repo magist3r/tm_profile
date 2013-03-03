@@ -30,7 +30,9 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     qDebug() << delta << delta_s_max;
 
     painter1.setRenderHint(QPainter::Antialiasing);
+    painter1.setRenderHint(QPainter::Qt4CompatiblePainting);
     painter2.setRenderHint(QPainter::Antialiasing);
+    painter2.setRenderHint(QPainter::Qt4CompatiblePainting);
 
     QTransform transform;
     transform.translate(0, height); // move (0,0) to bottom left corner
