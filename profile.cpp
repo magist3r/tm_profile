@@ -218,8 +218,12 @@ void Profile::calculate()
         }
         Wi += dW;
     }
-    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height, getBaseName());
- //   m_image1->save("image1.png");
+    QString baseName = getBaseName();
+    if (m_useS_manual)
+        baseName += "_manual";
+
+    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height, baseName);
+    //   m_image1->save("image1.png");
 }
 
 QList<double> Profile::squareMethod(const QMap<double, double> &S)
@@ -243,7 +247,10 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
         sum_y += i.value();
         sum_xy += i.key() * i.value();
         sum_x2y += pow(i.key(), 2) * i.value();
-        qDebug() << i.key() << i.value();
+      //  div_t divResult;
+      //  divResult = div(i.key(), 0.5);
+        if (floor(fmod(i.key(), 0.5)*1000) == 0)
+            qDebug() << i.key() << i.value();
         n++;
     }
 
@@ -387,6 +394,19 @@ void Profile::saveMainSettings()
     settings.setValue("d0", m_d0);
     settings.setValue("ra2", m_ra2);
     settings.setValue("rf2", m_rf2);
+    settings.setValue("useManualTr", m_useS_manual);
+    if (m_useS_manual) {
+        settings.setValue("XtList", m_s_manual);
+    }
+    settings.endGroup();
+}
+
+void Profile::saveManualTrajectory()
+{
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
+    settings.beginGroup(getBaseName());
+    settings.setValue("XtList", m_s_manual);
     settings.endGroup();
 }
 
@@ -510,6 +530,9 @@ void Profile::loadSettings(QString value)
        setD0(settings.value("d0").toDouble());
        setRa2(settings.value("ra2").toDouble());
        setRf2(settings.value("rf2").toDouble());
+       setUseS_manual(settings.value("useManualTr").toBool());
+       if (m_useS_manual)
+           setS_manual(settings.value("XtList").toList());
 
        //settings.setValue("rf2", m_rf2);
    }

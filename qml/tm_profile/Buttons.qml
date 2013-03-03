@@ -21,6 +21,10 @@ Column {
                     profile.saveMainSettings()
                     parametersChanged = false
                 }
+           //     if (checkbox.checked)
+             //       profile.saveManualTrajectory()
+
+
                 calculating()
                 profile.calculate()
             }

@@ -8,6 +8,8 @@ ApplicationWindow {
     title: qsTr("tm_profile - program for calculation of cylinder-bevel transmissions")
     visible: true
 
+    signal arrayChanged
+
   //  color: syspal.window
 
     minimumWidth: 640
@@ -15,6 +17,15 @@ ApplicationWindow {
 
     property bool parametersChanged: false
     property var my_array: new Array(11)
+
+    Connections {
+        target: profile
+        onS_manualChanged: {
+            console.log("ololololololoolololololo")
+            my_array = profile.s_manual
+            arrayChanged()
+        }
+    }
 
     function isArrayEmpty() {
         if (checkbox.checked) {
@@ -219,7 +230,7 @@ ApplicationWindow {
 
               /*  Connections {
                     target: calculate
-                    onCalculating: {
+                    onCalculating: {Component.onCompleted: profile[modelData + "Changed"].connect(function () { item.value = profile[modelData]})
                         _image1.destroy();
                         _image2.destroy();
                     }
@@ -262,7 +273,9 @@ id: field2
 
         CheckBox {
             id: checkbox
+            checked: profile.useS_manual
             onCheckedChanged: profile.useS_manual = checked
+          //  Component.onCompleted: profile[useS_manualChanged].connect(function () { item.value = profile.useS_manual})
             text: "ololo"
         }
 
@@ -283,14 +296,20 @@ id: field2
                 value: my_array[index]
                 property int f_index: index
                 onValueChanged: {
-                    my_array[index] = item.value
-                    profile.s_manual = my_array
+                    if (my_array[index] != item.value) {
+                        my_array[index] = item.value
+                        profile.s_manual = my_array
+                        console.log("lilililil")
+                    }
+
+
+
                    //modelData = 50.0
             //        console.log(index)
            //         console.log(my_array[index])
            //         console.log(profile.s_manual[index])
                 }
-            //    Component.onCompleted: profile.s_manual[f_index] = 0.0
+                Component.onCompleted: arrayChanged.connect(function () { item.value = my_array[index]})
             }}
         }
 

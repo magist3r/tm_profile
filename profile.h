@@ -55,8 +55,8 @@ class Profile : public QObject
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
-    Q_PROPERTY(QVariantList s_manual READ s_manual WRITE setS_manual NOTIFY onS_manualChanged)
-    Q_PROPERTY(bool useS_manual READ useS_manual WRITE setUseS_manual NOTIFY onUseS_manualChanged)
+    Q_PROPERTY(QVariantList s_manual READ s_manual WRITE setS_manual NOTIFY s_manualChanged)
+    Q_PROPERTY(bool useS_manual READ useS_manual WRITE setUseS_manual NOTIFY useS_manualChanged)
 
 
 
@@ -147,6 +147,7 @@ public:
     }
 
     Q_INVOKABLE void saveMainSettings();
+    Q_INVOKABLE void saveManualTrajectory();
     Q_INVOKABLE bool areEmpty();
     void saveOtherSettings();
     void saveLastSettings();
@@ -320,7 +321,7 @@ public slots:
     {
         if (m_useS_manual != arg) {
             m_useS_manual = arg;
-            emit onUseS_manualChanged(arg);
+            emit useS_manualChanged(arg);
         }
     }
 
@@ -328,7 +329,7 @@ public slots:
     {
         if (m_s_manual != arg) {
             m_s_manual = arg;
-            emit onS_manualChanged(arg);
+            emit s_manualChanged(arg);
         }
     }
 
@@ -374,9 +375,9 @@ signals:
 
     void xt_wChanged(QList<double> arg);
 
-    void onUseS_manualChanged(bool arg);
+    void useS_manualChanged(bool arg);
 
-    void onS_manualChanged(QVariantList arg);
+    void s_manualChanged(QVariantList arg);
 
 private:
 
