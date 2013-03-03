@@ -149,6 +149,7 @@ public:
     Q_INVOKABLE void saveMainSettings();
     Q_INVOKABLE void saveManualTrajectory();
     Q_INVOKABLE bool areEmpty();
+    Q_INVOKABLE QString getFullName();
     void saveOtherSettings();
     void saveLastSettings();
 
@@ -378,6 +379,8 @@ signals:
     void useS_manualChanged(bool arg);
 
     void s_manualChanged(QVariantList arg);
+
+    void loadImage(QString image);
 
 private:
 

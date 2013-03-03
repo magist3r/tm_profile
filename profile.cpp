@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "profile.h"
 #include "math.h"
 #include <QSettings>
+#include <QStandardPaths>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -433,6 +434,15 @@ bool Profile::areEmpty()
     return false;
 }
 
+QString Profile::getFullName()
+{
+    QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
+    if (m_useS_manual)
+        return savePath + getBaseName() + "_manual.png";
+    else
+        return savePath + getBaseName() + ".png";
+}
+
 
 void Profile::saveOtherSettings()
 {
@@ -531,8 +541,13 @@ void Profile::loadSettings(QString value)
        setRa2(settings.value("ra2").toDouble());
        setRf2(settings.value("rf2").toDouble());
        setUseS_manual(settings.value("useManualTr").toBool());
-       if (m_useS_manual)
+       QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
+       if (m_useS_manual) {
            setS_manual(settings.value("XtList").toList());
+           emit loadImage(savePath + value + "_manual.png");
+       } else {
+           emit loadImage(savePath + value + ".png");
+       }
 
        //settings.setValue("rf2", m_rf2);
    }

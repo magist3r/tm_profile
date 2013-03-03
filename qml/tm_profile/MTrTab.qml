@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtDesktop 1.0
 
 Tab {
+
+    property alias checkbox: checkbox
     title: qsTr("Manual trajectory")
 
     CheckBox {
@@ -31,8 +33,9 @@ Tab {
             onValueChanged: {
                 if (my_array[index] != item.value) {
                     my_array[index] = item.value
+                    parametersChanged = true
                     profile.s_manual = my_array
-                    console.log("lilililil")
+                    console.log(profile.s_manual[index])
                 }
 
 
@@ -45,33 +48,4 @@ Tab {
             Component.onCompleted: arrayChanged.connect(function () { item.value = my_array[index]})
         }}
     }
-
-
-
-
-//        ListModel {
-//            id: listModel
-//            Component.onCompleted: {
-//                for (var i = 0; i < 9; i++) {
-//                    listModel.append({"bw": i/2, "xt": 0})
-//                }
-//            }
-
-//        }
-
-//        TableView {
-//            model: listModel
-//          TableColumn {
-
-//                role: "bw"
-//                title: "bw"
-//            }
-
-
-//                        TableColumn {
-//                            role: "xt"
-//                            title: "xt"
-//                        }
-
-//        }
 }

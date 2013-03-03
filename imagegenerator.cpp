@@ -98,10 +98,10 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     // Save generated images
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
     qDebug() << savePath;
-    image1.save(savePath + image_basename + "_1.png");
-    image2.save(savePath + image_basename + "_2.png");
-    image3.save(savePath + image_basename + "_3.png");
-    emit imagesGenerated(savePath + image_basename + "_1.png", savePath + image_basename + "_2.png");
+  //  image1.save(savePath + image_basename + "_1.png");
+  //  image2.save(savePath + image_basename + "_2.png");
+    image3.save(savePath + image_basename + ".png");
+    emit imagesGenerated(savePath + image_basename + ".png");
 }
 
 QColor ImageGenerator::getColor(double delta_s, double min, double max)

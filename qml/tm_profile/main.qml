@@ -15,6 +15,7 @@ ApplicationWindow {
     minimumWidth: 640
     minimumHeight: 480
 
+    //property alias checkbox: mTrTab.checkbox
     property bool parametersChanged: false
     property var my_array: new Array(11)
 
@@ -28,7 +29,7 @@ ApplicationWindow {
     }
 
     function isArrayEmpty() {
-        if (checkbox.checked) {
+        if (mTrTab.checkbox.checked) {
             for (var i=0; i<=10; i++) {
                 if (my_array[i] === 0 || my_array[i] === undefined)
                     return true
@@ -47,12 +48,31 @@ ApplicationWindow {
     TabFrame {
         id: tabs
         property int margins : styleitem.style == "mac" ? 16 : 0
-        anchors.fill: parent
-        anchors.margins: margins
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
 
-        MainTab {}
+        height: 200
+
+        anchors.margins: margins
+      //  onChildrenRectChanged: height = childrenRect.height
+
+        MainTab { id: mainTab }
         AddTab {}
-        MTrTab {}
+        MTrTab { id: mTrTab }
+    }
+
+    Images {
+        id: images
+
+        anchors {
+            top: tabs.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
     }
 }
 
