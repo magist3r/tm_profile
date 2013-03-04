@@ -8,14 +8,14 @@ Tab {
 
     CheckBox {
         id: checkbox
-        checked: profile.useS_manual
-        onCheckedChanged: profile.useS_manual = checked
-      //  Component.onCompleted: profile[useS_manualChanged].connect(function () { item.value = profile.useS_manual})
+        checked: profile.useXtList
+        onCheckedChanged: profile.useXtList = checked
+        Component.onCompleted: profile["useXtListChanged"].connect(function () { checkbox.checked = profile.useXtList})
         text: "ololo"
     }
 
     Repeater {
-        model: 11
+        model: profile.bw * 2 + 1
         anchors.top: checkbox.bottom
         Row {
             visible: checkbox.checked
@@ -28,14 +28,14 @@ Tab {
 
         SpinBox {
             id: item
-            value: my_array[index]
-            property int f_index: index
+            value: profile.xtList[index]
+            //property int f_index: index
             onValueChanged: {
-                if (my_array[index] != item.value) {
-                    my_array[index] = item.value
+                if (profile.xtList[index] != item.value) {
+                  //  my_array[index] = item.value
                     parametersChanged = true
-                    profile.s_manual = my_array
-                    console.log(profile.s_manual[index])
+                    profile.xtList[index] = item.value
+                    console.log(profile.xtList[index])
                 }
 
 
@@ -45,7 +45,12 @@ Tab {
        //         console.log(my_array[index])
        //         console.log(profile.s_manual[index])
             }
-            Component.onCompleted: arrayChanged.connect(function () { item.value = my_array[index]})
-        }}
+            Component.onCompleted: profile["xtListChanged"].connect(function () {
+                if (item.value != profile.xtList[index])
+                    item.value = profile.xtList[index]
+            })
+
+        }
+        }
     }
 }

@@ -35,7 +35,7 @@ Profile::Profile(QObject *parent)
     m_c = 0.25;
     m_nr = 200;
     m_nW = 250;
-    setUseS_manual(false);
+    setUseXtList(false);
 
 
 }
@@ -118,8 +118,8 @@ void Profile::calculate()
 
     double Wi = m_W0;
     // Расчет коэффициентов смещения
-    if (m_useS_manual) {
-        m_xt_w = squareMethod(s_manual());
+    if (m_useXtList) {
+        m_xt_w = squareMethod(xtList());
     } else {
         for (int i=0; i <= m_nW; i++) {
             double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
@@ -220,7 +220,7 @@ void Profile::calculate()
         Wi += dW;
     }
     QString baseName = getBaseName();
-    if (m_useS_manual)
+    if (m_useXtList)
         baseName += "_manual";
 
     emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height, baseName);
@@ -302,12 +302,15 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
     return X;
     }
 
-QList<double> Profile::squareMethod(const QVariantList &S)
+QList<double> Profile::squareMethod(const QList<qreal> &S)
 {
     QMap<double, double> map;
-    for (int i = 0; i <= 10; i++)
-        map[i * 1.0 / 2] = S[i].toDouble();
-
+    QListIterator<qreal> i(S);
+    int n = 0;
+    while (i.hasNext()) {
+        map[n * 1.0 / 2] = i.next();
+        n++;
+    }
     return squareMethod(map);
 }
 
@@ -395,9 +398,13 @@ void Profile::saveMainSettings()
     settings.setValue("d0", m_d0);
     settings.setValue("ra2", m_ra2);
     settings.setValue("rf2", m_rf2);
-    settings.setValue("useManualTr", m_useS_manual);
-    if (m_useS_manual) {
-        settings.setValue("XtList", m_s_manual);
+    settings.setValue("useManualTr", m_useXtList);
+    if (m_useXtList) {
+        QVariantList variantList;
+        QListIterator<qreal> i(m_xtList);
+        while (i.hasNext())
+            variantList << i.next();
+        settings.setValue("XtList", variantList);
     }
     settings.endGroup();
 }
@@ -407,7 +414,7 @@ void Profile::saveManualTrajectory()
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
     settings.beginGroup(getBaseName());
-    settings.setValue("XtList", m_s_manual);
+    //settings.setValue("XtList", m_s_manual);
     settings.endGroup();
 }
 
@@ -431,13 +438,20 @@ bool Profile::areEmpty()
          da0() == 0 )
         return true;
 
+    QListIterator<qreal> i(xtList());
+    while (i.hasNext()) {
+        if (i.next() == 0)
+            return true;
+    }
+
+
     return false;
 }
 
 QString Profile::getFullName()
 {
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-    if (m_useS_manual)
+    if (m_useXtList)
         return savePath + getBaseName() + "_manual.png";
     else
         return savePath + getBaseName() + ".png";
@@ -540,10 +554,16 @@ void Profile::loadSettings(QString value)
        setD0(settings.value("d0").toDouble());
        setRa2(settings.value("ra2").toDouble());
        setRf2(settings.value("rf2").toDouble());
-       setUseS_manual(settings.value("useManualTr").toBool());
+       setUseXtList(settings.value("useManualTr").toBool());
        QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-       if (m_useS_manual) {
-           setS_manual(settings.value("XtList").toList());
+       if (m_useXtList) {
+           QList<QVariant> variantList = settings.value("XtList").toList();
+           QList<qreal> qList;
+           QListIterator<QVariant> i(variantList);
+           while (i.hasNext()) {
+               qList << i.next().toDouble();
+           }
+           setXtList(qList);
            emit loadImage(savePath + value + "_manual.png");
        } else {
            emit loadImage(savePath + value + ".png");

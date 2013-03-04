@@ -55,8 +55,8 @@ class Profile : public QObject
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
 
-    Q_PROPERTY(QVariantList s_manual READ s_manual WRITE setS_manual NOTIFY s_manualChanged)
-    Q_PROPERTY(bool useS_manual READ useS_manual WRITE setUseS_manual NOTIFY useS_manualChanged)
+    Q_PROPERTY(QList<qreal> xtList READ xtList WRITE setXtList NOTIFY xtListChanged)
+    Q_PROPERTY(bool useXtList READ useXtList WRITE setUseXtList NOTIFY useXtListChanged)
 
 
 
@@ -172,14 +172,14 @@ public:
         return m_xt_w;
     }
 
-    bool useS_manual() const
+    bool useXtList() const
     {
-        return m_useS_manual;
+        return m_useXtList;
     }
 
-    QVariantList s_manual() const
+    QList<qreal> xtList() const
     {
-        return m_s_manual;
+        return m_xtList;
     }
 
 public slots:
@@ -318,19 +318,20 @@ public slots:
         }
     }
 
-    void setUseS_manual(bool arg)
+    void setUseXtList(bool arg)
     {
-        if (m_useS_manual != arg) {
-            m_useS_manual = arg;
-            emit useS_manualChanged(arg);
+        qDebug() << m_useXtList << arg;
+        if (m_useXtList != arg) {
+            m_useXtList = arg;
+            emit useXtListChanged(arg);
         }
     }
 
-    void setS_manual(QVariantList arg)
+    void setXtList(QList<qreal> arg)
     {
-        if (m_s_manual != arg) {
-            m_s_manual = arg;
-            emit s_manualChanged(arg);
+        if (m_xtList != arg) {
+            m_xtList = arg;
+            emit xtListChanged(arg);
         }
     }
 
@@ -376,9 +377,9 @@ signals:
 
     void xt_wChanged(QList<double> arg);
 
-    void useS_manualChanged(bool arg);
+    void useXtListChanged(bool arg);
 
-    void s_manualChanged(QVariantList arg);
+    void xtListChanged(QList<qreal> arg);
 
     void loadImage(QString image);
 
@@ -392,7 +393,7 @@ private:
 
     QList<double> squareMethod(const QMap<double, double> &S);
 
-    QList<double> squareMethod(const QVariantList &S);
+    QList<double> squareMethod(const QList<qreal> &S);
 
     void a_tw(double ry1, double Wi, double &x_tr, double &y_tr); // Подбор угла профиля в торцовом сечении
 
@@ -448,8 +449,8 @@ private:
 
     QList<double> m_xt_w;
     QStringList m_listOfParameters;
-    bool m_useS_manual;
-    QVariantList m_s_manual;
+    bool m_useXtList;
+    QList<qreal> m_xtList;
 };
 
 #endif // PROFILE_H

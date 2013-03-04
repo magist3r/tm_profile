@@ -12,7 +12,7 @@ Column {
         tooltip: "Not all fields are not empty"
         onClicked: {
 
-            if (profile.areEmpty() || isArrayEmpty()) {
+            if (profile.areEmpty()) {
                 Qt.createComponent("Alert.qml").createObject(mainWindow)
                 console.log("haha")
 

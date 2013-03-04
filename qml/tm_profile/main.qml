@@ -8,6 +8,8 @@ ApplicationWindow {
     title: qsTr("tm_profile - program for calculation of cylinder-bevel transmissions")
     visible: true
 
+   // property alias xtList: profile.xtList
+
     signal arrayChanged
 
   //  color: syspal.window
@@ -17,18 +19,18 @@ ApplicationWindow {
 
     //property alias checkbox: mTrTab.checkbox
     property bool parametersChanged: false
-    property var my_array: new Array(11)
+   // property var my_array: new Array(11)
 
-    Connections {
+    /*Connections {
         target: profile
         onS_manualChanged: {
             console.log("ololololololoolololololo")
             my_array = profile.s_manual
             arrayChanged()
         }
-    }
+    }*/
 
-    function isArrayEmpty() {
+  /*  function isArrayEmpty() {
         if (mTrTab.checkbox.checked) {
             for (var i=0; i<=10; i++) {
                 if (my_array[i] === 0 || my_array[i] === undefined)
@@ -36,7 +38,7 @@ ApplicationWindow {
             }
         }
         return false
-    }
+    }*/
 
     // Profile { id: profile }
 
