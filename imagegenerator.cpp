@@ -10,12 +10,21 @@ ImageGenerator::ImageGenerator(QObject *parent) :
 
 void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename)
 {
+    m_legendMin1 = Black;
+    m_legendMin2 = Black;
+
+    m_legendMax1 = DarkRed;
+    m_legendMax2 = DarkRed;
+
+    m_legendList1.clear();
+    m_legendList2.clear();
+
     double width = 250;
     double height = 200;
 
     QImage image1(width, height, QImage::Format_ARGB32_Premultiplied);
     QImage image2(width, height, QImage::Format_ARGB32_Premultiplied);
-    QImage image3(width*2 + 50, height, QImage::Format_ARGB32_Premultiplied);
+    QImage image3(width*2 + 50 + 50, height, QImage::Format_ARGB32_Premultiplied);
 
     image1.fill(0);
     image2.fill(0);
@@ -47,11 +56,30 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter1.setTransform(transform);
     painter2.setTransform(transform);
 
-    double max_value1 = delta;
-    double min_value1 = 0;
+    double step = delta / 3;
 
-    double max_value2 = delta_s_max;
-    double min_value2 = delta_s_max - delta;
+    m_legendList1 << delta
+                  << delta - step
+                  << step
+                  << 0.0
+                  << -step
+                  << -2 * step
+                  << -delta;
+
+    m_legendList2 << delta_s_max
+                  << delta_s_max - step
+                  << delta_s_max - (2 * step)
+                  << delta_s_max - (3 * step)
+                  << delta_s_max - (4 * step)
+                  << delta_s_max - (5 * step)
+                  << delta_s_max - (6 * step);
+
+
+  //  double max_value1 = delta;
+  //  double min_value1 = 0;
+
+  //  double max_value2 = delta_s_max;
+  //  double min_value2 = delta_s_max - delta;
 
     double maxX;
     double maxY;
@@ -66,8 +94,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
         {
             j.next();
 
-            painter1.setPen(getColor(j.value(), min_value1, max_value1));
-            painter2.setPen(getColor(j.value(), min_value2, max_value2));
+            painter1.setPen(getColor(j.value(), First));
+            painter2.setPen(getColor(j.value(), Second));
             painter1.drawPoint(QPointF(i.key(), j.key()));
             painter2.drawPoint(QPointF(i.key(), j.key()));
             maxX = qMax(i.key(), maxX);
@@ -75,6 +103,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
 
         }
     }
+
+    qDebug() << m_legendMin1 << m_legendMax1 << m_legendMin2 << m_legendMax2;
 
     // Draw border
     painter1.setPen(Qt::black);
@@ -91,8 +121,10 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter1.end();
     painter2.end();
 
-    painter3.drawImage(0,0, image1);
-    painter3.drawImage(width+50,0, image2);
+    painter3.drawImage(0,0, drawLegend(First));
+    painter3.drawImage(50,0, image1);
+    painter3.drawImage(width+100,0, image2);
+
     painter3.end();
 
     // Save generated images
@@ -104,26 +136,115 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     emit imagesGenerated(savePath + image_basename + ".png");
 }
 
-QColor ImageGenerator::getColor(double delta_s, double min, double max)
+QColor ImageGenerator::getColor(double delta_s, legend l)
 {
-    double delta = max - min;
-    double step = delta / 3;
-    double min2 = min - delta;
+    QList<double> *list;
+    switch (l) {
+    case First:
+        list = &m_legendList1;
+        break;
+    case Second:
+        list = &m_legendList2;
+        break;
+    }
 
-    if (delta_s < min2)
-        return Qt::black;
-    else if (delta_s < (min2 + step))
-        return Qt::darkGray;
-    else if (delta_s < (min2 + 2 * step))
-        return Qt::gray;
-    else if (delta_s < min)
-        return Qt::white;
-    else if (delta_s < (min + step))
-        return Qt::green;
-    else if (delta_s < (min + 2 * step))
-        return Qt::yellow;
-    else if (delta_s < max)
-        return Qt::red;
+    if (delta_s < list->at(6))
+        return addColorToLegend(Black, l);
+    else if (delta_s < list->at(5))
+        return addColorToLegend(DarkGray, l);
+    else if (delta_s < list->at(4))
+        return addColorToLegend(Gray, l);
+    else if (delta_s < list->at(3))
+        return addColorToLegend(White, l);
+    else if (delta_s < list->at(2))
+        return addColorToLegend(Green, l);
+    else if (delta_s < list->at(1))
+        return addColorToLegend(Yellow, l);
+    else if (delta_s < list->at(0))
+        return addColorToLegend(Red, l);
     else
-        return Qt::darkRed;
+        return addColorToLegend(DarkRed, l);
+}
+
+QImage ImageGenerator::drawLegend(legend l)
+{
+    double width = 50;
+    double height = 50;
+    int min, max;
+
+    QImage image(width, height, QImage::Format_ARGB32_Premultiplied);
+    image.fill(0);
+
+    QPainter painter(&image);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Qt4CompatiblePainting);
+
+    switch (l) {
+    case First:
+        min = m_legendMin1;
+        max = m_legendMax1;
+        break;
+    case Second:
+        min = m_legendMin1;
+        max = m_legendMax1;
+        break;
+    }
+
+    int n = 0;
+    for (int i = min; i <= max; i++) {
+        painter.setBrush(getColorFromEnum(static_cast<colors>(i)));
+        painter.drawRect(0,n,30,10);
+        n+= 10;
+
+    }
+
+    painter.end();
+     return image;
+    //painter.drawLine(20,0,50,0);
+    //painter.d
+
+}
+
+QColor ImageGenerator::addColorToLegend(ImageGenerator::colors c, ImageGenerator::legend l)
+{
+    switch (l) {
+        case First:
+            if (c < m_legendMin1)
+                m_legendMin1 = c;
+            if (c > m_legendMax1)
+                m_legendMax1 = c;
+            break;
+
+        case Second:
+            if (c < m_legendMin2)
+                m_legendMin2 = c;
+            if (c > m_legendMax2)
+                m_legendMax2 = c;
+            break;
+    }
+
+    return getColorFromEnum(c);
+}
+
+QColor ImageGenerator::getColorFromEnum(ImageGenerator::colors c)
+{
+    switch (c) {
+        case DarkRed:
+            return Qt::darkRed;
+        case Red:
+            return Qt::red;
+        case Yellow:
+            return Qt::yellow;
+        case Green:
+            return Qt::green;
+        case White:
+            return Qt::white;
+        case Gray:
+            return Qt::gray;
+        case DarkGray:
+            return Qt::darkGray;
+        case Black:
+            return Qt::black;
+    }
 }

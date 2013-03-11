@@ -18,7 +18,30 @@ public slots:
     void paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename);
 
 private:
-    QColor getColor(double delta_s, double min, double max);
+    enum colors {
+        DarkRed,
+        Red,
+        Yellow,
+        Green,
+        White,
+        Gray,
+        DarkGray,
+        Black
+    };
+    enum legend {
+        First,
+        Second
+    };
+
+    QColor getColor(double delta_s, legend l);
+    QImage drawLegend(legend l);
+    QColor addColorToLegend(colors c, legend l);
+    QColor getColorFromEnum(colors c);
+
+
+    colors m_legendMin1, m_legendMax1, m_legendMin2, m_legendMax2;
+    QList<double> m_legendList1;
+    QList<double> m_legendList2;
 };
 
 #endif // IMAGEGENERATOR_H
