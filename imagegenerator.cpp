@@ -24,7 +24,7 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
 
     QImage image1(width, height, QImage::Format_ARGB32_Premultiplied);
     QImage image2(width, height, QImage::Format_ARGB32_Premultiplied);
-    QImage image3(width*2 + 50 + 50, height, QImage::Format_ARGB32_Premultiplied);
+    QImage image3(width + 100, height*2, QImage::Format_ARGB32_Premultiplied);
 
     image1.fill(0);
     image2.fill(0);
@@ -122,8 +122,11 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter2.end();
 
     painter3.drawImage(0,0, drawLegend(First));
-    painter3.drawImage(50,0, image1);
-    painter3.drawImage(width+100,0, image2);
+    painter3.drawImage(100,0, image1);
+    painter3.drawImage(0, height, drawLegend(Second));
+    painter3.drawImage(100, height, image2);
+
+
 
     painter3.end();
 
@@ -168,9 +171,10 @@ QColor ImageGenerator::getColor(double delta_s, legend l)
 
 QImage ImageGenerator::drawLegend(legend l)
 {
-    double width = 50;
-    double height = 50;
+    double width = 100;
+    double height = 250;
     int min, max;
+    QList<double> *list;
 
     QImage image(width, height, QImage::Format_ARGB32_Premultiplied);
     image.fill(0);
@@ -184,23 +188,33 @@ QImage ImageGenerator::drawLegend(legend l)
     case First:
         min = m_legendMin1;
         max = m_legendMax1;
+        list = &m_legendList1;
         break;
     case Second:
-        min = m_legendMin1;
-        max = m_legendMax1;
+        min = m_legendMin2 + 1;
+        max = m_legendMax2;
+        list = &m_legendList2;
         break;
     }
 
-    int n = 0;
+    int n = 0, m = 0;
     for (int i = min; i <= max; i++) {
+        if (i != 0) {
+            painter.drawText(QRectF(0,n,40,20), Qt::AlignCenter, QString::number(list->at(i-1) * 1000, 'f', 1));
+        } else if (i == 0 && i == max) {
+            painter.drawText(QRectF(0,n+20,40,20), Qt::AlignCenter, QString::number(list->at(i) * 1000, 'f', 1));
+        }
+
+
         painter.setBrush(getColorFromEnum(static_cast<colors>(i)));
-        painter.drawRect(0,n,30,10);
-        n+= 10;
+        painter.drawRect(40,n+10,40,20);
+       //
+        n+= 20;
 
     }
 
     painter.end();
-     return image;
+    return image;
     //painter.drawLine(20,0,50,0);
     //painter.d
 

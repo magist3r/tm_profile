@@ -15,7 +15,7 @@ ApplicationWindow {
   //  color: syspal.window
 
     minimumWidth: 640
-    minimumHeight: 480
+    minimumHeight: 640
 
     //property alias checkbox: mTrTab.checkbox
     property bool parametersChanged: false
