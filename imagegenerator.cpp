@@ -205,11 +205,12 @@ QImage ImageGenerator::drawLegend(legend l)
 
     int n = 0, m = 0;
     for (int i = min; i <= max; i++) {
-        if (i != 0) {
+        if (i != 0)
             painter.drawText(QRectF(0,n,40,20), Qt::AlignCenter, QString::number(list->at(i-1) * 1000, 'f', 1));
-        } else if (i == 0 && i == max) {
+
+        if ( (i == max) && (i != 7) )
             painter.drawText(QRectF(0,n+20,40,20), Qt::AlignCenter, QString::number(list->at(i) * 1000, 'f', 1));
-        }
+
 
 
         painter.setBrush(getColorFromEnum(static_cast<colors>(i)));

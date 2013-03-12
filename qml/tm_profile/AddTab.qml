@@ -3,25 +3,66 @@ import QtDesktop 1.0
 
 Tab {
       title: qsTr("Add. parameters")
-      GroupBox {
-      Fields {
 
-          model: [ "alpha", "c", "ha"]
-      }
-          title: qsTr("blabla")
-id: field1
-          width: parent.width / parent.children.length
+      Text {
+          id: title1
+          text: qsTr("Main parameters")
+          anchors.top: parent.top
+          anchors.topMargin: 10
+          anchors.horizontalCenter: parent.horizontalCenter
       }
 
-      GroupBox {
-      Fields {
+      Item {
+          id: fields1
+          anchors.top: title1.bottom
+          anchors.topMargin: 10
+          width: parent.width / 2
+          height: childrenRect.height
+          Fields { model: [ "m", "z1", "z2", "bw", "ra2" ] }
+      }
 
-          model: [ "z0", "x0", "da0"]
+      Item {
+          id: fields2
+          anchors.top: title1.bottom
+          anchors.topMargin: 10
+          width: parent.width / 2
+          anchors.left: fields1.right
+          height: childrenRect.height
+          Fields { model: [ "W0", "E", "x2", "d0", "rf2" ] }
       }
-id: field2
-           anchors.left: field1.right
-           title: qsTr("blablabla")
-          width: parent.width / parent.children.length
+
+      Text {
+          id: title2
+          anchors.top: fields1.bottom
+          anchors.topMargin: 10
+
+          text: qsTr("Main parameters")
+          anchors.horizontalCenter: parent.horizontalCenter
       }
+
+      Item {
+         // title: qsTr("blabla")
+          id: field1
+          anchors.top: title2.bottom
+          anchors.topMargin: 10
+          width: parent.width / 2
+          height: childrenRect.height
+          Fields { model: [ "alpha", "c", "ha"] }
+
+      }
+
+      Item {
+         // title: qsTr("blabla")
+          id: field2
+          anchors.top: title2.bottom
+          anchors.left: field1.right
+          anchors.topMargin: 10
+          width: parent.width / 2
+          height: childrenRect.height
+          Fields { model: [ "z0", "x0", "da0"] }
+
+      }
+
+
 
 }

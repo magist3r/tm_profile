@@ -3,26 +3,16 @@ import QtDesktop 1.0
 
 Tab {
 
-    property alias checkbox: checkbox
+   // property alias checkbox: checkbox
     title: qsTr("Manual trajectory")
 
-    CheckBox {
-        id: checkbox
-        checked: profile.useXtList
-        onCheckedChanged: {
-            profile.useXtList = checked
-            images.setImageSource()
-        }
-        Component.onCompleted: profile["useXtListChanged"].connect(function () { checkbox.checked = profile.useXtList})
-        text: "ololo"
-    }
 
     Repeater {
         model: profile.bw * 2 + 1
-        anchors.top: checkbox.bottom
+     //   anchors.top: checkbox.bottom
         Row {
             visible: checkbox.checked
-            y: checkbox.height + index * (height + 10)
+            y: index * (height + 10)
 
         Label {
             id: label

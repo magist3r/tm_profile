@@ -10,8 +10,8 @@ Item {
     function setImageSource() {
         _image1.source = ""
         _image2.source = ""
-        var basename = profile.dataLocation + '/' + mainTab.list.selectedText
-        if (mTrTab.checkbox.checked) {
+        var basename = profile.dataLocation + '/' + list.selectedText
+        if (checkbox.checked) {
             _image1.source = basename + '_manual_1.png'
             _image2.source = basename + '_manual_2.png'
         } else {
@@ -38,6 +38,7 @@ Item {
     Image {
         id: _image1
         cache: false
+      //  antialiasing: true
 
         anchors {
             top: parent.top
@@ -48,8 +49,13 @@ Item {
     }
     Text {
         id: text
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: _image1.bottom
-        text: "dpvmfhjv;lkfhjv;fjh;lvgfmjhlvkdjhmvljmh;lddbjvflghjv,lkghbmjvlkfbhjk"
+      //  anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        text: "dpvmfhjv;lkfhjv;fjh;lvgfmjhl vkdjhmvljmh;lddbjvflg hjv,lkghbmjvlkfbhjkfghvkjdnh gvlkdfhigjvhdfjgt hdkfjghvkjdghvjg hvjnfhgkvjgnkghvkjdh"
     }
 
     Image {

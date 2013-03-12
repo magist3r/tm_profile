@@ -2,7 +2,8 @@ import QtQuick 2.0
 import QtDesktop 1.0
 
 
-Column {
+Row {
+    spacing: 10
 
     Button {
         id: calculate

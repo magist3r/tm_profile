@@ -14,8 +14,8 @@ ApplicationWindow {
 
   //  color: syspal.window
 
-    minimumWidth: 640
-    minimumHeight: 640
+    minimumWidth: 450
+    minimumHeight: 500
 
     //property alias checkbox: mTrTab.checkbox
     property bool parametersChanged: false
@@ -47,35 +47,111 @@ ApplicationWindow {
         onCalculateFinished: imageGenerator.onCalculated(_result, _delta_s_max)
     }*/
 
-    TabFrame {
-        id: tabs
-        property int margins : styleitem.style == "mac" ? 16 : 0
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+    Item {
+        id: parameters
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: list.height
+        anchors.margins: 10
+
+        Label {
+            id: label1
+            text: qsTr("Parameters:")
+            font.pointSize: 10
+            anchors.verticalCenter: list.verticalCenter
+
         }
 
-        height: 200
+        ComboBox {
+            id: list
+            model: profile.listOfParameters
+            anchors.left: label1.right
+            anchors.right: buttons.left
+            anchors.margins: 10
+            onSelectedTextChanged: {
+                profile.loadSettings(list.selectedText)
+                images.setImageSource()
+            }
+            Component.onCompleted: profile.loadSettings(list.selectedText)
+        }
 
-        anchors.margins: margins
-      //  onChildrenRectChanged: height = childrenRect.height
-
-        MainTab { id: mainTab }
-        AddTab {}
-        MTrTab { id: mTrTab }
+        Buttons {
+            id: buttons
+            anchors.right: parent.right
+        }
     }
 
-    Images {
-        id: images
-
+    CheckBox {
         anchors {
-            top: tabs.bottom
+            top: parameters.bottom
+            right: parent.right
+            left: parent.left
+            margins: 10
+        }
+
+
+     //   anchors.margins: 10
+        id: checkbox
+        checked: profile.useXtList
+        onCheckedChanged: {
+            profile.useXtList = checked
+            images.setImageSource()
+        }
+        Component.onCompleted: profile["useXtListChanged"].connect(function () { checkbox.checked = profile.useXtList})
+        text: qsTr("Use manual xt list")
+    }
+
+
+
+    TabFrame {
+        id: tabs
+      //  property int margins : styleitem.style == "mac" ? 16 : 0
+        anchors {
+            top: checkbox.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
+            margins: 2
+            topMargin: 10
+        }
+
+      //  height: 200
+
+     //   anchors.margins: margins
+      //  onChildrenRectChanged: height = childrenRect.height
+
+        Tab {
+            id: mainTab
+            title: qsTr("Inertial zone")
+            Images {
+                id: images
+                anchors.fill: parent
+            }
+        }
+        AddTab {}
+        MTrTab {
+            id: mTrTab
+            visible: false
+        }
+        Tab {
+            Repeater {
+                model: ["W0", "bw"]
+                SpinBox {
+                    id: item
+                    y: index*height + 10
+                 //   value: profile[modelData]
+                    onValueChanged: profile[modelData] = value
+                    Binding { target: item; property: value; value: profile[modelData] }
+                }
+
+            }
+
+
         }
     }
+
+
 }
 
 
