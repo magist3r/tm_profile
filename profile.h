@@ -57,6 +57,7 @@ class Profile : public QObject
 
     Q_PROPERTY(QList<qreal> xtList READ xtList WRITE setXtList NOTIFY xtListChanged)
     Q_PROPERTY(bool useXtList READ useXtList WRITE setUseXtList NOTIFY useXtListChanged)
+    Q_PROPERTY(QString dataLocation READ dataLocation WRITE setdataLocation NOTIFY dataLocationChanged)
 
 
 
@@ -180,6 +181,11 @@ public:
     QList<qreal> xtList() const
     {
         return m_xtList;
+    }
+
+    QString dataLocation() const
+    {
+        return m_dataLocation;
     }
 
 public slots:
@@ -335,6 +341,14 @@ public slots:
         }
     }
 
+    void setdataLocation(QString arg)
+    {
+        if (m_dataLocation != arg) {
+            m_dataLocation = arg;
+            emit dataLocationChanged(arg);
+        }
+    }
+
 signals:
     void addToDebugConsole(QString text);
 
@@ -382,6 +396,8 @@ signals:
     void xtListChanged(QList<qreal> arg);
 
     void loadImage(QString image);
+
+    void dataLocationChanged(QString arg);
 
 private:
 
@@ -451,6 +467,7 @@ private:
     QStringList m_listOfParameters;
     bool m_useXtList;
     QList<qreal> m_xtList;
+    QString m_dataLocation;
 };
 
 #endif // PROFILE_H

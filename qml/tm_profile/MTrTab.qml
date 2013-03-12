@@ -9,7 +9,10 @@ Tab {
     CheckBox {
         id: checkbox
         checked: profile.useXtList
-        onCheckedChanged: profile.useXtList = checked
+        onCheckedChanged: {
+            profile.useXtList = checked
+            images.setImageSource()
+        }
         Component.onCompleted: profile["useXtListChanged"].connect(function () { checkbox.checked = profile.useXtList})
         text: "ololo"
     }

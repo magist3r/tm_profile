@@ -4,6 +4,8 @@ import QtDesktop 1.0
 Tab {
     title: qsTr("Inertial zone")
 
+    property alias list: list
+
 
     Item {
         id: leftcol
@@ -44,7 +46,10 @@ Tab {
                 model: profile.listOfParameters
                 anchors.left: label1.right
                 anchors.right: parent.right
-                onSelectedTextChanged: profile.loadSettings(list.selectedText)
+                onSelectedTextChanged: {
+                    profile.loadSettings(list.selectedText)
+                    images.setImageSource()
+                }
                 Component.onCompleted: profile.loadSettings(list.selectedText)
             }
         }

@@ -42,6 +42,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         datadir.mkpath(datadir.path());
 
     Profile *profile = new Profile();
+    profile->setdataLocation(datadir.absolutePath());
+
     ImageGenerator *generator = new ImageGenerator();
     QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
                      generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));

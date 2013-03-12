@@ -12,7 +12,7 @@ public:
     explicit ImageGenerator(QObject *parent = 0);
     
 signals:
-    void imagesGenerated(QString image);
+    void imagesGenerated();
     
 public slots:
     void paint(QMap<double, QMap<double,double> > &result, double delta, double delta_s_max, double image_width, double image_height, QString image_basename);

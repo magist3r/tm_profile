@@ -3,35 +3,82 @@ import QtDesktop 1.0
 
 Item {
     id: images
+   // property alias image: _image
 
-   property int margin: (width - _image.width ) / 2
-  //  onChildrenRectChanged: margin = (width - _image2.width - _image2.width) / 3
+  //  property int margin: (width - _image.width ) / 2
+
+    function setImageSource() {
+        _image1.source = ""
+        _image2.source = ""
+        var basename = profile.dataLocation + '/' + mainTab.list.selectedText
+        if (mTrTab.checkbox.checked) {
+            _image1.source = basename + '_manual_1.png'
+            _image2.source = basename + '_manual_2.png'
+        } else {
+            _image1.source = basename + '_1.png'
+            _image2.source = basename + '_2.png'
+        }
+    }
+
+    Connections {
+        target: imageGenerator
+
+        onImagesGenerated: {
+            console.log('ololololo')
+            setImageSource()
+           // _image.update()
+        }
+
+    }
 
 
 
 
 
     Image {
-        id: _image
+        id: _image1
+        cache: false
 
-//          width: 200
-//        height: 150
         anchors {
             top: parent.top
-            left: parent.left
-            leftMargin: images.margin
-            topMargin: 30
+            horizontalCenter: parent.horizontalCenter
+        //    leftMargin: images.margin
+       //     topMargin: 30
         }
+    }
+    Text {
+        id: text
+        anchors.top: _image1.bottom
+        text: "dpvmfhjv;lkfhjv;fjh;lvgfmjhlvkdjhmvljmh;lddbjvflghjv,lkghbmjvlkfbhjk"
+    }
 
-        Connections {
-            target: imageGenerator
+    Image {
+        id: _image2
+        cache: false
 
-            onImagesGenerated: {
-                _image.source = image
+        anchors {
+            top: text.bottom
+            horizontalCenter: parent.horizontalCenter
+          //  leftMargin: images.margin
+          //  topMargin: 30
+        }
+    }
+}
+
+     /*   states: [
+            State {
+                name: "clicked"
+                PropertyChanges {
+                    target: _image
+                    source: profile.dataLocation + '/' + mainTab.list.selectedText + '_manual.png'
+                }
             }
+        ]*/
 
-        }
 
+
+
+/*
         Connections {
             target: profile
             onLoadImage: _image.source = image
@@ -41,7 +88,7 @@ Item {
             target: mTrTab.checkbox
             onCheckedChanged: _image.source = profile.getFullName()
         }
-    }
+    }*/
 
    /* Image {
         id: _image2
@@ -86,4 +133,5 @@ Item {
 
     }*/
 
-}
+
+
