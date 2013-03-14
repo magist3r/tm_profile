@@ -438,6 +438,9 @@ bool Profile::areEmpty()
          da0() == 0 )
         return true;
 
+    if (xtList().empty() && useXtList())
+        return true;
+
     QListIterator<qreal> i(xtList());
     while (i.hasNext()) {
         if (i.next() == 0)
@@ -555,21 +558,16 @@ void Profile::loadSettings(QString value)
        setRa2(settings.value("ra2").toDouble());
        setRf2(settings.value("rf2").toDouble());
        setUseXtList(settings.value("useManualTr").toBool());
-       QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-       if (m_useXtList) {
-           QList<QVariant> variantList = settings.value("XtList").toList();
+     //  QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
+       QList<QVariant> variantList = settings.value("XtList").toList();
+       if ( !variantList.empty() ) {
            QList<qreal> qList;
            QListIterator<QVariant> i(variantList);
            while (i.hasNext()) {
                qList << i.next().toDouble();
            }
            setXtList(qList);
-           emit loadImage(savePath + value + "_manual.png");
-       } else {
-           emit loadImage(savePath + value + ".png");
        }
-
-       //settings.setValue("rf2", m_rf2);
    }
 
    settings.endGroup();

@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtDesktop 1.0
 
 Tab {
-      title: qsTr("Add. parameters")
+      title: qsTr("Parameters")
 
       Text {
           id: title1
@@ -36,13 +36,12 @@ Tab {
           anchors.top: fields1.bottom
           anchors.topMargin: 10
 
-          text: qsTr("Main parameters")
+          text: qsTr("Additional parameters")
           anchors.horizontalCenter: parent.horizontalCenter
       }
 
       Item {
-         // title: qsTr("blabla")
-          id: field1
+          id: fields3
           anchors.top: title2.bottom
           anchors.topMargin: 10
           width: parent.width / 2
@@ -52,10 +51,9 @@ Tab {
       }
 
       Item {
-         // title: qsTr("blabla")
-          id: field2
+          id: fields4
           anchors.top: title2.bottom
-          anchors.left: field1.right
+          anchors.left: fields3.right
           anchors.topMargin: 10
           width: parent.width / 2
           height: childrenRect.height

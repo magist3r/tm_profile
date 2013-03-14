@@ -50,5 +50,7 @@ OTHER_FILES += \
     qml/tm_profile/Fields.qml \
     qml/tm_profile/Buttons.qml \
     qml/tm_profile/Alert.qml \
-    qmlapplicationviewer.pri
+    qmlapplicationviewer.pri \
+    qml/tm_profile/Parameters.qml \
+    qml/tm_profile/XtList.qml
 

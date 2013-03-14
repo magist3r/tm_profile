@@ -7,7 +7,6 @@ Row {
 
     Button {
         id: calculate
-        signal calculating
         width: 96
         text: qsTr("Calculate")
         tooltip: "Not all fields are not empty"
@@ -15,35 +14,21 @@ Row {
 
             if (profile.areEmpty()) {
                 Qt.createComponent("Alert.qml").createObject(mainWindow)
-                console.log("haha")
-
             } else {
                 if (parametersChanged) {
                     profile.saveMainSettings()
                     parametersChanged = false
                 }
-           //     if (checkbox.checked)
-             //       profile.saveManualTrajectory()
 
-
-                calculating()
                 profile.calculate()
             }
         }
     }
+
     Button {
         id: calculateR
         width: 96
         text: qsTr("CalculateR")
-        onClicked: {
-            profile.getRadius();
-        }
+        onClicked: profile.getRadius()
     }
-
-    Loader { id: loader }
-
-
-
-
-
 }

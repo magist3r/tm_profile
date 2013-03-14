@@ -26,12 +26,16 @@ Repeater {
             anchors.verticalCenter: label.verticalCenter
             anchors.left: label.right
             anchors.right: parent.right
-            value: profile[modelData]
             onValueChanged: {
                 parametersChanged = true
                 profile[modelData] = item.value
             }
-            Component.onCompleted: profile[modelData + "Changed"].connect(function () { item.value = profile[modelData]})
+
+            Binding {
+                target: item
+                property: "value"
+                value: profile[modelData]
+            }
         }
     }
 }
