@@ -26,8 +26,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <math.h>
 
-//extern double m, z1, z2, x2, W0, E, alpha, c, ha, z0, x0, da0, i21, rb2, delta2, psi_b2, d0, bw, ra2, rf2, dx, dx_0, dx_bw;
-
 class Profile : public QObject
 {
     Q_OBJECT
@@ -68,127 +66,49 @@ public:
 
     ~Profile();
 
-
-
-    QMap<double, QMap<double,double> > result;
-    QMap<double, QMap<double,double> > result_s_tr;
-    QMap<double, QMap<double,double> > result_s_pr;
-
     Q_INVOKABLE bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
     Q_INVOKABLE void calculate(); // Расчет толщин зубьев практического и теоретического профилей
-    double m() const
-    {
-        return m_m;
-    }
 
-    double z1() const
-    {
-        return m_z1;
-    }
 
-    double z2() const
-    {
-        return m_z2;
-    }
+    /* getters */
 
-    double x2() const
-    {
-        return m_x2;
-    }
+    double m() const { return m_m; }
+    double z1() const { return m_z1; }
+    double z2() const { return m_z2; }
+    double x2() const { return m_x2; }
+    double W0() const { return m_W0; }
+    double E() const { return m_E; }
+    double alpha() const { return m_alpha; }
+    double c() const { return m_c; }
+    double ha() const { return m_ha; }
+    double z0() const { return m_z0; }
+    double x0() const { return m_x0; }
+    double da0() const { return m_da0; }
+    double d0() const { return m_d0; }
+    double bw() const { return m_bw; }
+    double ra2() const { return m_ra2; }
+    double rf2() const { return m_rf2; }
+    QList<double> xt_w() const {  return m_xt_w; }
+    bool useXtList() const { return m_useXtList; }
+    QList<qreal> xtList() const { return m_xtList; }
+    QString dataLocation() const { return m_dataLocation; }
 
-    double W0() const
-    {
-        return m_W0;
-    }
-
-    double E() const
-    {
-        return m_E;
-    }
-
-    double alpha() const
-    {
-        return m_alpha;
-    }
-
-    double c() const
-    {
-        return m_c;
-    }
-
-    double ha() const
-    {
-        return m_ha;
-    }
-
-    double z0() const
-    {
-        return m_z0;
-    }
-
-    double x0() const
-    {
-        return m_x0;
-    }
-
-    double da0() const
-    {
-        return m_da0;
-    }
-
-    double d0() const
-    {
-        return m_d0;
-    }
-
-    double bw() const
-    {
-        return m_bw;
-    }
+    /* end getters */
 
     Q_INVOKABLE void saveMainSettings();
-    Q_INVOKABLE void saveManualTrajectory();
+
     Q_INVOKABLE bool areEmpty();
-    Q_INVOKABLE QString getFullName();
-    void saveOtherSettings();
-    void saveLastSettings();
+
+    /*void saveOtherSettings();
+
+    void saveLastSettings();*/
 
     QStringList listOfParameters();
 
-
-
-    double ra2() const
-    {
-        return m_ra2;
-    }
-
-    double rf2() const
-    {
-        return m_rf2;
-    }
-
-    QList<double> xt_w() const
-    {
-        return m_xt_w;
-    }
-
-    bool useXtList() const
-    {
-        return m_useXtList;
-    }
-
-    QList<qreal> xtList() const
-    {
-        return m_xtList;
-    }
-
-    QString dataLocation() const
-    {
-        return m_dataLocation;
-    }
-
 public slots:
+
+    /* setters */
     void setBw(double arg)
     {
         if (m_bw != arg) {
@@ -199,7 +119,6 @@ public slots:
 
     void setM(double arg)
     {
-        qDebug() << "i am here!";
         if (m_m != arg) {
             m_m = arg;
             emit mChanged(arg);
@@ -304,10 +223,6 @@ public slots:
         }
     }
 
-    void convertSettings();
-    void onCalculate();
-    void loadSettings(QString value = "");
-
     void setRa2(double arg)
     {
         if (m_ra2 != arg) {
@@ -326,7 +241,6 @@ public slots:
 
     void setUseXtList(bool arg)
     {
-        qDebug() << m_useXtList << arg;
         if (m_useXtList != arg) {
             m_useXtList = arg;
             emit useXtListChanged(arg);
@@ -349,55 +263,41 @@ public slots:
         }
     }
 
+    /* end setters */
+
+    void loadSettings(QString value = "");
+
 signals:
-    void addToDebugConsole(QString text);
+
+    /* NOTIFY */
 
     void mChanged(double arg);
-
     void z1Changed(double arg);
-
     void z2Changed(double arg);
-
     void bwChanged(double arg);
-
     void W0Changed(double arg);
-
     void EChanged(double arg);
-
     void x2Changed(double arg);
-
     void d0Changed(double arg);
-
     void alphaChanged(double arg);
-
     void cChanged(double arg);
-
     void haChanged(double arg);
-
     void z0Changed(double arg);
-
     void x0Changed(double arg);
-
     void da0Changed(double arg);
-
     void onListOfParametersChanged(QStringList arg);
-
     void ra2Changed(double arg);
-
     void rf2Changed(double arg);
+    void xt_wChanged(QList<double> arg);
+    void useXtListChanged(bool arg);
+    void xtListChanged(QList<qreal> arg);
+    void dataLocationChanged(QString arg);
+
+    /* end NOTIFY */
 
     void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height, QString image_basename);
 
-
-    void xt_wChanged(QList<double> arg);
-
-    void useXtListChanged(bool arg);
-
-    void xtListChanged(QList<qreal> arg);
-
     void loadImage(QString image);
-
-    void dataLocationChanged(QString arg);
 
 private:
 
@@ -420,6 +320,8 @@ private:
     QString getBaseName();
 
     void saveTrajectory();
+
+    QMap<double, QMap<double,double> > m_result;
 
     double m_m;
 
@@ -459,9 +361,6 @@ private:
     bool m_useSmooth;
     bool m_useOldPaintMode;
     bool m_diagnosticMode;
-
-    QImage *m_image1;
-    QImage *m_image2;
 
     QList<double> m_xt_w;
     QStringList m_listOfParameters;

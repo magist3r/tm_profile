@@ -31,19 +31,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     profile.cpp \
-    imagegenerator.cpp \
-    qmldesktopviewer.cpp \
-    loggerwidget.cpp
+    imagegenerator.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     profile.h \
-    imagegenerator.h \
-    qmldesktopviewer.h \
-    loggerwidget.h
+    imagegenerator.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
 OTHER_FILES += \
     qml/tm_profile/main.qml \

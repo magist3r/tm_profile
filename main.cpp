@@ -19,20 +19,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QtWidgets/QApplication>
 #include <QtQml>
 #include <QtQuick/QQuickView>
-//#include <QtDeclarative>
-#include <QMetaType>
 #include "profile.h"
 #include "imagegenerator.h"
-#include "qmldesktopviewer.h"
-#include "mainwindow.h"
+
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QQmlEngine engine;
     QQmlComponent component(&engine);
-
-  //  QObject::connect(&app, SIGNAL(lastWindowClosed()), engine, SLOT());
 
     QCoreApplication::setApplicationName("tm_profile");
     QCoreApplication::setOrganizationName("zb-susu");
@@ -48,14 +43,12 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
                      generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
 
- //   engine.addImageProvider("images", generator);
-
     engine.rootContext()->setContextProperty("imageGenerator", generator);
     engine.rootContext()->setContextProperty("profile", profile);
 
     component.loadUrl(QUrl("qml/tm_profile/main.qml"));
     if ( !component.isReady() ) {
-         qWarning("%s", qPrintable(component.errorString()));
+        qWarning("%s", qPrintable(component.errorString()));
         return -1;
     }
 
@@ -69,24 +62,5 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     window->show();
 
-
-
-   // QmlDesktopViewer *viewer = new QmlDesktopViewer();
-
-
-
-//    viewer->open("qml/tm_profile/main.qml");
-  //  viewer->
-
- //   qmlRegisterType<Profile>("org.tm_profile.profile", 1, 0, "Profile");
-    //qmlRegisterType<QThread>("org.tm_profile.thread", 1, 0, "Worker");
-
-
-   /* viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QLatin1String("qml/tm_profile/main.qml"));
-    viewer.showExpanded();*/
-
-//    MainWindow w;
-//    w.show();
     return app.exec();
 }

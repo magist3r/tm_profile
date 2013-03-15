@@ -39,7 +39,6 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
 
     painter1.setBrush(Qt::transparent);
     painter2.setBrush(Qt::transparent);
-    qDebug() << delta << delta_s_max;
 
     painter1.setRenderHint(QPainter::Antialiasing);
     painter1.setRenderHint(QPainter::Qt4CompatiblePainting);
@@ -77,13 +76,6 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
                   << delta_s_max - (5 * step)
                   << delta_s_max - (6 * step);
 
-
-  //  double max_value1 = delta;
-  //  double min_value1 = 0;
-
-  //  double max_value2 = delta_s_max;
-  //  double min_value2 = delta_s_max - delta;
-
     double maxX;
     double maxY;
 
@@ -91,7 +83,6 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     while (i.hasNext())
     {
         i.next();
-      //  qDebug() << i.key();
         QMapIterator<double,double> j(i.value());
         while (j.hasNext())
         {
@@ -106,8 +97,6 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
 
         }
     }
-
-    qDebug() << m_legendMin1 << m_legendMax1 << m_legendMin2 << m_legendMax2;
 
     // Draw border
     painter1.setPen(Qt::black);
@@ -132,14 +121,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter3.end();
     painter4.end();
 
-
-
-
-    // Save generated images
     QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-    qDebug() << savePath;
-  //  image1.save(savePath + image_basename + "_1.png");
-  //  image2.save(savePath + image_basename + "_2.png");
+
     image3.save(savePath + image_basename + "_1.png");
     image4.save(savePath + image_basename + "_2.png");
     emit imagesGenerated();
@@ -203,7 +186,7 @@ QImage ImageGenerator::drawLegend(legend l)
         break;
     }
 
-    int n = 0, m = 0;
+    int n = 0;
     for (int i = min; i <= max; i++) {
         if (i != 0)
             painter.drawText(QRectF(0,n,40,20), Qt::AlignCenter, QString::number(list->at(i-1) * 1000, 'f', 1));
@@ -211,20 +194,15 @@ QImage ImageGenerator::drawLegend(legend l)
         if ( (i == max) && (i != 7) )
             painter.drawText(QRectF(0,n+20,40,20), Qt::AlignCenter, QString::number(list->at(i) * 1000, 'f', 1));
 
-
-
         painter.setBrush(getColorFromEnum(static_cast<colors>(i)));
         painter.drawRect(40,n+10,40,20);
-       //
-        n+= 20;
 
+        n+= 20;
     }
 
     painter.end();
-    return image;
-    //painter.drawLine(20,0,50,0);
-    //painter.d
 
+    return image;
 }
 
 QColor ImageGenerator::addColorToLegend(ImageGenerator::colors c, ImageGenerator::legend l)

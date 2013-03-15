@@ -24,8 +24,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 Profile::Profile(QObject *parent)
 {
-    m_image1 = new QImage(320, 240, QImage::Format_ARGB32_Premultiplied);
-
     m_m = 2;
     m_z0 = 19;
     m_x0 = 0.105;
@@ -82,29 +80,14 @@ bool Profile::getRadius()
 
 void Profile::calculate()
 {
-   // m_image1->fill(0);
-  // QPainter painter(m_image1);
-  //  painter.setBrush(Qt::white);
-    //painter.setRenderHint(painter.);
-   // painter.setRenderHint(painter.Antialiasing, true);
-  //  QTransform trans;
-  //  trans.translate(0, m_image1->height());
-  //  trans.scale(50, -50);
-  //  painter.setTransform(trans);
-
-    double image_height = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad);
-    double image_width = m_bw;
-
-    //qDebug() << im_height << im_width;
-
+    double imageHeight = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad);
+    double imageWidth = m_bw;
+    m_result.clear();
 
     m_i21 = m_z1 / m_z2;
     m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha_rad);
     m_delta2 = atan(sin(m_E_rad) / (cos(m_E_rad) - m_i21));
     m_psi_b2 = M_PI / (2 * m_z2) + 2 * m_x2 * tan(m_alpha_rad) / m_z2 + tan(m_alpha_rad) - m_alpha_rad;
-    result.clear();
-    result_s_tr.clear();
-    result_s_pr.clear();
 
     double dW = m_bw / m_nW; // Шаг торцовых сечений
     double rav2 = (m_rf2 + m_ra2 - m_c * m_m) / 2;
@@ -152,9 +135,9 @@ void Profile::calculate()
         m_xt_w = squareMethod(S);
 
     }
-    //emit xt_wChanged(m_xt_w);
+
     saveTrajectory();
-    qDebug() << "Calculating.." << m_xt_w[2] << m_xt_w[1] << m_xt_w[0];
+
     // Задание модификации
   /*  if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
     {
@@ -173,8 +156,7 @@ void Profile::calculate()
 
     m_delta_s_max=0;
     // Расчет толщин зубьев
-    for (int i=0; i <= m_nW; i++)
-    {
+    for (int i=0; i <= m_nW; i++) {
         double wi = Wi - m_W0;
         double delta_oi = -atan(m_m * (2 * m_xt_w[2] * wi + m_xt_w[1]));
         double xt = m_xt_w[2] * pow(wi, 2) + m_xt_w[1] * wi + m_xt_w[0];
@@ -187,9 +169,7 @@ void Profile::calculate()
         double ry1_min = m_ra2 / cos(m_E_rad) - (m_W0 + m_bw) * tan(m_E_rad);
         double ry2 = m_ra2;
 
-        for (int j=0; j <= m_nr; j++)
-        {
-
+        for (int j=0; j <= m_nr; j++) {
             double ry1 = ry2 / cos(m_E_rad) - Wi * tan(m_E_rad);
 
             // Теоретический профиль
@@ -204,16 +184,7 @@ void Profile::calculate()
             if (delta_s > m_delta_s_max)
                 m_delta_s_max = delta_s;
 
-            result[wi][ry1 - ry1_min] = delta_s;
-            result_s_tr[wi][ry1 - ry1_min] = s_tr;
-            result_s_pr[wi][ry1 - ry1_min] = s_pr;
-            // drawPoint(painter,delta_s, wi, ry1 - ry1_min);
-          //  painter.setPen(getPointColor(delta_s));
-           // painter.drawPoint(QPointF(wi, ry1 - ry1_min));
-    /*        if (m_diagnosticMode)
-            {*/
-   //        qDebug() << "Wi= " << QString::number(wi) << " | ry= " << QString::number(ry1) << " | s_tr = " << QString::number(s_tr) << " | delta_s = " << QString::number(delta_s);
-    //        }
+            m_result[wi][ry1 - ry1_min] = delta_s;
 
             ry2 += dr;
         }
@@ -223,8 +194,7 @@ void Profile::calculate()
     if (m_useXtList)
         baseName += "_manual";
 
-    emit calculateFinished(result, 0.006 * sqrt(m_m), m_delta_s_max, image_width, image_height, baseName);
-    //   m_image1->save("image1.png");
+    emit calculateFinished(m_result, 0.006 * sqrt(m_m), m_delta_s_max, imageWidth, imageHeight, baseName);
 }
 
 QList<double> Profile::squareMethod(const QMap<double, double> &S)
@@ -248,8 +218,6 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
         sum_y += i.value();
         sum_xy += i.key() * i.value();
         sum_x2y += pow(i.key(), 2) * i.value();
-      //  div_t divResult;
-      //  divResult = div(i.key(), 0.5);
         if (floor(fmod(i.key(), 0.5)*1000) == 0)
             qDebug() << i.key() << i.value();
         n++;
@@ -271,18 +239,14 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
 
     double detA = det(A);
     double A_bkp[3][3];
-    for (int i = 0; i < 3; i++)
-    {
-        for (int a = 0; a < 3; a++)
-        {
-            for (int b = 0; b < 3; b++)
-            {
-                A_bkp[a][b] = A[a][b];
 
+    for (int i = 0; i < 3; i++) {
+        for (int a = 0; a < 3; a++) {
+            for (int b = 0; b < 3; b++) {
+                A_bkp[a][b] = A[a][b];
             }
         }
-        for (int j = 0; j < 3; j++)
-        {
+        for (int j = 0; j < 3; j++) {
             A_bkp[j][i] = B[j];
         }
         X.append(det(A_bkp) / detA);
@@ -291,16 +255,14 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
     double sum = 0;
     double otk = 0;
     double max_otk;
-    for (i = S.begin(); i != S.end(); ++i)
-    {
+    for (i = S.begin(); i != S.end(); ++i) {
         otk = pow(i.value() - (X[2] * pow(i.key(),2) + X[1] * i.key() + X[0]), 2);
         max_otk = qMax(otk, max_otk);
         sum += max_otk;
- //       qDebug() << sum << otk;
     }
-  //  qDebug() << "square" << sum << max_otk;
+
     return X;
-    }
+}
 
 QList<double> Profile::squareMethod(const QList<qreal> &S)
 {
@@ -314,23 +276,19 @@ QList<double> Profile::squareMethod(const QList<qreal> &S)
     return squareMethod(map);
 }
 
-void Profile::a_tw (double ry1, double Wi, double &x_tr, double &y_tr)
+void Profile::a_tw(double ry1, double Wi, double &x_tr, double &y_tr)
 {
     double vy2, p, q, alpha_tw, phi1;
     double alpha_tw_n = M_PI / 180;
     double alpha_tw_k = acos((Wi/m_rb2 - sqrt(pow(Wi/m_rb2,2) - 2 * sin(2*m_E_rad) / tan(m_delta2))) / (2 * sin(m_E_rad)));
-    while (alpha_tw_k - alpha_tw_n > m_eps)
-    {
+    while (alpha_tw_k - alpha_tw_n > m_eps) {
         alpha_tw = (alpha_tw_n + alpha_tw_k) / 2;
         vy2 = (Wi / (m_rb2 * sin(m_E_rad)) - (1 / (tan(m_E_rad) * tan(m_delta2) * cos(alpha_tw))) - cos(alpha_tw)) / sin(alpha_tw);
         p = cos(m_E_rad) * (cos(alpha_tw) + vy2 * sin(alpha_tw)) - sin(m_E_rad) / (cos(alpha_tw) * tan(m_delta2));
         q = sin(alpha_tw) - vy2 * cos(alpha_tw);
-        if ((m_rb2 * sqrt(pow(q,2) + pow(p,2)) - ry1) > 0)
-        {
+        if ((m_rb2 * sqrt(pow(q,2) + pow(p,2)) - ry1) > 0) {
              alpha_tw_n = alpha_tw;
-        }
-        else
-        {
+        } else {
              alpha_tw_k = alpha_tw;
         }
     }
@@ -348,17 +306,6 @@ double Profile::det(const double A[3][3])
           A[2][0] * A[1][1] * A[0][2] -
           A[1][0] * A[0][1] * A[2][2] -
            A[2][1] * A[1][2] * A[0][0];
-}
-
-QColor Profile::getPointColor(double delta_s)
-{
-    double delta = 6 * sqrt(m_m);
-    if (delta_s < 0)
-        return Qt::white;
-    else if (delta_s > delta)
-        return Qt::red;
-    else
-        return Qt::blue;
 }
 
 QString Profile::getBaseName()
@@ -387,7 +334,6 @@ void Profile::saveMainSettings()
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
     settings.beginGroup(getBaseName());
-    qDebug() << m_m << m_z1 << m_z2 << m_bw;
     settings.setValue("m", m_m);
     settings.setValue("z1", m_z1);
     settings.setValue("z2", m_z2);
@@ -406,15 +352,6 @@ void Profile::saveMainSettings()
             variantList << i.next();
         settings.setValue("XtList", variantList);
     }
-    settings.endGroup();
-}
-
-void Profile::saveManualTrajectory()
-{
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
-    settings.beginGroup(getBaseName());
-    //settings.setValue("XtList", m_s_manual);
     settings.endGroup();
 }
 
@@ -447,21 +384,10 @@ bool Profile::areEmpty()
             return true;
     }
 
-
     return false;
 }
 
-QString Profile::getFullName()
-{
-    QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-    if (m_useXtList)
-        return savePath + getBaseName() + "_manual.png";
-    else
-        return savePath + getBaseName() + ".png";
-}
-
-
-void Profile::saveOtherSettings()
+/*void Profile::saveOtherSettings()
 {
     QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
     settings.beginGroup("OtherSettings");
@@ -481,14 +407,14 @@ void Profile::saveLastSettings()
     settings.setValue("dx", m_dx);
     settings.setValue("dx_0", m_dx_0);
     settings.setValue("dx_bw", m_dx_bw);
-    //settings.setValue("detalization", m_detalization);
     settings.endGroup();
-}
+}*/
 
 QStringList Profile::listOfParameters()
 {
     if (m_listOfParameters.empty()) {
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        QSettings settings;
         QRegExp rx("m*");
         rx.setPatternSyntax(QRegExp::Wildcard);
         m_listOfParameters = settings.childGroups().filter(rx);
@@ -497,107 +423,32 @@ QStringList Profile::listOfParameters()
     return m_listOfParameters;
 }
 
-void Profile::convertSettings()
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-    QSettings settings2("tm_profile", "zb-susu");
-
-    settings2.beginGroup("properties");
-    QStringList groups = settings2.childGroups();
-    for (int i = 0; i < groups.count(); i++)
-    {
-        settings2.beginGroup(groups[i]);
-        settings.beginGroup(groups[i]);
-        settings.setValue("m", settings2.value("m"));
-        settings.setValue("z1", settings2.value("z1"));
-        settings.setValue("z2", settings2.value("z2"));
-        settings.setValue("bw", settings2.value("bw"));
-        settings.setValue("W0", settings2.value("W0"));
-        settings.setValue("E", settings2.value("E"));
-        settings.setValue("x2", settings2.value("x2"));
-        settings.setValue("d0", settings2.value("d0"));
-        settings.setValue("ra2", settings2.value("ra2"));
-        settings.setValue("rf2", settings2.value("rf2"));
-        settings.endGroup();
-        settings2.endGroup();
-    }
-    settings2.endGroup();
-}
-
-void Profile::onCalculate()
-{
-    calculate();
-}
-
 void Profile::loadSettings(QString value)
 {
-   QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-   qDebug() << value;
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
+    settings.beginGroup(value);
 
-   if (value == "")
-   {
-       settings.beginGroup("LastSettings");
-   }
-   else
-   {
-       settings.beginGroup(value);
-   }
-   if (value == "OtherSettings") {
+    setM(settings.value("m").toDouble());
+    setZ1(settings.value("z1").toDouble());
+    setZ2(settings.value("z2").toDouble());
+    setBw(settings.value("bw").toDouble());
+    setW0(settings.value("W0").toDouble());
+    setE(settings.value("E").toDouble());
+    setX2(settings.value("x2").toDouble());
+    setD0(settings.value("d0").toDouble());
+    setRa2(settings.value("ra2").toDouble());
+    setRf2(settings.value("rf2").toDouble());
+    setUseXtList(settings.value("useManualTr").toBool());
+    QList<QVariant> variantList = settings.value("XtList").toList();
+    if ( !variantList.empty() ) {
+        QList<qreal> qList;
+        QListIterator<QVariant> i(variantList);
+        while (i.hasNext())
+            qList << i.next().toDouble();
 
-   }
-   else {
-       setM(settings.value("m").toDouble());
-       qDebug() << settings.value("m").toDouble();
-       setZ1(settings.value("z1").toDouble());
-       setZ2(settings.value("z2").toDouble());
-       setBw(settings.value("bw").toDouble());
-       setW0(settings.value("W0").toDouble());
-       setE(settings.value("E").toDouble());
-       setX2(settings.value("x2").toDouble());
-       setD0(settings.value("d0").toDouble());
-       setRa2(settings.value("ra2").toDouble());
-       setRf2(settings.value("rf2").toDouble());
-       setUseXtList(settings.value("useManualTr").toBool());
-     //  QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-       QList<QVariant> variantList = settings.value("XtList").toList();
-       if ( !variantList.empty() ) {
-           QList<qreal> qList;
-           QListIterator<QVariant> i(variantList);
-           while (i.hasNext()) {
-               qList << i.next().toDouble();
-           }
-           setXtList(qList);
-       }
-   }
+        setXtList(qList);
+    }
 
-   settings.endGroup();
-
+    settings.endGroup();
 }
-
-
-   /*  ui->m->setValue(settings.value("m").toDouble());
-   ui->z1->setValue(settings.value("z1").toDouble());
-   ui->z2->setValue(settings.value("z2").toDouble());
-    ui->x0->setValue(settings.value("x0").toDouble());
-    ui->x2->setValue(settings.value("x2").toDouble());
-    ui->alpha->setValue(settings.value("alpha").toDouble());
-    ui->c->setValue(settings.value("c").toDouble());
-    ui->z0->setValue(settings.value("z0").toDouble());
-    ui->da0->setValue(settings.value("da0").toDouble());
-    ui->ha->setValue(settings.value("ha").toDouble());
-    ui->E->setValue(settings.value("E").toDouble());
-    ui->W0->setValue(settings.value("W0").toDouble());
-    ui->d0->setValue(settings.value("d0").toDouble());
-    ui->bw->setValue(settings.value("bw").toDouble());
-    ui->ra2->setValue(settings.value("ra2").toDouble());
-    ui->rf2->setValuesave image not transparent(settings.value("rf2").toDouble());
-    ui->dx->setValue(settings.value("dx").toDouble());
-    ui->dx_0->setValue(settings.value("dx_0").toDouble());
-    ui->dx_bw->setValue(settings.value("dx_bw").toDouble());
-    ui->detalization->setValue(settings.value("detalization").toInt());
-    settings.endGroup();
-    settings.endGroup();
-
-}*/
-
-
