@@ -49,12 +49,17 @@ class Profile : public QObject
     Q_PROPERTY(double ra2 READ ra2 WRITE setRa2 NOTIFY ra2Changed)
     Q_PROPERTY(double rf2 READ rf2 WRITE setRf2 NOTIFY rf2Changed)
 
-    Q_PROPERTY(QList<double> xt_w READ xt_w NOTIFY xt_wChanged)
+    Q_PROPERTY(double mod0 READ mod0 WRITE setMod0 NOTIFY mod0Changed)
+    Q_PROPERTY(double modCenter READ modCenter WRITE setModCenter NOTIFY modCenterChanged)
+    Q_PROPERTY(double modBw READ modBw WRITE setModBw NOTIFY modBwChanged)
 
-    Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY onListOfParametersChanged)
+    Q_PROPERTY(QList<double> trajectory READ trajectory NOTIFY xt_wChanged)
 
-    Q_PROPERTY(QList<qreal> xtList READ xtList WRITE setXtList NOTIFY xtListChanged)
-    Q_PROPERTY(bool useXtList READ useXtList WRITE setUseXtList NOTIFY useXtListChanged)
+    Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY listOfParametersChanged)
+    Q_PROPERTY(QVariantList modificationList READ modificationList NOTIFY modificationListChanged)
+
+    Q_PROPERTY(QList<qreal> manualXtList READ manualXtList WRITE setManualXtList NOTIFY manualXtListChanged)
+    Q_PROPERTY(bool useManualXtList READ useManualXtList WRITE setUseManualXtList NOTIFY useManualXtListChanged)
     Q_PROPERTY(QString dataLocation READ dataLocation WRITE setdataLocation NOTIFY dataLocationChanged)
 
 
@@ -89,10 +94,22 @@ public:
     double bw() const { return m_bw; }
     double ra2() const { return m_ra2; }
     double rf2() const { return m_rf2; }
-    QList<double> xt_w() const {  return m_xt_w; }
-    bool useXtList() const { return m_useXtList; }
-    QList<qreal> xtList() const { return m_xtList; }
+
+    double mod0() const { return m_mod0; }
+    double modCenter() const { return m_modCenter; }
+    double modBw() const { return m_modBw; }
+
+    QList<double> trajectory() const {  return m_trajectory; }
+    bool useManualXtList() const { return m_useManualXtList; }
+    QList<qreal> manualXtList() const { return m_manualXtList; }
     QString dataLocation() const { return m_dataLocation; }
+
+    QStringList listOfParameters() const { return m_listOfParameters; }
+
+    QVariantList modificationList() const
+    {
+        return m_modificationList;
+    }
 
     /* end getters */
 
@@ -104,7 +121,9 @@ public:
 
     void saveLastSettings();*/
 
-    QStringList listOfParameters();
+
+
+
 
 public slots:
 
@@ -239,19 +258,19 @@ public slots:
         }
     }
 
-    void setUseXtList(bool arg)
+    void setUseManualXtList(bool arg)
     {
-        if (m_useXtList != arg) {
-            m_useXtList = arg;
-            emit useXtListChanged(arg);
+        if (m_useManualXtList != arg) {
+            m_useManualXtList = arg;
+            emit useManualXtListChanged(arg);
         }
     }
 
-    void setXtList(QList<qreal> arg)
+    void setManualXtList(QList<qreal> arg)
     {
-        if (m_xtList != arg) {
-            m_xtList = arg;
-            emit xtListChanged(arg);
+        if (m_manualXtList != arg) {
+            m_manualXtList = arg;
+            emit manualXtListChanged(arg);
         }
     }
 
@@ -263,9 +282,51 @@ public slots:
         }
     }
 
+    void setModificationList(QVariantList arg)
+    {
+        if (m_modificationList != arg) {
+            m_modificationList = arg;
+            emit modificationListChanged(arg);
+        }
+    }
+
+    void setMod0(double arg)
+    {
+        if (m_mod0 != arg) {
+            m_mod0 = arg;
+            emit mod0Changed(arg);
+        }
+    }
+
+    void setModCenter(double arg)
+    {
+        if (m_modCenter != arg) {
+            m_modCenter = arg;
+            emit modCenterChanged(arg);
+        }
+    }
+
+    void setModBw(double arg)
+    {
+        if (m_modBw != arg) {
+            m_modBw = arg;
+            emit modBwChanged(arg);
+        }
+    }
+
     /* end setters */
 
     void loadSettings(QString value = "");
+
+    void loadModSettings(QString value, QString modValue);
+
+    void setListOfParameters(QStringList arg)
+    {
+        if (m_listOfParameters != arg) {
+            m_listOfParameters = arg;
+            emit listOfParametersChanged(arg);
+        }
+    }
 
 signals:
 
@@ -285,19 +346,21 @@ signals:
     void z0Changed(double arg);
     void x0Changed(double arg);
     void da0Changed(double arg);
-    void onListOfParametersChanged(QStringList arg);
+    void listOfParametersChanged(QStringList arg);
     void ra2Changed(double arg);
     void rf2Changed(double arg);
     void xt_wChanged(QList<double> arg);
-    void useXtListChanged(bool arg);
-    void xtListChanged(QList<qreal> arg);
+    void useManualXtListChanged(bool arg);
+    void manualXtListChanged(QList<qreal> arg);
     void dataLocationChanged(QString arg);
+    void modificationListChanged(QVariantList arg);
+    void mod0Changed(double arg);
+    void modCenterChanged(double arg);
+    void modBwChanged(double arg);
 
     /* end NOTIFY */
 
     void calculateFinished(QMap<double, QMap<double,double> > &_result, double delta, double _delta_s_max, double image_width, double image_height, QString image_basename);
-
-    void loadImage(QString image);
 
 private:
 
@@ -318,6 +381,9 @@ private:
     QColor getPointColor(double delta_s);
 
     QString getBaseName();
+
+    QString getModName();
+    QStringList getListOfParameters();
 
     void saveTrajectory();
 
@@ -352,9 +418,9 @@ private:
     static const double m_eps = 0.000001; // Требуемая точность расчётов
     double m_nW;
     double m_nr;
-    double m_dx; // Величина модификации
+/*    double m_dx; // Величина модификации
     double m_dx_0;
-    double m_dx_bw;
+    double m_dx_bw;*/
 
     double m_delta_s_max;
 
@@ -362,11 +428,15 @@ private:
     bool m_useOldPaintMode;
     bool m_diagnosticMode;
 
-    QList<double> m_xt_w;
+    QList<double> m_trajectory;
     QStringList m_listOfParameters;
-    bool m_useXtList;
-    QList<qreal> m_xtList;
+    bool m_useManualXtList;
+    QList<qreal> m_manualXtList;
     QString m_dataLocation;
+    QVariantList m_modificationList;
+    double m_mod0;
+    double m_modCenter;
+    double m_modBw;
 };
 
 #endif // PROFILE_H

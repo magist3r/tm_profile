@@ -31,4 +31,19 @@ Row {
         text: qsTr("CalculateR")
         onClicked: profile.getRadius()
     }
+
+  /*  Button {
+        id: ool
+        width: 96
+        text: "gkfjgdo"
+        onClicked: {
+
+          //  parameters.children.
+           // parComboBox.menuItems = ["aa", "mmm"]
+           //var modelka = ["aa", "mmm"]
+            //parComboBox.model = modelka
+          //  parComboBox.update()
+
+        }
+    }*/
 }

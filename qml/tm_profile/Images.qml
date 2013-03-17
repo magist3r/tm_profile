@@ -7,13 +7,13 @@ Item {
     function setImageSource() {
         _image1.source = ""
         _image2.source = ""
-        var basename = profile.dataLocation + '/' + list.selectedText
+        var basename = profile.dataLocation + '/' + parComboBox.selectedText
         if (checkbox.checked) {
             _image1.source = basename + '_manual_1.png'
             _image2.source = basename + '_manual_2.png'
         } else {
-            _image1.source = basename + '_1.png'
-            _image2.source = basename + '_2.png'
+            _image1.source = basename + '_' + modComboBox.selectedText + '_1.png'
+            _image2.source = basename + '_' + modComboBox.selectedText + '_2.png'
         }
     }
 

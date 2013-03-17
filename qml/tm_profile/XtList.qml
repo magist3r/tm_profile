@@ -44,13 +44,13 @@ Tab {
 
                     onValueChanged: {
                         parametersChanged = true
-                        profile.xtList[index*2] = item.value
+                        profile.manualXtList[index*2] = item.value
                     }
 
                     Binding {
                         target: item
                         property: "value"
-                        value: profile.xtList[index*2]
+                        value: profile.manualXtList[index*2]
                     }
                 }
             }
@@ -95,13 +95,13 @@ Tab {
 
                     onValueChanged: {
                         parametersChanged = true
-                        profile.xtList[index*2 + 1] = item2.value
+                        profile.manualXtList[index*2 + 1] = item2.value
                     }
 
                     Binding {
                         target: item2
                         property: "value"
-                        value: profile.xtList[index*2 + 1]
+                        value: profile.manualXtList[index*2 + 1]
                     }
                 }
             }
