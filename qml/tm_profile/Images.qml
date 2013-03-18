@@ -4,22 +4,25 @@ import QtDesktop 1.0
 Item {
     id: images
 
-    function setImageSource() {
+    property alias image1: _image1
+    property alias image2: _image2
+
+    function setImageSource(basename, modname) {
         _image1.source = ""
         _image2.source = ""
-        var basename = profile.dataLocation + '/' + parComboBox.selectedText
+        var name = profile.dataLocation + '/' + basename
         if (checkbox.checked) {
-            _image1.source = basename + '_manual_1.png'
-            _image2.source = basename + '_manual_2.png'
+            _image1.source = name + '_manual_1.png'
+            _image2.source = name + '_manual_2.png'
         } else {
-            _image1.source = basename + '_' + modComboBox.selectedText + '_1.png'
-            _image2.source = basename + '_' + modComboBox.selectedText + '_2.png'
+            _image1.source = name + '_' + modname + '_1.png'
+            _image2.source = name + '_' + modname + '_2.png'
         }
     }
 
     Connections {
         target: imageGenerator
-        onImagesGenerated: setImageSource()
+        onImagesGenerated: updateSettingsAndImages(true)
     }
 
     Image {

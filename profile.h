@@ -56,7 +56,7 @@ class Profile : public QObject
     Q_PROPERTY(QList<double> trajectory READ trajectory NOTIFY xt_wChanged)
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY listOfParametersChanged)
-    Q_PROPERTY(QVariantList modificationList READ modificationList NOTIFY modificationListChanged)
+    Q_PROPERTY(QStringList modificationList READ modificationList NOTIFY modificationListChanged)
 
     Q_PROPERTY(QList<qreal> manualXtList READ manualXtList WRITE setManualXtList NOTIFY manualXtListChanged)
     Q_PROPERTY(bool useManualXtList READ useManualXtList WRITE setUseManualXtList NOTIFY useManualXtListChanged)
@@ -106,7 +106,7 @@ public:
 
     QStringList listOfParameters() const { return m_listOfParameters; }
 
-    QVariantList modificationList() const
+    QStringList modificationList() const
     {
         return m_modificationList;
     }
@@ -116,6 +116,11 @@ public:
     Q_INVOKABLE void saveMainSettings();
 
     Q_INVOKABLE bool areEmpty();
+
+
+    Q_INVOKABLE QString getBaseName();
+
+    Q_INVOKABLE QString getModName();
 
     /*void saveOtherSettings();
 
@@ -282,13 +287,7 @@ public slots:
         }
     }
 
-    void setModificationList(QVariantList arg)
-    {
-        if (m_modificationList != arg) {
-            m_modificationList = arg;
-            emit modificationListChanged(arg);
-        }
-    }
+    void setModificationList(QStringList arg);
 
     void setMod0(double arg)
     {
@@ -320,13 +319,7 @@ public slots:
 
     void loadModSettings(QString value, QString modValue);
 
-    void setListOfParameters(QStringList arg)
-    {
-        if (m_listOfParameters != arg) {
-            m_listOfParameters = arg;
-            emit listOfParametersChanged(arg);
-        }
-    }
+    void setListOfParameters();
 
 signals:
 
@@ -353,7 +346,7 @@ signals:
     void useManualXtListChanged(bool arg);
     void manualXtListChanged(QList<qreal> arg);
     void dataLocationChanged(QString arg);
-    void modificationListChanged(QVariantList arg);
+    void modificationListChanged(QStringList arg);
     void mod0Changed(double arg);
     void modCenterChanged(double arg);
     void modBwChanged(double arg);
@@ -379,11 +372,6 @@ private:
     double det(const double A[3][3]); // Расчет определителя матрицы
 
     QColor getPointColor(double delta_s);
-
-    QString getBaseName();
-
-    QString getModName();
-    QStringList getListOfParameters();
 
     void saveTrajectory();
 
@@ -433,7 +421,7 @@ private:
     bool m_useManualXtList;
     QList<qreal> m_manualXtList;
     QString m_dataLocation;
-    QVariantList m_modificationList;
+    QStringList m_modificationList;
     double m_mod0;
     double m_modCenter;
     double m_modBw;

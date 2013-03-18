@@ -15,12 +15,14 @@ Row {
             if (profile.areEmpty()) {
                 Qt.createComponent("Alert.qml").createObject(mainWindow)
             } else {
+                profile.calculate()
+
                 if (parametersChanged) {
                     profile.saveMainSettings()
                     parametersChanged = false
                 }
 
-                profile.calculate()
+
             }
         }
     }
@@ -32,11 +34,12 @@ Row {
         onClicked: profile.getRadius()
     }
 
-  /*  Button {
+   /* Button {
         id: ool
         width: 96
         text: "gkfjgdo"
         onClicked: {
+            parComboBox.selectedText = "m2_34_40_5"
 
           //  parameters.children.
            // parComboBox.menuItems = ["aa", "mmm"]

@@ -37,7 +37,7 @@ Profile::Profile(QObject *parent)
     setModCenter(0.0);
     setModBw(0.0);
     setUseManualXtList(false);
-    setListOfParameters(getListOfParameters());
+    setListOfParameters();
 
 
 }
@@ -101,7 +101,7 @@ void Profile::calculate()
 
     QList<double> list;
 
-    QMap<double, double> S;
+    QMap<double, double> XtList;
 
     double Wi = m_W0;
     // Расчет коэффициентов смещения
@@ -131,28 +131,27 @@ void Profile::calculate()
             alpha_y1 = acos(rb1 / ry1);
             double xt = (m_z1 * (psi_yi - tan(alpha1) + alpha1 + tan(alpha_y1) - alpha_y1) - 0.5 * M_PI) / (2 * tan(alpha1)); // Коэф. смещения
 
-            S[Wi - m_W0] = xt;
+            XtList[Wi - m_W0] = xt;
 
             Wi += dW;
         }
 
-        m_trajectory = squareMethod(S);
+        m_trajectory = squareMethod(XtList);
 
     }
 
   //  saveTrajectory();
 
     // Задание модификации
-  /*  if(m_dx != 0 || m_dx_0 != 0 || m_dx_bw != 0)
-    {
-        S.clear();
+    if( !useManualXtList() && (mod0() != 0 || modCenter() != 0 || modBw() != 0) ) {
+        XtList.clear();
 
-        S[0] = m_xt_w[2] * 0 + m_xt_w[1] * 0 + m_xt_w[0] - m_dx_0;
-        S[m_bw/2] = m_xt_w[2] * pow(m_bw/2,2) + m_xt_w[1] * m_bw/2 + m_xt_w[0] + m_dx;
-        S[m_bw] = m_xt_w[2] * pow(m_bw,2) + m_xt_w[1] * m_bw + m_xt_w[0] - m_dx_bw;
+        XtList[0] = m_trajectory[2] * 0 + m_trajectory[1] * 0 + m_trajectory[0] + mod0();
+        XtList[bw()/2] = m_trajectory[2] * pow(bw() / 2, 2) + m_trajectory[1] * bw() / 2 + m_trajectory[0] + modCenter();
+        XtList[bw()] = m_trajectory[2] * pow(bw(), 2) + m_trajectory[1] * bw() + m_trajectory[0] + modBw();
 
-        m_xt_w = square_method(S);
-    }*/
+        m_trajectory = squareMethod(XtList);
+    }
 
     double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
 
@@ -330,10 +329,10 @@ QString Profile::getModName()
     QString name = QString::number(mod0()) +
                    "_" + QString::number(modCenter()) +
                    "_" + QString::number(modBw());
-    qDebug() << name;
     return name;
-
 }
+
+
 
 void Profile::saveTrajectory()
 {
@@ -380,10 +379,12 @@ void Profile::saveMainSettings()
     settings.setValue("c", trajectory().at(0));*/
     settings.endGroup();
 
+    setModificationList(settings.childGroups());
 
     settings.endGroup();
 
-    setListOfParameters(getListOfParameters());
+    setListOfParameters();
+
 }
 
 bool Profile::areEmpty()
@@ -441,23 +442,6 @@ void Profile::saveLastSettings()
     settings.endGroup();
 }*/
 
-QStringList Profile::getListOfParameters()
-{
-   // if (m_listOfParameters.empty()) {
-        QSettings::setDefaultFormat(QSettings::IniFormat);
-        QSettings settings;
-        QRegExp rx("m*");
-        rx.setPatternSyntax(QRegExp::Wildcard);
-     /*   QStringList list =
-        QVariantList variantList;
-        QListIterator<QString> i(list);
-        while (i.hasNext())
-            variantList << i.next();*/
-
-
-    return settings.childGroups().filter(rx);
-}
-
 void Profile::loadSettings(QString value)
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -485,13 +469,13 @@ void Profile::loadSettings(QString value)
         setManualXtList(qList);
     }
 
-    /*if ( !settings.childGroups().isEmpty() ) {
+    //if ( !settings.childGroups().isEmpty() ) {
         setModificationList(settings.childGroups());
-    } else {
-        QVariantList list;
-        list << QString("0_0_0");
-        setModificationList(list);
-    }*/
+   // } else {
+  //      QStringList list;
+     //   list << QString("0_0_0");
+   //     setModificationList(list);
+    //}
 
     settings.endGroup();
 }
@@ -500,6 +484,7 @@ void Profile::loadModSettings(QString value, QString modValue)
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
+    qDebug() << value << modValue;
     settings.beginGroup(value);
     settings.beginGroup(modValue);
     setMod0(settings.value("mod0").toDouble());
@@ -507,4 +492,31 @@ void Profile::loadModSettings(QString value, QString modValue)
     setModBw(settings.value("modBw").toDouble());
     settings.endGroup();
     settings.endGroup();
+}
+
+void Profile::setListOfParameters()
+{
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    QSettings settings;
+    QRegExp rx("m*");
+    rx.setPatternSyntax(QRegExp::Wildcard);
+    QStringList list = settings.childGroups().filter(rx);
+    if (m_listOfParameters != list) {
+        m_listOfParameters = list;
+        emit listOfParametersChanged(list);
+    }
+}
+
+void Profile::setModificationList(QStringList arg)
+{
+    if (arg.isEmpty()) {
+        setMod0(0.0);
+        setModCenter(0.0);
+        setModBw(0.0);
+    }
+
+    if (m_modificationList != arg) {
+        m_modificationList = arg;
+        emit modificationListChanged(arg);
+    }
 }

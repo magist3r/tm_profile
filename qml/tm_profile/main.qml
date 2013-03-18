@@ -6,36 +6,92 @@ ApplicationWindow {
     title: qsTr("tm_profile - program for calculation of cylinder-bevel transmissions")
     visible: true
 
-    minimumWidth: 450
-    minimumHeight: 550
+    minimumWidth: 480
+    minimumHeight: 640
 
     property bool parametersChanged: false
-    property bool loadSettings: true
-    property var parComboBox: createComboBox()
+    property bool firstRun: true
+    property bool reloading: false
 
-    function createComboBox() {
-        var comboBox = Qt.createComponent("MyComboBox.qml")
-        if (comboBox.status == Component.Ready)
-            comboBox.createObject(parameters, {"anchors.left": label1.right, "anchors.right": buttons.left});
+    property var parComboBox: createComboBox("ParComboBox.qml", parameters)
+    property var modComboBox: createComboBox("ModComboBox.qml", modification)
+
+    property alias image1: images.image1
+    property alias image2: images.image2
+
+    function createComboBox(component, parent) {
+        var comp = Qt.createComponent(component)
+        if (comp.status == Component.Ready)
+            var comboBox = comp.createObject(parent);
 
         return comboBox
+    }
+
+    function updateSettingsAndImages(imagesOnly, name) {
+        var parName = parComboBox.selectedText
+        var modName
+
+        if (name === undefined)
+            modName = modComboBox.selectedText
+        else
+            modName = name
+
+        if (!imagesOnly) {
+            profile.loadSettings(parName)
+            profile.loadModSettings(parName, modName)
+        }
+
+        image1.source = ""
+        image2.source = ""
+
+        var baseName = profile.dataLocation + '/' + parName
+        if (checkbox.checked) {
+            image1.source = baseName + '_manual_1.png'
+            image2.source = baseName + '_manual_2.png'
+        } else {
+            image1.source = baseName + '_' + modName + '_1.png'
+            image2.source = baseName + '_' + modName + '_2.png'
+        }
     }
 
     Connections {
         target: profile
         onListOfParametersChanged: {
-            console.log('olok')
-            loadSettings = false
+            reloading = true
             parComboBox.destroy()
-            parComboBox = createComboBox()
-            parComboBox.hoveredIndex = 5
-           // parComboBox.hoveredText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
-            loadSettings = true
+            parComboBox = createComboBox("ParComboBox.qml", parameters, "parComboBox")
+            parComboBox.selectedText = profile.getBaseName()
+            console.log('don')
+            reloading = false
         }
+
+        onModificationListChanged: {
+            reloading = true
+            modComboBox.destroy()
+            modComboBox = createComboBox("ModComboBox.qml", modification, "modComboBox")
+         //   modComboBox.selectedText = profile.getModName()
+            //parComboBox.hoveredIndex = 5
+           // parComboBox.hoveredText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
+            reloading = false
+
+        }
+
+      /*  onCalculateFinished: {
+            loadSettings = false
+
+            parComboBox.selectedText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
+            modComboBox.selectedText = profile.getModName()
+            loadSettings = true
+         }*/
     }
 
-  //  property var parList: profile.listOfParameters
-  //  property var modList: profile.modificationList
+    Connections {
+        target: parComboBox
+        onChangeSelectedText:{
+            console.log('ololo')
+            parComboBox.selectedText = profile.getBaseName()
+        }
+    }
 
     Item {
         id: parameters
@@ -89,7 +145,7 @@ ApplicationWindow {
         onCheckedChanged: {
             parametersChanged = true
             profile.useManualXtList = checked
-            images.setImageSource()
+            updateSettingsAndImages(true)
         }
 
         Binding {
@@ -109,14 +165,17 @@ ApplicationWindow {
         height: modComboBox.height
         anchors.margins: 10
 
+        visible: !checkbox.checked
+
+
         Label {
             id: label2
             text: qsTr("Modification:")
             font.pointSize: 10
-            anchors.verticalCenter: modList.verticalCenter
+            anchors.verticalCenter: modComboBox.verticalCenter
         }
 
-        ComboBox {
+      /*  ComboBox {
             id: modComboBox
             model: profile.modificationList
             anchors.left: label2.right
@@ -133,7 +192,7 @@ ApplicationWindow {
                 property: "model"
                 value: profile.modificationList
             }*/
-        }
+        //}
 
 
     }
@@ -147,6 +206,9 @@ ApplicationWindow {
                 margins: 10
             }
             height: childrenRect.height
+
+            visible: !checkbox.checked
+
 
             Repeater {
                 model: [ "mod0", "modCenter", "modBw"]
