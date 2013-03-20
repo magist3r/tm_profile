@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtDesktop 1.0
+import QtQuick.Controls 1.0
 
 
 Row {
@@ -34,12 +34,14 @@ Row {
         onClicked: profile.getRadius()
     }
 
-   /* Button {
+    Button {
         id: ool
         width: 96
         text: "gkfjgdo"
         onClicked: {
-            parComboBox.selectedText = "m2_34_40_5"
+            parComboBox.currentIndex = 5
+            //profile.listOfParameters.indexOf(currentText)
+         //   console.log(parComboBox.(parComboBox.currentText))
 
           //  parameters.children.
            // parComboBox.menuItems = ["aa", "mmm"]
@@ -48,5 +50,5 @@ Row {
           //  parComboBox.update()
 
         }
-    }*/
+    }
 }

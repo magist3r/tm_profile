@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtDesktop 1.0
+import QtQuick.Controls 1.0
 
 Repeater {
     id: repeater
@@ -26,6 +26,7 @@ Repeater {
             anchors.verticalCenter: label.verticalCenter
             anchors.left: label.right
             anchors.right: parent.right
+            decimals: 3
             onValueChanged: {
                 parametersChanged = true
                 profile[modelData] = item.value

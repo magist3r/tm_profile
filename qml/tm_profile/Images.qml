@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtDesktop 1.0
+import QtQuick 2.1
+import QtQuick.Controls 1.0
 
 Item {
     id: images
@@ -7,23 +7,33 @@ Item {
     property alias image1: _image1
     property alias image2: _image2
 
-    function setImageSource(basename, modname) {
+    function updateImages() {
+        var parName = parComboBox.currentText
+        var modName = modComboBox.currentText
+
         _image1.source = ""
         _image2.source = ""
-        var name = profile.dataLocation + '/' + basename
+
+        var baseName = profile.dataLocation + '/' + parName
         if (checkbox.checked) {
-            _image1.source = name + '_manual_1.png'
-            _image2.source = name + '_manual_2.png'
+            _image1.source = baseName + '_manual_1.png'
+            _image2.source = baseName + '_manual_2.png'
         } else {
-            _image1.source = name + '_' + modname + '_1.png'
-            _image2.source = name + '_' + modname + '_2.png'
+            _image1.source = baseName + '_' + modName + '_1.png'
+            _image2.source = baseName + '_' + modName + '_2.png'
         }
     }
 
     Connections {
         target: imageGenerator
-        onImagesGenerated: updateSettingsAndImages(true)
+        onImagesGenerated: updateImages()
     }
+
+    Connections {
+        target: checkbox
+        onCheckedChanged: updateImages()
+    }
+
 
     Image {
         id: _image1

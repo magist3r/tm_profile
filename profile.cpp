@@ -38,7 +38,9 @@ Profile::Profile(QObject *parent)
     setModBw(0.0);
     setUseManualXtList(false);
     setListOfParameters();
-
+    m_trajectory.append(0.0);
+    m_trajectory.append(0.0);
+    m_trajectory.append(0.0);
 
 }
 
@@ -153,6 +155,8 @@ void Profile::calculate()
         m_trajectory = squareMethod(XtList);
     }
 
+    emit trajectoryChanged(m_trajectory);
+
     double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
 
     Wi = m_W0;
@@ -202,7 +206,7 @@ void Profile::calculate()
     emit calculateFinished(m_result, 0.006 * sqrt(m_m), m_delta_s_max, imageWidth, imageHeight, baseName);
 }
 
-QList<double> Profile::squareMethod(const QMap<double, double> &S)
+QList<qreal> Profile::squareMethod(const QMap<double, double> &S)
 {
     double sum_x = 0;
     double sum_x2 = 0;
@@ -211,7 +215,7 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
     double sum_y = 0;
     double sum_xy = 0;
     double sum_x2y = 0;
-    QList<double> X; // Матрица результатов (коэффициенты уравнения)
+    QList<qreal> X; // Матрица результатов (коэффициенты уравнения)
 
     int n = 0;
     QMap<double, double>::const_iterator i;
@@ -269,7 +273,7 @@ QList<double> Profile::squareMethod(const QMap<double, double> &S)
     return X;
 }
 
-QList<double> Profile::squareMethod(const QList<qreal> &S)
+QList<qreal> Profile::squareMethod(const QList<qreal> &S)
 {
     QMap<double, double> map;
     QListIterator<qreal> i(S);
@@ -374,17 +378,19 @@ void Profile::saveMainSettings()
     settings.setValue("mod0", mod0());
     settings.setValue("modCenter", modCenter());
     settings.setValue("modBw", modBw());
-  /*  settings.setValue("a", trajectory().at(2));
+    settings.setValue("a", trajectory().at(2));
     settings.setValue("b", trajectory().at(1));
-    settings.setValue("c", trajectory().at(0));*/
+    settings.setValue("c", trajectory().at(0));
     settings.endGroup();
 
-    setModificationList(settings.childGroups());
+    QStringList list = settings.childGroups();
+
+
 
     settings.endGroup();
 
     setListOfParameters();
-
+    setModificationList(list);
 }
 
 bool Profile::areEmpty()
@@ -484,12 +490,16 @@ void Profile::loadModSettings(QString value, QString modValue)
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
-    qDebug() << value << modValue;
     settings.beginGroup(value);
     settings.beginGroup(modValue);
     setMod0(settings.value("mod0").toDouble());
     setModCenter(settings.value("modCenter").toDouble());
     setModBw(settings.value("modBw").toDouble());
+    m_trajectory[2] = settings.value("a").toDouble();
+    m_trajectory[1] = settings.value("b").toDouble();
+    m_trajectory[0] = settings.value("c").toDouble();
+
+    trajectoryChanged(m_trajectory);
     settings.endGroup();
     settings.endGroup();
 }

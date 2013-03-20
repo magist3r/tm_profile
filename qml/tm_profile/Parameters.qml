@@ -1,8 +1,11 @@
 import QtQuick 2.0
-import QtDesktop 1.0
+import QtQuick.Controls 1.0
 
 Tab {
-      title: qsTr("Parameters")
+     title: qsTr("Parameters")
+     Item {
+         anchors.fill: parent
+
 
       Text {
           id: title1
@@ -62,5 +65,5 @@ Tab {
       }
 
 
-
+}
 }

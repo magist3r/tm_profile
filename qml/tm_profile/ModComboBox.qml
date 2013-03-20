@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtDesktop 1.0
+/*import QtQuick 2.0
+import QtQuick.Controls 1.0
 
 ComboBox {
     id: item
@@ -7,11 +7,11 @@ ComboBox {
     anchors.left: label2.right
   //  anchors.right: buttons.left
     anchors.margins: 10
-    onSelectedTextChanged: {
+    onCurrentTextChanged: {
         if (!reloading) {
             if (firstRun) {
-                profile.loadModSettings(parComboBox.selectedText,item.selectedText)
-                updateSettingsAndImages(true, item.selectedText)
+                profile.loadModSettings(parComboBox.currentText, item.currentText)
+                updateSettingsAndImages(true, item.currentText)
                 firstRun = false
             }
             updateSettingsAndImages()
@@ -25,4 +25,4 @@ ComboBox {
 
     }
  //   Component.onCompleted: profile.loadSettings(parComboBox.selectedText)
-}
+}*/

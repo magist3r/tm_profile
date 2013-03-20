@@ -53,7 +53,7 @@ class Profile : public QObject
     Q_PROPERTY(double modCenter READ modCenter WRITE setModCenter NOTIFY modCenterChanged)
     Q_PROPERTY(double modBw READ modBw WRITE setModBw NOTIFY modBwChanged)
 
-    Q_PROPERTY(QList<double> trajectory READ trajectory NOTIFY xt_wChanged)
+    Q_PROPERTY(QList<qreal> trajectory READ trajectory NOTIFY trajectoryChanged)
 
     Q_PROPERTY(QStringList listOfParameters READ listOfParameters NOTIFY listOfParametersChanged)
     Q_PROPERTY(QStringList modificationList READ modificationList NOTIFY modificationListChanged)
@@ -99,7 +99,7 @@ public:
     double modCenter() const { return m_modCenter; }
     double modBw() const { return m_modBw; }
 
-    QList<double> trajectory() const {  return m_trajectory; }
+    QList<qreal> trajectory() const {  return m_trajectory; }
     bool useManualXtList() const { return m_useManualXtList; }
     QList<qreal> manualXtList() const { return m_manualXtList; }
     QString dataLocation() const { return m_dataLocation; }
@@ -342,7 +342,7 @@ signals:
     void listOfParametersChanged(QStringList arg);
     void ra2Changed(double arg);
     void rf2Changed(double arg);
-    void xt_wChanged(QList<double> arg);
+    void trajectoryChanged(QList<qreal> arg);
     void useManualXtListChanged(bool arg);
     void manualXtListChanged(QList<qreal> arg);
     void dataLocationChanged(QString arg);
@@ -416,7 +416,7 @@ private:
     bool m_useOldPaintMode;
     bool m_diagnosticMode;
 
-    QList<double> m_trajectory;
+    QList<qreal> m_trajectory;
     QStringList m_listOfParameters;
     bool m_useManualXtList;
     QList<qreal> m_manualXtList;

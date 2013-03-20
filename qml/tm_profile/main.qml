@@ -1,5 +1,6 @@
-import QtQuick 2.0
-import QtDesktop 1.0
+import QtQuick 2.1
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Private 1.0
 
 ApplicationWindow {
     id:mainWindow
@@ -11,13 +12,15 @@ ApplicationWindow {
 
     property bool parametersChanged: false
     property bool firstRun: true
-    property bool reloading: false
+ //   property bool reloading: false
+    property bool parChanged: false
+    property bool modChanged: false
 
-    property var parComboBox: createComboBox("ParComboBox.qml", parameters)
-    property var modComboBox: createComboBox("ModComboBox.qml", modification)
+  //  property var parComboBox: createComboBox("ParComboBox.qml", parameters)
+ //   property var modComboBox: createComboBox("ModComboBox.qml", modification)
 
-    property alias image1: images.image1
-    property alias image2: images.image2
+   // property alias image1: mainTab.component.image1
+  //  property alias image2: images.image2
 
     function createComboBox(component, parent) {
         var comp = Qt.createComponent(component)
@@ -27,54 +30,28 @@ ApplicationWindow {
         return comboBox
     }
 
-    function updateSettingsAndImages(imagesOnly, name) {
-        var parName = parComboBox.selectedText
-        var modName
 
-        if (name === undefined)
-            modName = modComboBox.selectedText
-        else
-            modName = name
 
-        if (!imagesOnly) {
-            profile.loadSettings(parName)
-            profile.loadModSettings(parName, modName)
-        }
-
-        image1.source = ""
-        image2.source = ""
-
-        var baseName = profile.dataLocation + '/' + parName
-        if (checkbox.checked) {
-            image1.source = baseName + '_manual_1.png'
-            image2.source = baseName + '_manual_2.png'
-        } else {
-            image1.source = baseName + '_' + modName + '_1.png'
-            image2.source = baseName + '_' + modName + '_2.png'
-        }
-    }
-
-    Connections {
+  /*  Connections {
         target: profile
         onListOfParametersChanged: {
-            reloading = true
-            parComboBox.destroy()
-            parComboBox = createComboBox("ParComboBox.qml", parameters, "parComboBox")
-            parComboBox.selectedText = profile.getBaseName()
-            console.log('don')
-            reloading = false
-        }
+
 
         onModificationListChanged: {
-            reloading = true
-            modComboBox.destroy()
-            modComboBox = createComboBox("ModComboBox.qml", modification, "modComboBox")
+
+
+
+
+       //     console.log(profile.getModName() + ' slot')
+       //     modComboBox.currentIndex = profile.modificationList.indexOf(profile.getModName())
+        //    modComboBox.destroy()
+       //     modComboBox = createComboBox("ModComboBox.qml", modification, "modComboBox")
          //   modComboBox.selectedText = profile.getModName()
             //parComboBox.hoveredIndex = 5
            // parComboBox.hoveredText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
-            reloading = false
 
-        }
+
+        }*/
 
       /*  onCalculateFinished: {
             loadSettings = false
@@ -83,15 +60,14 @@ ApplicationWindow {
             modComboBox.selectedText = profile.getModName()
             loadSettings = true
          }*/
-    }
 
-    Connections {
+ /*   Connections {
         target: parComboBox
         onChangeSelectedText:{
             console.log('ololo')
             parComboBox.selectedText = profile.getBaseName()
         }
-    }
+    }*/
 
     Item {
         id: parameters
@@ -109,22 +85,41 @@ ApplicationWindow {
 
         }
 
-/*        ComboBox {
+        ComboBox {
             id: parComboBox
+            property bool reloading: false
             model: profile.listOfParameters
             anchors.left: label1.right
             anchors.right: buttons.left
             anchors.margins: 10
-            onSelectedTextChanged: {
-                if (loadSettings) {
-                    profile.loadSettings(parComboBox.selectedText)
-                    images.setImageSource()
+            onCurrentTextChanged: {
+                if (!reloading) {
+                    parChanged = true
+                    profile.loadSettings(currentText)
+                    console.log(parChanged, modChanged)
+                    if (!modChanged) {
+                        profile.loadModSettings(currentText, modComboBox.currentText)
+                             console.log('load mod')
+                    } else {
+                        modChanged = false
+                    }
+
+
+                   // updateImages()
+                    //updateSettingsAndImages()
+                   // console.log(modComboBox.currentText + 'jk')
                 }
-
-
             }
-            Component.onCompleted: profile.loadSettings(parComboBox.selectedText)
-        }*/
+
+            onModelChanged: {
+                console.log('1u' + profile.getBaseName())
+                reloading = true
+                currentIndex = profile.listOfParameters.indexOf(profile.getBaseName())
+                reloading = false
+            }
+
+           // Component.onCompleted: profile.loadSettings(parComboBox.currentText)
+        }
 
         Buttons {
             id: buttons
@@ -175,24 +170,45 @@ ApplicationWindow {
             anchors.verticalCenter: modComboBox.verticalCenter
         }
 
-      /*  ComboBox {
+        ComboBox {
             id: modComboBox
+            property bool reloading: false
             model: profile.modificationList
             anchors.left: label2.right
           //  anchors.right: modFields.left
             anchors.margins: 10
-            onSelectedTextChanged: {
-                profile.loadModSettings(parComboBox.selectedText, modComboBox.selectedText)
-                images.setImageSource()
-            }
-            Component.onCompleted: profile.loadModSettings(parComboBox.selectedText, modComboBox.selectedText)
+            onCurrentTextChanged: {
+                if (!reloading) {
+                    console.log('ololololololololololo')
+                    profile.loadModSettings(parComboBox.currentText, currentText)
+                  //  updateImages()
+                } else {
+                    console.log('aaaaaaaa')
+                }
 
-      /*      Binding {
-                target: modList
-                property: "model"
-                value: profile.modificationList
-            }*/
-        //}
+             /*   if (!reloading) {
+                    console.log('gdhvbfhvgh!!!!!!!')
+                    updateSettingsAndImages()
+                }*/
+            }
+
+            onModelChanged: {
+                console.log('2u')
+                if (parChanged) {
+                    if (currentIndex !== 0) {
+                        modChanged = true
+                        currentIndex = 0
+                    }
+                    parChanged = false
+                } else {
+                    reloading = true
+                    currentIndex = profile.modificationList.indexOf(profile.getModName())
+                    reloading = false
+                }
+            }
+
+          //  Component.onCompleted: profile.loadModSettings(parComboBox.currentText, modComboBox.currentText)
+}
 
 
     }
@@ -236,7 +252,8 @@ ApplicationWindow {
                         anchors.right: parent.right
                         minimumValue: -0.1
                         maximumValue: 0.1
-                        singleStep: 0.005
+                        decimals: 3
+                        stepSize: 0.005
                         onValueChanged: {
                             parametersChanged = true
                             profile[modelData] = item.value
@@ -254,12 +271,18 @@ ApplicationWindow {
 
        }
 
+       Text {
+           anchors.top: modFields.bottom
+           text: profile.trajectory[2] + '   ' + profile.trajectory[1] + '   ' + profile.trajectory[0]
+       }
 
 
 
 
-    TabFrame {
+
+    TabView {
         id: tabs
+
 
         anchors {
             top: modFields.bottom
@@ -270,18 +293,23 @@ ApplicationWindow {
             topMargin: 10
         }
 
+       //  property alias images: images
+
         Tab {
             id: mainTab
             title: qsTr("Inertial zone")
+          //  property alias images: images
             Images {
                 id: images
                 anchors.fill: parent
             }
+
+
         }
 
         Parameters { id: parametersTab }
 
-        XtList { id: xtListTab }
+        //XtList { id: xtListTab }
 
     }
 }
