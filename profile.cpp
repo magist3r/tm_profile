@@ -142,8 +142,6 @@ void Profile::calculate()
 
     }
 
-  //  saveTrajectory();
-
     // Задание модификации
     if( !useManualXtList() && (mod0() != 0 || modCenter() != 0 || modBw() != 0) ) {
         XtList.clear();
@@ -155,6 +153,7 @@ void Profile::calculate()
         m_trajectory = squareMethod(XtList);
     }
 
+    saveTrajectory();
     emit trajectoryChanged(m_trajectory);
 
     double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
@@ -333,6 +332,10 @@ QString Profile::getModName()
     QString name = QString::number(mod0()) +
                    "_" + QString::number(modCenter()) +
                    "_" + QString::number(modBw());
+
+    if (useManualXtList())
+        name = "manual";
+
     return name;
 }
 
@@ -343,10 +346,12 @@ void Profile::saveTrajectory()
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
     settings.beginGroup(getBaseName());
-    settings.setValue("a", m_trajectory[2]);
-    settings.setValue("b", m_trajectory[1]);
-    settings.setValue("c", m_trajectory[0]);
-
+    settings.beginGroup(getModName());
+    settings.setValue("a", trajectory().at(2));
+    settings.setValue("b", trajectory().at(1));
+    settings.setValue("c", trajectory().at(0));
+    settings.endGroup();
+    settings.endGroup();
 }
 
 void Profile::saveMainSettings()
@@ -366,7 +371,7 @@ void Profile::saveMainSettings()
     settings.setValue("rf2", m_rf2);
 
     settings.setValue("useManualTr", m_useManualXtList);
-    if (m_useManualXtList) {
+    if (useManualXtList()) {
         QVariantList variantList;
         QListIterator<qreal> i(m_manualXtList);
         while (i.hasNext())
@@ -378,14 +383,9 @@ void Profile::saveMainSettings()
     settings.setValue("mod0", mod0());
     settings.setValue("modCenter", modCenter());
     settings.setValue("modBw", modBw());
-    settings.setValue("a", trajectory().at(2));
-    settings.setValue("b", trajectory().at(1));
-    settings.setValue("c", trajectory().at(0));
     settings.endGroup();
 
     QStringList list = settings.childGroups();
-
-
 
     settings.endGroup();
 
@@ -425,29 +425,6 @@ bool Profile::areEmpty()
     return false;
 }
 
-/*void Profile::saveOtherSettings()
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-    settings.beginGroup("OtherSettings");
-    settings.setValue("alpha", m_alpha);
-    settings.setValue("c", m_c);
-    settings.setValue("z0", m_z0);
-    settings.setValue("x0", m_x0);
-    settings.setValue("da0", m_da0);
-    settings.setValue("ha", m_ha);
-    settings.endGroup();
-}
-
-void Profile::saveLastSettings()
-{
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope, "zb-susu", "tm_profile");
-    settings.beginGroup("LastSettings");
-    settings.setValue("dx", m_dx);
-    settings.setValue("dx_0", m_dx_0);
-    settings.setValue("dx_bw", m_dx_bw);
-    settings.endGroup();
-}*/
-
 void Profile::loadSettings(QString value)
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -475,14 +452,7 @@ void Profile::loadSettings(QString value)
         setManualXtList(qList);
     }
 
-    //if ( !settings.childGroups().isEmpty() ) {
-        setModificationList(settings.childGroups());
-   // } else {
-  //      QStringList list;
-     //   list << QString("0_0_0");
-   //     setModificationList(list);
-    //}
-
+    setModificationList(settings.childGroups());
     settings.endGroup();
 }
 

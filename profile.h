@@ -122,14 +122,6 @@ public:
 
     Q_INVOKABLE QString getModName();
 
-    /*void saveOtherSettings();
-
-    void saveLastSettings();*/
-
-
-
-
-
 public slots:
 
     /* setters */

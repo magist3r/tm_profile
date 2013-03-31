@@ -3,6 +3,12 @@ import QtQuick.Controls 1.0
 
 Tab {
     title: qsTr("Manual trajectory")
+    enabled: checkbox.checked
+
+    Item {
+        id: rootItem
+        anchors.fill: parent
+
 
     Item {
         id: leftColumn
@@ -41,6 +47,7 @@ Tab {
                     anchors.left: label.right
                     anchors.right: parent.right
                     anchors.verticalCenter: label.verticalCenter
+                    decimals: 3
 
                     onValueChanged: {
                         parametersChanged = true
@@ -92,6 +99,7 @@ Tab {
                     anchors.left: label2.right
                     anchors.right: parent.right
                     anchors.verticalCenter: label2.verticalCenter
+                    decimals: 3
 
                     onValueChanged: {
                         parametersChanged = true
@@ -107,4 +115,5 @@ Tab {
             }
         }
     }
+}
 }

@@ -19,13 +19,13 @@ ApplicationWindow {
 
     Connections {
         target: profile
+
         onListOfParametersChanged: {
             reloading = true
             parComboBox.model = arg
             parComboBox.currentIndex = profile.listOfParameters.indexOf(profile.getBaseName())
             reloading = false
         }
-
 
         onModificationListChanged: {
             if (parChanged) {
@@ -107,8 +107,17 @@ ApplicationWindow {
             onCheckedChanged: {
                 parametersChanged = true
                 profile.useManualXtList = checked
-                images.updateImages()
+                if (checked) {
+                    var index = profile.modificationList.indexOf("manual")
+                    if (index !== -1)
+                        modComboBox.currentIndex = index
+                } else {
+                    if (modComboBox.currentText == "manual") {
+                        modComboBox.currentIndex = 0
+                    }
+                }
             }
+
 
             Binding {
                 target: checkbox
@@ -127,7 +136,7 @@ ApplicationWindow {
             height: modComboBox.height
             anchors.topMargin: 10
 
-            visible: !checkbox.checked
+           // visible: !checkbox.checked
 
             Label {
                 id: label2
@@ -143,6 +152,11 @@ ApplicationWindow {
                 onCurrentTextChanged: {
                     if (!reloading) {
                         profile.loadModSettings(parComboBox.currentText, currentText)
+                        if (currentText == "manual")
+                            checkbox.checked = true
+                        else
+                            checkbox.checked = false
+
                         images.updateImages()
                     }
                 }
@@ -161,7 +175,7 @@ ApplicationWindow {
             }
             height: childrenRect.height
 
-            visible: !checkbox.checked
+       //    visible: !checkbox.checked
 
             Repeater {
                 model: [ "mod0", "modCenter", "modBw"]
@@ -230,23 +244,19 @@ ApplicationWindow {
             topMargin: 10
         }
 
-       //  property alias images: images
-
         Tab {
             id: mainTab
             title: qsTr("Inertial zone")
-          //  property alias images: images
             Images {
                 id: images
                 anchors.fill: parent
             }
 
-
         }
 
         Parameters { id: parametersTab }
 
-        //XtList { id: xtListTab }
+        XtList { id: xtListTab }
 
     }
 }

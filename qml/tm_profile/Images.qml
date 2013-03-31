@@ -15,25 +15,14 @@ Item {
         _image2.source = ""
 
         var baseName = profile.dataLocation + '/' + parName
-        if (checkbox.checked) {
-            _image1.source = baseName + '_manual_1.png'
-            _image2.source = baseName + '_manual_2.png'
-        } else {
-            _image1.source = baseName + '_' + modName + '_1.png'
-            _image2.source = baseName + '_' + modName + '_2.png'
-        }
+        _image1.source = baseName + '_' + modName + '_1.png'
+        _image2.source = baseName + '_' + modName + '_2.png'
     }
 
     Connections {
         target: imageGenerator
         onImagesGenerated: updateImages()
     }
-
-    Connections {
-        target: checkbox
-        onCheckedChanged: updateImages()
-    }
-
 
     Image {
         id: _image1
