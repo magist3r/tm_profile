@@ -11,207 +11,145 @@ ApplicationWindow {
     minimumHeight: 640
 
     property bool parametersChanged: false
-    property bool firstRun: true
- //   property bool reloading: false
+    property bool reloading: false
     property bool parChanged: false
     property bool modChanged: false
 
-  //  property var parComboBox: createComboBox("ParComboBox.qml", parameters)
- //   property var modComboBox: createComboBox("ModComboBox.qml", modification)
+    property alias images: mainTab.item
 
-   // property alias image1: mainTab.component.image1
-  //  property alias image2: images.image2
-
-    function createComboBox(component, parent) {
-        var comp = Qt.createComponent(component)
-        if (comp.status == Component.Ready)
-            var comboBox = comp.createObject(parent);
-
-        return comboBox
-    }
-
-
-
-  /*  Connections {
+    Connections {
         target: profile
         onListOfParametersChanged: {
+            reloading = true
+            parComboBox.model = arg
+            parComboBox.currentIndex = profile.listOfParameters.indexOf(profile.getBaseName())
+            reloading = false
+        }
 
 
         onModificationListChanged: {
-
-
-
-
-       //     console.log(profile.getModName() + ' slot')
-       //     modComboBox.currentIndex = profile.modificationList.indexOf(profile.getModName())
-        //    modComboBox.destroy()
-       //     modComboBox = createComboBox("ModComboBox.qml", modification, "modComboBox")
-         //   modComboBox.selectedText = profile.getModName()
-            //parComboBox.hoveredIndex = 5
-           // parComboBox.hoveredText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
-
-
-        }*/
-
-      /*  onCalculateFinished: {
-            loadSettings = false
-
-            parComboBox.selectedText = 'm' + profile.m + '_' + profile.z1 + '_' + profile.z2 + '_' + profile.bw
-            modComboBox.selectedText = profile.getModName()
-            loadSettings = true
-         }*/
-
- /*   Connections {
-        target: parComboBox
-        onChangeSelectedText:{
-            console.log('ololo')
-            parComboBox.selectedText = profile.getBaseName()
-        }
-    }*/
-
-    Item {
-        id: parameters
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        height: 20
-        anchors.margins: 10
-
-        Label {
-            id: label1
-            text: qsTr("Parameters:")
-            font.pointSize: 10
-            anchors.verticalCenter: parComboBox.verticalCenter
-
-        }
-
-        ComboBox {
-            id: parComboBox
-            property bool reloading: false
-            model: profile.listOfParameters
-            anchors.left: label1.right
-            anchors.right: buttons.left
-            anchors.margins: 10
-            onCurrentTextChanged: {
-                if (!reloading) {
-                    parChanged = true
-                    profile.loadSettings(currentText)
-                    console.log(parChanged, modChanged)
-                    if (!modChanged) {
-                        profile.loadModSettings(currentText, modComboBox.currentText)
-                             console.log('load mod')
-                    } else {
-                        modChanged = false
-                    }
-
-
-                   // updateImages()
-                    //updateSettingsAndImages()
-                   // console.log(modComboBox.currentText + 'jk')
+            if (parChanged) {
+                modComboBox.model = arg
+                if (modComboBox.currentIndex !== 0) {
+                    modChanged = true
+                    modComboBox.currentIndex  = 0
                 }
-            }
-
-            onModelChanged: {
-                console.log('1u' + profile.getBaseName())
+                parChanged = false
+            } else {
                 reloading = true
-                currentIndex = profile.listOfParameters.indexOf(profile.getBaseName())
+                modComboBox.model = arg
+                modComboBox.currentIndex = profile.modificationList.indexOf(profile.getModName())
                 reloading = false
             }
-
-           // Component.onCompleted: profile.loadSettings(parComboBox.currentText)
         }
-
-        Buttons {
-            id: buttons
-            anchors.right: parent.right
-        }
-    }
-
-    CheckBox {
-        id: checkbox
-
-        anchors {
-            top: parameters.bottom
-            right: parent.right
-            left: parent.left
-            margins: 10
-        }
-
-        onCheckedChanged: {
-            parametersChanged = true
-            profile.useManualXtList = checked
-            updateSettingsAndImages(true)
-        }
-
-        Binding {
-            target: checkbox
-            property: "checked"
-            value: profile.useManualXtList
-        }
-
-        text: qsTr("Use manual xt list")
     }
 
     Item {
-        id: modification
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: checkbox.bottom
-        height: modComboBox.height
-        anchors.margins: 10
+        id: rootItem
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+            margins: 10
+        }
+        height: childrenRect.height
 
-        visible: !checkbox.checked
+        Item {
+            id: parameters
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 20
 
+            Label {
+                id: label1
+                text: qsTr("Parameters:")
+                font.pointSize: 10
+                anchors.verticalCenter: parComboBox.verticalCenter
+            }
 
-        Label {
-            id: label2
-            text: qsTr("Modification:")
-            font.pointSize: 10
-            anchors.verticalCenter: modComboBox.verticalCenter
+            ComboBox {
+                id: parComboBox
+                anchors.left: label1.right
+                anchors.right: buttons.left
+                anchors.margins: 10
+                onCurrentTextChanged: {
+                    if (!reloading) {
+                        parChanged = true
+                        profile.loadSettings(currentText)
+                        if (!modChanged) {
+                            profile.loadModSettings(currentText, modComboBox.currentText)
+                            images.updateImages()
+                        } else
+                            modChanged = false
+                    }
+                }
+
+                Component.onCompleted: model = profile.listOfParameters
+            }
+
+            Buttons {
+                id: buttons
+                anchors.right: parent.right
+            }
         }
 
-        ComboBox {
-            id: modComboBox
-            property bool reloading: false
-            model: profile.modificationList
-            anchors.left: label2.right
-          //  anchors.right: modFields.left
-            anchors.margins: 10
-            onCurrentTextChanged: {
-                if (!reloading) {
-                    console.log('ololololololololololo')
-                    profile.loadModSettings(parComboBox.currentText, currentText)
-                  //  updateImages()
-                } else {
-                    console.log('aaaaaaaa')
-                }
+        CheckBox {
+            id: checkbox
 
-             /*   if (!reloading) {
-                    console.log('gdhvbfhvgh!!!!!!!')
-                    updateSettingsAndImages()
-                }*/
+            anchors {
+                top: parameters.bottom
+                right: parent.right
+                left: parent.left
+                topMargin: 10
             }
 
-            onModelChanged: {
-                console.log('2u')
-                if (parChanged) {
-                    if (currentIndex !== 0) {
-                        modChanged = true
-                        currentIndex = 0
+            onCheckedChanged: {
+                parametersChanged = true
+                profile.useManualXtList = checked
+                images.updateImages()
+            }
+
+            Binding {
+                target: checkbox
+                property: "checked"
+                value: profile.useManualXtList
+            }
+
+            text: qsTr("Use manual xt list")
+        }
+
+        Item {
+            id: modification
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: checkbox.bottom
+            height: modComboBox.height
+            anchors.topMargin: 10
+
+            visible: !checkbox.checked
+
+            Label {
+                id: label2
+                text: qsTr("Modification:")
+                font.pointSize: 10
+                anchors.verticalCenter: modComboBox.verticalCenter
+            }
+
+            ComboBox {
+                id: modComboBox
+                anchors.left: label2.right
+                anchors.margins: 10
+                onCurrentTextChanged: {
+                    if (!reloading) {
+                        profile.loadModSettings(parComboBox.currentText, currentText)
+                        images.updateImages()
                     }
-                    parChanged = false
-                } else {
-                    reloading = true
-                    currentIndex = profile.modificationList.indexOf(profile.getModName())
-                    reloading = false
                 }
+
+                Component.onCompleted: model = profile.modificationList
             }
-
-          //  Component.onCompleted: profile.loadModSettings(parComboBox.currentText, modComboBox.currentText)
-}
-
-
-    }
+        }
 
         Item {
             id: modFields
@@ -219,12 +157,11 @@ ApplicationWindow {
                 top: modification.bottom
                 left: parent.left
                 right: parent.right
-                margins: 10
+                topMargin: 10
             }
             height: childrenRect.height
 
             visible: !checkbox.checked
-
 
             Repeater {
                 model: [ "mod0", "modCenter", "modBw"]
@@ -233,7 +170,6 @@ ApplicationWindow {
                     x: index * (width + 10)
                     width: parent.width / 3 - 10
                     height: label.height
-
 
                     Label {
                         id: label
@@ -267,25 +203,26 @@ ApplicationWindow {
                     }
                 }
             }
-
-
        }
 
        Text {
-           anchors.top: modFields.bottom
+           anchors {
+               top: modFields.bottom
+               topMargin: 10
+               left: parent.left
+               right: parent.right
+           }
            text: profile.trajectory[2] + '   ' + profile.trajectory[1] + '   ' + profile.trajectory[0]
+           horizontalAlignment: Text.AlignHCenter
+           wrapMode: Text.WordWrap
        }
-
-
-
-
+    }
 
     TabView {
         id: tabs
 
-
         anchors {
-            top: modFields.bottom
+            top: rootItem.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom

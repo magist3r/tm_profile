@@ -47,6 +47,5 @@ OTHER_FILES += \
     qml/tm_profile/Alert.qml \
     qmlapplicationviewer.pri \
     qml/tm_profile/Parameters.qml \
-    qml/tm_profile/XtList.qml \
-    qml/tm_profile/ParComboBox.qml
+    qml/tm_profile/XtList.qml
 

@@ -34,7 +34,7 @@ Row {
         onClicked: profile.getRadius()
     }
 
-    Button {
+  /*  Button {
         id: ool
         width: 96
         text: "gkfjgdo"
@@ -50,5 +50,5 @@ Row {
           //  parComboBox.update()
 
         }
-    }
+    }*/
 }
