@@ -21,7 +21,7 @@ DEPLOYMENTFOLDERS = folder_01
 
 QML_IMPORT_PATH =
 
-include(qmlapplicationviewer.pri)
+include(qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 QT       += widgets qml quick
@@ -38,14 +38,14 @@ HEADERS  += \
     profile.h \
     imagegenerator.h
 
-FORMS    +=
+TRANSLATIONS += tm_profile_ru.ts
 
 OTHER_FILES += \
     qml/tm_profile/main.qml \
     qml/tm_profile/Fields.qml \
     qml/tm_profile/Buttons.qml \
     qml/tm_profile/Alert.qml \
-    qmlapplicationviewer.pri \
     qml/tm_profile/Parameters.qml \
-    qml/tm_profile/XtList.qml
+    qml/tm_profile/XtList.qml \
+    qtquick2applicationviewer.pri
 

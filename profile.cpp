@@ -169,7 +169,7 @@ void Profile::calculate()
         double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
         double ha_2 = m_ha / cos(delta_oi);
         double c_2 = m_c / cos(delta_oi);
-        double d = m_m * m_z1;QString getModName();
+        double d = m_m * m_z1;
         double alpha_t = atan(tan(m_alpha_rad) * cos(delta_oi));
         double d_b = d * cos(alpha_t);
         double ry1_min = m_ra2 / cos(m_E_rad) - (m_W0 + m_bw) * tan(m_E_rad);

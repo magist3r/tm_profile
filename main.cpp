@@ -36,6 +36,11 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     if (!datadir.exists())
         datadir.mkpath(datadir.path());
 
+    QTranslator myappTranslator;
+    myappTranslator.load(app.applicationName() + "_" + QLocale::system().name());
+    qDebug() << app.applicationName() + "_" + QLocale::system().name();
+    app.installTranslator(&myappTranslator);
+
     Profile *profile = new Profile();
     profile->setdataLocation(datadir.absolutePath());
 
