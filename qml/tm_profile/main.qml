@@ -7,8 +7,12 @@ ApplicationWindow {
     title: qsTr("tm_profile - program for calculation of cylinder-bevel transmissions")
     visible: true
 
-    minimumWidth: 480
-    minimumHeight: 640
+    minimumWidth: 600
+    minimumHeight: 690
+
+    onHeightChanged: {
+        console.log(tabs.height)
+    }
 
     property bool parametersChanged: false
     property bool reloading: false
@@ -59,7 +63,7 @@ ApplicationWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: 20
+            height: childrenRect.height
 
             Label {
                 id: label1
@@ -94,46 +98,12 @@ ApplicationWindow {
             }
         }
 
-        CheckBox {
-            id: checkbox
-
-            anchors {
-                top: parameters.bottom
-                right: parent.right
-                left: parent.left
-                topMargin: 10
-            }
-
-            onCheckedChanged: {
-                parametersChanged = true
-                profile.useManualXtList = checked
-                if (checked) {
-                    var index = profile.modificationList.indexOf("manual")
-                    if (index !== -1)
-                        modComboBox.currentIndex = index
-                } else {
-                    if (modComboBox.currentText == "manual") {
-                        modComboBox.currentIndex = 0
-                    }
-                }
-            }
-
-
-            Binding {
-                target: checkbox
-                property: "checked"
-                value: profile.useManualXtList
-            }
-
-            text: qsTr("Use manual xt list")
-        }
-
         Item {
             id: modification
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: checkbox.bottom
-            height: modComboBox.height
+            anchors.top: parameters.bottom
+            height: childrenRect.height
             anchors.topMargin: 10
 
            // visible: !checkbox.checked
@@ -148,6 +118,7 @@ ApplicationWindow {
             ComboBox {
                 id: modComboBox
                 anchors.left: label2.right
+                anchors.right: checkbox.left
                 anchors.margins: 10
                 onCurrentTextChanged: {
                     if (!reloading) {
@@ -163,7 +134,41 @@ ApplicationWindow {
 
                 Component.onCompleted: model = profile.modificationList
             }
+
+            CheckBox {
+                id: checkbox
+
+                anchors {
+                    right: parent.right
+ //                   verticalCenter: modComboBox.verticalCenter
+                }
+
+                onCheckedChanged: {
+                    parametersChanged = true
+                    profile.useManualXtList = checked
+                    if (checked) {
+                        var index = profile.modificationList.indexOf("manual")
+                        if (index !== -1)
+                            modComboBox.currentIndex = index
+                    } else {
+                        if (modComboBox.currentText == "manual") {
+                            modComboBox.currentIndex = 0
+                        }
+                    }
+                }
+
+
+                Binding {
+                    target: checkbox
+                    property: "checked"
+                    value: profile.useManualXtList
+                }
+
+                text: qsTr("Use manual xt list")
+            }
         }
+
+
 
         Item {
             id: modFields
@@ -226,7 +231,14 @@ ApplicationWindow {
                left: parent.left
                right: parent.right
            }
-           text: profile.trajectory[2] + '   ' + profile.trajectory[1] + '   ' + profile.trajectory[0]
+           function num(number) {
+               if (number > 0)
+                   return '+ ' + number.toFixed(6)
+               else
+                   return '- ' + Math.abs(number.toFixed(6))
+           }
+
+           text: qsTr("Trajectory: %1 * w^2 %2 * w %3").arg(num(profile.trajectory[2])).arg(num(profile.trajectory[1])).arg(num(profile.trajectory[0]))
            horizontalAlignment: Text.AlignHCenter
            wrapMode: Text.WordWrap
        }
@@ -244,15 +256,7 @@ ApplicationWindow {
             topMargin: 10
         }
 
-        Tab {
-            id: mainTab
-            title: qsTr("Inertial zone")
-            Images {
-                id: images
-                anchors.fill: parent
-            }
-
-        }
+        Images { id: mainTab }
 
         Parameters { id: parametersTab }
 

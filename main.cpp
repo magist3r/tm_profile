@@ -38,7 +38,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QTranslator myappTranslator;
     myappTranslator.load(app.applicationName() + "_" + QLocale::system().name());
-    qDebug() << app.applicationName() + "_" + QLocale::system().name();
     app.installTranslator(&myappTranslator);
 
     Profile *profile = new Profile();

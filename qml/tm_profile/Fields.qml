@@ -16,8 +16,8 @@ Repeater {
 
         Label {
             id: label
-            width: 40
-            text: [modelData].valueOf(index) + "= "
+            width: 50
+            text: [modelData].valueOf(index) + " ="
             font.pointSize: 10
         }
 

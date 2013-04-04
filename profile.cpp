@@ -196,11 +196,7 @@ void Profile::calculate()
         }
         Wi += dW;
     }
-    QString baseName = getBaseName();
-    if (m_useManualXtList)
-        baseName += "_manual";
-    else
-        baseName += "_" + getModName();
+    QString baseName = getBaseName() + "_" + getModName();
 
     emit calculateFinished(m_result, 0.006 * sqrt(m_m), m_delta_s_max, imageWidth, imageHeight, baseName);
 }
@@ -329,14 +325,19 @@ QString Profile::getBaseName()
 
 QString Profile::getModName()
 {
-    QString name = QString::number(mod0()) +
-                   "_" + QString::number(modCenter()) +
-                   "_" + QString::number(modBw());
-
     if (useManualXtList())
-        name = "manual";
+        return QString("manual");
 
-    return name;
+    QString name1, name2, name3;
+    name1 = QString::number(mod0() * 1000);
+    name2 = QString::number(modCenter() * 1000);
+    name3 = QString::number(modBw() * 1000);
+
+    if (mod0() > 0) name1 = "+" + name1;
+    if (modCenter() > 0) name2 = "+" + name2;
+    if (modBw() > 0) name3 = "+" + name3;
+
+    return name1 + "_" + name2 + "_" + name3;
 }
 
 
