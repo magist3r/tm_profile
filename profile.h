@@ -117,6 +117,8 @@ public:
 
     Q_INVOKABLE bool areEmpty();
 
+    Q_INVOKABLE bool imageExists(QString basename);
+
 
     Q_INVOKABLE QString getBaseName();
 

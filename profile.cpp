@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "math.h"
 #include <QSettings>
 #include <QStandardPaths>
+#include <QFile>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -424,6 +425,16 @@ bool Profile::areEmpty()
     }
 
     return false;
+}
+
+bool Profile::imageExists(QString basename)
+{
+    QFile file1(basename + "_1.png");
+    QFile file2(basename + "_2.png");
+    if (!file1.exists() || !file2.exists())
+        return false;
+
+    return true;
 }
 
 void Profile::loadSettings(QString value)
