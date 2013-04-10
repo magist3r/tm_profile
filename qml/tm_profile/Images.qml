@@ -16,11 +16,11 @@ Tab {
 
             var baseName = profile.dataLocation + '/' + parName
 
-            if (!profile.imageExists(baseName))
-                return
-
             _image1.source = ""
             _image2.source = ""
+
+            if (!profile.imageExists(baseName + '_' + modName))
+                return
 
             _image1.source = baseName + '_' + modName + '_1.png'
             _image2.source = baseName + '_' + modName + '_2.png'
