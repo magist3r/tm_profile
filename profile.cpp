@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "math.h"
 #include <QSettings>
 #include <QStandardPaths>
-#include <QFile>
+#include <QFileInfo>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -74,7 +74,38 @@ void Profile::calculate()
 {
     double imageHeight = (m_rf2 - m_ra2 - m_c * m_m) / cos(m_E_rad);
     double imageWidth = m_bw;
-    m_result.clear();
+
+    QMap<double, double> XtList = calculateTheoretical();
+    qDebug() << XtList;
+
+    // Задание модификации
+    if( !useManualXtList() && (mod0() != 0 || modCenter() != 0 || modBw() != 0) ) {
+        XtList.clear();
+
+        XtList[0] = m_trajectory[2] * 0 + m_trajectory[1] * 0 + m_trajectory[0] + mod0();
+        XtList[bw()/2] = m_trajectory[2] * pow(bw() / 2, 2) + m_trajectory[1] * bw() / 2 + m_trajectory[0] + modCenter();
+        XtList[bw()] = m_trajectory[2] * pow(bw(), 2) + m_trajectory[1] * bw() + m_trajectory[0] + modBw();
+
+        m_trajectory = squareMethod(XtList);
+    }
+
+    qDebug() << XtList;
+
+    saveTrajectory();
+    emit trajectoryChanged(m_trajectory);
+
+    //double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
+
+    calculatePractical();
+
+    QString baseName = getBaseName() + "_" + getModName();
+
+    emit calculateFinished(m_result, 0.006 * sqrt(m_m), m_delta_s_max, imageWidth, imageHeight, baseName);
+}
+
+QMap<double, double> Profile::calculateTheoretical()
+{
+    m_theoreticalProfile.clear();
 
     double i21 = z1() / z2();
     m_rb2 = 0.5 * m_m * m_z2 * cos(m_alpha_rad);
@@ -87,14 +118,15 @@ void Profile::calculate()
 
     double x_tr = 0.0, y_tr = 0.0;
 
-    QList<double> list;
+    //QList<double> list;
 
     QMap<double, double> XtList;
 
     double Wi = m_W0;
+
     // Расчет коэффициентов смещения
     if (m_useManualXtList) {
-        m_trajectory = squareMethod(manualXtList());
+        ;//m_trajectory = squareMethod(manualXtList());
     } else {
         for (int i=0; i <= m_nW; i++) {
             double delta_oi = m_E_rad; // Угол аксоидного конуса шестерни
@@ -121,40 +153,51 @@ void Profile::calculate()
 
             XtList[Wi - m_W0] = xt;
 
+            double ry1_min = m_ra2 / cos(m_E_rad) - (m_W0 + m_bw) * tan(m_E_rad);
+            double ry2 = m_ra2;
+
+            for (int j=0; j <= m_nr; j++) {
+                double ry1 = ry2 / cos(m_E_rad) - Wi * tan(m_E_rad);
+
+                // Теоретический профиль
+                a_tw(ry1, Wi, x_tr, y_tr);
+                m_theoreticalProfile[Wi - m_W0][ry1 - ry1_min] = 2 * ry1 * atan(x_tr / y_tr); // Толщина зуба теоретическая
+
+                ry2 += dr;
+            }
+
             Wi += dW;
         }
 
         m_trajectory = squareMethod(XtList);
-
     }
 
-    // Задание модификации
-    if( !useManualXtList() && (mod0() != 0 || modCenter() != 0 || modBw() != 0) ) {
-        XtList.clear();
+    return XtList;
+}
 
-        XtList[0] = m_trajectory[2] * 0 + m_trajectory[1] * 0 + m_trajectory[0] + mod0();
-        XtList[bw()/2] = m_trajectory[2] * pow(bw() / 2, 2) + m_trajectory[1] * bw() / 2 + m_trajectory[0] + modCenter();
-        XtList[bw()] = m_trajectory[2] * pow(bw(), 2) + m_trajectory[1] * bw() + m_trajectory[0] + modBw();
 
-        m_trajectory = squareMethod(XtList);
-    }
 
-    saveTrajectory();
-    emit trajectoryChanged(m_trajectory);
+void Profile::calculatePractical()
+{
+    m_result.clear();
 
-    double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
+    double Wi = m_W0;
 
-    Wi = m_W0;
+    double dW = m_bw / m_nW; // Шаг торцовых сечений
+    double dr = (m_rf2 - m_ra2 - m_c * m_m) / m_nr; // Шаг радиусов
 
-    m_delta_s_max=0;
+    //double x_tr = 0.0, y_tr = 0.0;
+
+    m_delta_s_max = 0;
+    m_delta_s_min = 10000000;
     // Расчет толщин зубьев
     for (int i=0; i <= m_nW; i++) {
         double wi = Wi - m_W0;
         double delta_oi = -atan(m_m * (2 * m_trajectory[2] * wi + m_trajectory[1]));
         double xt = m_trajectory[2] * pow(wi, 2) + m_trajectory[1] * wi + m_trajectory[0];
-        double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
-        double ha_2 = m_ha / cos(delta_oi);
-        double c_2 = m_c / cos(delta_oi);
+        //double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
+        //double ha_2 = m_ha / cos(delta_oi);
+        //double c_2 = m_c / cos(delta_oi);
         double d = m_m * m_z1;
         double alpha_t = atan(tan(m_alpha_rad) * cos(delta_oi));
         double d_b = d * cos(alpha_t);
@@ -164,17 +207,16 @@ void Profile::calculate()
         for (int j=0; j <= m_nr; j++) {
             double ry1 = ry2 / cos(m_E_rad) - Wi * tan(m_E_rad);
 
-            // Теоретический профиль
-            a_tw(ry1, Wi, x_tr, y_tr);
-            double s_tr = 2 * ry1 * atan(x_tr / y_tr); // Толщина зуба теоретическая
-
             // Практический профиль
             double alpha_ty = acos(0.5 * d_b / ry1);
             double st = m_m * (M_PI / 2 + 2 * xt * tan(m_alpha_rad) * cos(delta_oi));
             double s_pr = ry1 * (2 * st / d + 2 * (tan(alpha_t) - alpha_t) - 2 * (tan(alpha_ty) - alpha_ty)); // Толщина зуба практическая
-            double delta_s = (s_pr - s_tr) / 2;
+            double delta_s = (s_pr - m_theoreticalProfile[wi][ry1 - ry1_min]) / 2;
             if (delta_s > m_delta_s_max)
                 m_delta_s_max = delta_s;
+
+            if (delta_s < m_delta_s_min)
+                m_delta_s_min = delta_s;
 
             m_result[wi][ry1 - ry1_min] = delta_s;
 
@@ -182,9 +224,6 @@ void Profile::calculate()
         }
         Wi += dW;
     }
-    QString baseName = getBaseName() + "_" + getModName();
-
-    emit calculateFinished(m_result, 0.006 * sqrt(m_m), m_delta_s_max, imageWidth, imageHeight, baseName);
 }
 
 QList<qreal> Profile::squareMethod(const QMap<double, double> &S)
@@ -208,8 +247,8 @@ QList<qreal> Profile::squareMethod(const QMap<double, double> &S)
         sum_y += i.value();
         sum_xy += i.key() * i.value();
         sum_x2y += pow(i.key(), 2) * i.value();
-        if (floor(fmod(i.key(), 0.5)*1000) == 0)
-            qDebug() << i.key() << i.value();
+        //if (floor(fmod(i.key(), 0.5)*1000) == 0)
+        qDebug() << i.key() << i.value();
         n++;
     }
 
@@ -254,7 +293,7 @@ QList<qreal> Profile::squareMethod(const QMap<double, double> &S)
     return X;
 }
 
-QList<qreal> Profile::squareMethod(const QList<qreal> &S)
+/*QList<qreal> Profile::squareMethod(const QList<qreal> &S)
 {
     QMap<double, double> map;
     QListIterator<qreal> i(S);
@@ -264,7 +303,7 @@ QList<qreal> Profile::squareMethod(const QList<qreal> &S)
         n++;
     }
     return squareMethod(map);
-}
+}*/
 
 void Profile::a_tw(double ry1, double Wi, double &x_tr, double &y_tr)
 {
@@ -414,8 +453,9 @@ bool Profile::areEmpty()
 
 bool Profile::imageExists(QString basename)
 {
-    QFile file1(basename + "_1.png");
-    QFile file2(basename + "_2.png");
+    basename.replace("file:///", QString());
+    QFileInfo file1(basename + "_1.png");
+    QFileInfo file2(basename + "_2.png");
     if (!file1.exists() || !file2.exists())
         return false;
 

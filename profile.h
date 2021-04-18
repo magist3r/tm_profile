@@ -70,7 +70,10 @@ public:
 
     Q_INVOKABLE bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
-    Q_INVOKABLE void calculate(); // Расчет толщин зубьев практического и теоретического профилей
+    Q_INVOKABLE void calculate();
+    Q_INVOKABLE QMap<double, double> calculateTheoretical(); // Расчет толщин зубьев теоретического профиля
+    Q_INVOKABLE void calculatePractical(); // Расчет толщин зубьев практического профиля
+
 
 
     /* getters */
@@ -366,7 +369,9 @@ private:
 
     void saveTrajectory();
 
+    QMap<double, QMap<double,double> > m_theoreticalProfile;
     QMap<double, QMap<double,double> > m_result;
+
 
     double m_m;
 
@@ -402,6 +407,7 @@ private:
     double m_dx_bw;*/
 
     double m_delta_s_max;
+    double m_delta_s_min;
 
     bool m_useSmooth;
     bool m_useOldPaintMode;

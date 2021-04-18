@@ -14,7 +14,7 @@ Tab {
             var parName = parComboBox.currentText
             var modName = modComboBox.currentText
 
-            var baseName = profile.dataLocation + '/' + parName
+            var baseName = "file:///" + profile.dataLocation + '/' + parName
 
             _image1.source = ""
             _image2.source = ""
