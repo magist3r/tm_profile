@@ -49,3 +49,8 @@ OTHER_FILES += \
     qml/tm_profile/XtList.qml \
     qtquick2applicationviewer.pri
 
+DISTFILES += \
+    qml/tm_profile/SpinBoxX.qml
+
+FORMS += \
+    profile.ui

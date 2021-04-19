@@ -25,12 +25,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QQmlEngine engine;
-    QQmlComponent component(&engine);
+	QApplication app(argc, argv);
+	//QQmlEngine engine;
+	//QQmlComponent component(&engine);
 
-    QCoreApplication::setApplicationName("tm_profile");
-    QCoreApplication::setOrganizationName("zb-susu");
+	QCoreApplication::setApplicationName("tm_profile");
+	QCoreApplication::setOrganizationName("zb-susu");
 
     QDir datadir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
     if (!datadir.exists())
@@ -38,19 +38,19 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QTranslator myappTranslator;
     myappTranslator.load(app.applicationName() + "_" + QLocale::system().name());
-    app.installTranslator(&myappTranslator);
+	app.installTranslator(&myappTranslator);
 
-    Profile *profile = new Profile();
-    profile->setdataLocation(datadir.absolutePath());
+	Profile _profile;
+	_profile.setDataLocation(datadir.absolutePath());
 
-    ImageGenerator *generator = new ImageGenerator();
-    QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
-                     generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
+	ImageGenerator _generator;
+	QObject::connect(&_profile, SIGNAL(calculateFinished(QMap<double, QMap<double, double>> &, double, double, double, double, QString)),
+	                 &_generator, SLOT(paint(QMap<double, QMap<double, double>> &, double, double, double, double, QString)));
 
-    engine.rootContext()->setContextProperty("imageGenerator", generator);
-    engine.rootContext()->setContextProperty("profile", profile);
+	//engine.rootContext()->setContextProperty("imageGenerator", generator);
+	//engine.rootContext()->setContextProperty("profile", profile);
 
-    component.loadUrl(QUrl("qml/tm_profile/main.qml"));
+	/*component.loadUrl(QUrl("qml/tm_profile/main.qml"));
     if ( !component.isReady() ) {
         qWarning("%s", qPrintable(component.errorString()));
         return -1;
@@ -64,7 +64,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         return -1;
     }
 
-    window->show();
+    window->show();*/
+	_profile.show();
 
-    return app.exec();
+
+	return app.exec();
 }
