@@ -1,11 +1,11 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
 Dialog {
     id: dialog
     width: 200
     height: 100
-    buttons: close
+    standardButtons: Dialog.Close
     visible: true
     title: qsTr("Error!")
     Text {

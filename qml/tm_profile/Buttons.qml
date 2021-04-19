@@ -1,14 +1,15 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
 
-Row {
-    spacing: 10
+//Row {
+//    spacing: 10
 
     Button {
         id: calculate
         width: 96
         text: qsTr("Calculate")
-        tooltip: "Not all fields are not empty"
+        ToolTip.text: "Not all fields are not empty"
+        ToolTip.visible: down
         onClicked: {
             if (profile.areEmpty()) {
                 Qt.createComponent("Alert.qml").createObject(mainWindow)
@@ -28,4 +29,4 @@ Row {
         text: qsTr("CalculateR")
         onClicked: profile.getRadius()
     }*/
-}
+//}

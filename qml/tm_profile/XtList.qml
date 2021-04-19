@@ -1,13 +1,10 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
-
-Tab {
-    title: qsTr("Manual trajectory")
-    enabled: checkbox.checked
+import QtQuick 2.12
+import QtQml 2.12
+import QtQuick.Controls 2.12
 
     Item {
         id: rootItem
-        anchors.fill: parent
+        enabled: checkbox.checked
 
 
         Item {
@@ -42,7 +39,7 @@ Tab {
                         font.pointSize: 10
                     }
 
-                    SpinBox {
+                    SpinBoxX {
                         id: item
                         anchors.left: label.right
                         anchors.right: parent.right
@@ -54,11 +51,7 @@ Tab {
                             profile.manualXtList[index*2] = item.value
                         }
 
-                        Binding {
-                            target: item
-                            property: "value"
-                            value: profile.manualXtList[index*2]
-                        }
+                        value: profile.manualXtList[index*2]
                     }
                 }
             }
@@ -94,7 +87,7 @@ Tab {
                         text: (index * 2 + 1) / 2 + " ="
                     }
 
-                    SpinBox {
+                    SpinBoxX {
                         id: item2
                         anchors.left: label2.right
                         anchors.right: parent.right
@@ -116,4 +109,4 @@ Tab {
             }
         }
     }
-}
+

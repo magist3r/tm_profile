@@ -1,65 +1,40 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
 
-Tab {
-    title: qsTr("Parameters")
-    Item {
-        anchors.fill: parent
+ColumnLayout {
+    Layout.preferredWidth: parent.width
 
-        Text {
-            id: title1
-            text: qsTr("Main parameters")
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+    Text {
+        text: qsTr("Main parameters")
+        Layout.alignment: Text.AlignHCenter
+    }
 
-        Item {
-            id: fields1
-            anchors.top: title1.bottom
-            anchors.topMargin: 10
-            width: parent.width / 2
-            height: childrenRect.height
-            Fields { model: [ "m", "z1", "z2", "bw", "ra2" ] }
-        }
+    GridLayout
+    {
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        Layout.topMargin: 10
+        Layout.bottomMargin: 20
+        columnSpacing: 50
 
-        Item {
-            id: fields2
-            anchors.top: title1.bottom
-            anchors.topMargin: 10
-            width: parent.width / 2
-            anchors.left: fields1.right
-            height: childrenRect.height
-            Fields { model: [ "W0", "E", "x2", "d0", "rf2" ] }
-        }
+        rows: 5
+        flow: GridLayout.TopToBottom
+        Fields { model: [ "m", "z1", "z2", "bw", "ra2", "W0", "E", "x2", "d0", "rf2" ] }
+    }
 
-        Text {
-            id: title2
-            anchors.top: fields1.bottom
-            anchors.topMargin: 10
+    Text {
+        Layout.alignment: Text.AlignHCenter
+        text: qsTr("Additional parameters")
+    }
 
-            text: qsTr("Additional parameters")
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        Item {
-            id: fields3
-            anchors.top: title2.bottom
-            anchors.topMargin: 10
-            width: parent.width / 2
-            height: childrenRect.height
-            Fields { model: [ "alpha", "c", "ha"] }
-
-        }
-
-        Item {
-            id: fields4
-            anchors.top: title2.bottom
-            anchors.left: fields3.right
-            anchors.topMargin: 10
-            width: parent.width / 2
-            height: childrenRect.height
-            Fields { model: [ "z0", "x0", "da0"] }
-        }
+    GridLayout
+    {
+        rows: 3
+        flow: GridLayout.TopToBottom
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        columnSpacing: 50
+        Layout.topMargin: 10
+        Layout.bottomMargin: 20
+        Fields { model: [ "alpha", "c", "ha", "z0", "x0", "da0"] }
     }
 }
