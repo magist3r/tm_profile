@@ -24,6 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QDebug>
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 class Profile : public QObject
@@ -66,10 +67,6 @@ class Profile : public QObject
 
 public:
     Profile(QObject *parent = 0);
-    Profile(const Profile&);
-    Profile& operator=(const Profile&);
-
-    ~Profile();
 
     Q_INVOKABLE bool getRadius(); // Расчет радиусов вершин и впадин колеса (ra2 и rf2)
 
@@ -395,7 +392,7 @@ private:
     double m_ra2; // Радиус вершин зубьев колеса
     double m_rf2; // Радиус впадин колеса
 
-    static const double m_eps = 0.000001; // Требуемая точность расчётов
+    static constexpr double m_eps = 0.000001; // Требуемая точность расчётов
     double m_nW;
     double m_nr;
 /*    double m_dx; // Величина модификации

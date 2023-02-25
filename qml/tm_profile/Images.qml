@@ -18,8 +18,8 @@ Tab {
             _image2.source = ""
 
             var baseName = profile.dataLocation + '/' + parName
-            _image1.source = baseName + '_' + modName + '_1.png'
-            _image2.source = baseName + '_' + modName + '_2.png'
+            _image1.source = 'file:///' + baseName + '_' + modName + '_1.png'
+            _image2.source = 'file:///' + baseName + '_' + modName + '_2.png'
         }
 
         Connections {

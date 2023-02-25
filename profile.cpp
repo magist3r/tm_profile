@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "math.h"
 #include <QSettings>
 #include <QStandardPaths>
+#include <QFile>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -41,21 +42,6 @@ Profile::Profile(QObject *parent)
     m_trajectory.append(0.0);
     m_trajectory.append(0.0);
     m_trajectory.append(0.0);
-
-}
-
-Profile::Profile(const Profile&)
-{
-
-}
-
-Profile& Profile::operator=(const Profile&)
-{
-
-}
-
-Profile::~Profile()
-{
 
 }
 
