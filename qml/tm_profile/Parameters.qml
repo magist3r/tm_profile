@@ -18,19 +18,9 @@ Tab {
             id: fields1
             anchors.top: title1.bottom
             anchors.topMargin: 10
-            width: parent.width / 2
+            width: parent.width
             height: childrenRect.height
-            Fields { model: [ "m", "z1", "z2", "bw", "ra2" ] }
-        }
-
-        Item {
-            id: fields2
-            anchors.top: title1.bottom
-            anchors.topMargin: 10
-            width: parent.width / 2
-            anchors.left: fields1.right
-            height: childrenRect.height
-            Fields { model: [ "W0", "E", "x2", "d0", "rf2" ] }
+            Fields { model: [ "m", "z1", "z2", "bw", "E", "x2", "d0", "W0", "ra2", "rf2" ] }
         }
 
         Text {
@@ -46,20 +36,10 @@ Tab {
             id: fields3
             anchors.top: title2.bottom
             anchors.topMargin: 10
-            width: parent.width / 2
+            width: parent.width
             height: childrenRect.height
-            Fields { model: [ "alpha", "c", "ha"] }
+            Fields { model: [ "alpha", "c", "ha", "z0", "x0", "da0"] }
 
-        }
-
-        Item {
-            id: fields4
-            anchors.top: title2.bottom
-            anchors.left: fields3.right
-            anchors.topMargin: 10
-            width: parent.width / 2
-            height: childrenRect.height
-            Fields { model: [ "z0", "x0", "da0"] }
         }
     }
 }

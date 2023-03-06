@@ -256,11 +256,10 @@ ApplicationWindow {
             topMargin: 10
         }
 
-        Images { id: mainTab }
-
         Parameters { id: parametersTab }
 
-        XtList { id: xtListTab }
+        Images { id: mainTab }
 
+        XtList { id: xtListTab }
     }
 }

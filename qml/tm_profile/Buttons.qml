@@ -22,10 +22,10 @@ Row {
         }
     }
 
-  /*  Button {
-        id: calculateR
-        width: 96
-        text: qsTr("CalculateR")
-        onClicked: profile.getRadius()
-    }*/
+//    Button {
+//        id: calculateR
+//        width: 96
+//        text: qsTr("CalculateR")
+//        onClicked: profile.getRadius()
+//    }
 }
