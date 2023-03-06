@@ -9,7 +9,7 @@ class ImageGenerator : public QObject
 {
     Q_OBJECT
 public:
-    explicit ImageGenerator(QObject *parent = 0);
+    explicit ImageGenerator(QObject *parent = 0, const QString & savePath = "images");
     
 signals:
     void imagesGenerated();
@@ -42,6 +42,7 @@ private:
     colors m_legendMin1, m_legendMax1, m_legendMin2, m_legendMax2;
     QList<double> m_legendList1;
     QList<double> m_legendList2;
+    QString m_savePath;
 };
 
 #endif // IMAGEGENERATOR_H

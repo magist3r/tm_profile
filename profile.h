@@ -24,8 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QPainter>
 #include <QDebug>
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <qmath.h>
 
 class Profile : public QObject
 {
@@ -368,10 +367,10 @@ private:
 
     QMap<double, QMap<double,double> > m_result;
 
-    double m_m;
+    double m_m; // Модуль зацепления
 
-    double m_z1; // Число зубьев шестерни
-    double m_z2; // Число зубьев колеса
+    double m_z1; // Число зубьев сателлита
+    double m_z2; // Число зубьев центрального колеса
     double m_x2; // Коэффициент смещения колеса
     double m_W0; // Аппликата большего торцового сечения венца шестерни
     double m_E; // Межосевой угол

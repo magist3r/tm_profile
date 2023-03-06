@@ -2,9 +2,10 @@
 #include <QPainter>
 #include <QDesktopServices>
 #include <QDebug>
+#include <QDir>
 
-ImageGenerator::ImageGenerator(QObject *parent) :
-    QObject(parent)
+ImageGenerator::ImageGenerator(QObject *parent, const QString &savePath) :
+    QObject(parent), m_savePath(savePath)
 {
 }
 
@@ -121,10 +122,8 @@ void ImageGenerator::paint(QMap<double, QMap<double,double> > &result, double de
     painter3.end();
     painter4.end();
 
-    QString savePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/";
-
-    image3.save(savePath + image_basename + "_1.png");
-    image4.save(savePath + image_basename + "_2.png");
+    image3.save(m_savePath + QDir::separator() + image_basename + "_1.png");
+    image4.save(m_savePath + QDir::separator() + image_basename + "_2.png");
     emit imagesGenerated();
 }
 

@@ -21,6 +21,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 #include <QStandardPaths>
 #include <QFile>
+#include <QCoreApplication>
+#include <QDir>
 #include <QDebug>
 
 Profile::Profile(QObject *parent)
@@ -47,7 +49,7 @@ Profile::Profile(QObject *parent)
 
 bool Profile::getRadius()
 {
-    double alpha_w02;
+    double alpha_w02{0};
 
     double inv_alpha_w02 = ((m_x2 - m_x0) / (m_z2 - m_z0)) * 2 * tan(m_alpha_rad) + tan(m_alpha_rad) - m_alpha_rad;
 
@@ -142,7 +144,7 @@ void Profile::calculate()
     saveTrajectory();
     emit trajectoryChanged(m_trajectory);
 
-    double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
+//    double w0 = -m_trajectory[1] / (2 * m_trajectory[2]);
 
     Wi = m_W0;
 
@@ -152,9 +154,9 @@ void Profile::calculate()
         double wi = Wi - m_W0;
         double delta_oi = -atan(m_m * (2 * m_trajectory[2] * wi + m_trajectory[1]));
         double xt = m_trajectory[2] * pow(wi, 2) + m_trajectory[1] * wi + m_trajectory[0];
-        double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
-        double ha_2 = m_ha / cos(delta_oi);
-        double c_2 = m_c / cos(delta_oi);
+//        double aw0 = m_m * (0.5 * m_z1 + xt) + 0.5 * m_d0 * cos(delta_oi);
+//        double ha_2 = m_ha / cos(delta_oi);
+//        double c_2 = m_c / cos(delta_oi);
         double d = m_m * m_z1;
         double alpha_t = atan(tan(m_alpha_rad) * cos(delta_oi));
         double d_b = d * cos(alpha_t);
@@ -268,7 +270,7 @@ QList<qreal> Profile::squareMethod(const QList<qreal> &S)
 
 void Profile::a_tw(double ry1, double Wi, double &x_tr, double &y_tr)
 {
-    double vy2, p, q, alpha_tw, phi1;
+    double vy2{0}, p{0}, q{0}, alpha_tw{0}, phi1{0};
     double i21 = z1() / z2();
     double alpha_tw_n = M_PI / 180;
     double alpha_tw_k = acos((Wi/m_rb2 - sqrt(pow(Wi/m_rb2,2) - 2 * sin(2*m_E_rad) / tan(m_delta2))) / (2 * sin(m_E_rad)));
@@ -424,8 +426,7 @@ bool Profile::imageExists(QString basename)
 
 void Profile::loadSettings(QString value)
 {
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
     settings.beginGroup(value);
 
     setM(settings.value("m").toDouble());
@@ -455,8 +456,7 @@ void Profile::loadSettings(QString value)
 
 void Profile::loadModSettings(QString value, QString modValue)
 {
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
     settings.beginGroup(value);
     settings.beginGroup(modValue);
     setMod0(settings.value("mod0").toDouble());
@@ -466,15 +466,14 @@ void Profile::loadModSettings(QString value, QString modValue)
     m_trajectory[1] = settings.value("b").toDouble();
     m_trajectory[0] = settings.value("c").toDouble();
 
-    trajectoryChanged(m_trajectory);
+    emit trajectoryChanged(m_trajectory);
     settings.endGroup();
     settings.endGroup();
 }
 
 void Profile::setListOfParameters()
 {
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
     QRegExp rx("m*");
     rx.setPatternSyntax(QRegExp::Wildcard);
     QStringList list = settings.childGroups().filter(rx);

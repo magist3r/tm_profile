@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QtQuick/QQuickView>
 #include "profile.h"
 #include "imagegenerator.h"
+#include <QDebug>
 
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
@@ -32,18 +33,19 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("tm_profile");
     QCoreApplication::setOrganizationName("zb-susu");
 
-    QDir datadir(QStandardPaths::writableLocation(QStandardPaths::DataLocation));
+    // Store images next to executable to enable portability
+    QDir datadir(QCoreApplication::applicationDirPath() + QDir::separator() + "images");
     if (!datadir.exists())
         datadir.mkpath(datadir.path());
 
     QTranslator myappTranslator;
-    myappTranslator.load(app.applicationName() + "_" + QLocale::system().name());
+    myappTranslator.load(app.applicationName() + "_" + QLocale::system().name(), QCoreApplication::applicationDirPath());
     app.installTranslator(&myappTranslator);
 
-    Profile *profile = new Profile();
+    Profile *profile = new Profile(&app);
     profile->setdataLocation(datadir.absolutePath());
 
-    ImageGenerator *generator = new ImageGenerator();
+    ImageGenerator *generator = new ImageGenerator(&app, datadir.absolutePath());
     QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
                      generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
 
