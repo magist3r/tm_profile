@@ -244,5 +244,7 @@ QColor ImageGenerator::getColorFromEnum(ImageGenerator::colors c)
             return Qt::darkGray;
         case Black:
             return Qt::black;
+        default:
+            return Qt::black;
     }
 }

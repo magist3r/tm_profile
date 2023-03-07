@@ -71,6 +71,8 @@ public:
 
     Q_INVOKABLE void calculate(); // Расчет толщин зубьев практического и теоретического профилей
 
+    ~Profile();
+
 
     /* getters */
 
@@ -396,9 +398,6 @@ private:
     static constexpr double m_eps = 0.000001; // Требуемая точность расчётов
     double m_nW;
     double m_nr;
-/*    double m_dx; // Величина модификации
-    double m_dx_0;
-    double m_dx_bw;*/
 
     double m_delta_s_max;
 
@@ -415,6 +414,9 @@ private:
     double m_mod0;
     double m_modCenter;
     double m_modBw;
+
+    QString m_baseName;
+    QString m_modName;
 };
 
 #endif // PROFILE_H

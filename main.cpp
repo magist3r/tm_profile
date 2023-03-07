@@ -42,15 +42,15 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     myappTranslator.load(app.applicationName() + "_" + QLocale::system().name(), QCoreApplication::applicationDirPath());
     app.installTranslator(&myappTranslator);
 
-    Profile *profile = new Profile(&app);
-    profile->setdataLocation(datadir.absolutePath());
+    Profile profile(&app);
+    profile.setdataLocation(datadir.absolutePath());
 
-    ImageGenerator *generator = new ImageGenerator(&app, datadir.absolutePath());
-    QObject::connect(profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
-                     generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
+    ImageGenerator generator(&app, datadir.absolutePath());
+    QObject::connect(&profile, SIGNAL(calculateFinished(QMap<double,QMap<double,double> >&,double,double,double,double,QString)),
+                     &generator, SLOT(paint(QMap<double,QMap<double,double> >&,double,double,double,double,QString)));
 
-    engine.rootContext()->setContextProperty("imageGenerator", generator);
-    engine.rootContext()->setContextProperty("profile", profile);
+    engine.rootContext()->setContextProperty("imageGenerator", &generator);
+    engine.rootContext()->setContextProperty("profile", &profile);
 
     component.loadUrl(QUrl("qml/tm_profile/main.qml"));
     if ( !component.isReady() ) {

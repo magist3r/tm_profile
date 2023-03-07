@@ -69,7 +69,7 @@
     <name>Profile</name>
     <message>
         <source>manual</source>
-        <translation type="vanished">вручную</translation>
+        <translation>вручную</translation>
     </message>
 </context>
 <context>

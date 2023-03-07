@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <QDir>
 #include <QDebug>
 
-Profile::Profile(QObject *parent)
+Profile::Profile(QObject */*parent*/)
 {
     m_m = 2;
     m_z0 = 19;
@@ -44,7 +44,14 @@ Profile::Profile(QObject *parent)
     m_trajectory.append(0.0);
     m_trajectory.append(0.0);
     m_trajectory.append(0.0);
+}
 
+Profile::~Profile()
+{
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
+
+    settings.setValue("currentProfile", getBaseName());
+    settings.setValue("currentMod", getModName());
 }
 
 bool Profile::getRadius()
@@ -314,7 +321,7 @@ QString Profile::getBaseName()
 QString Profile::getModName()
 {
     if (useManualXtList())
-        return QString("manual");
+        return tr("manual");
 
     QString name1, name2, name3;
     name1 = QString::number(mod0() * 1000);
@@ -332,8 +339,7 @@ QString Profile::getModName()
 
 void Profile::saveTrajectory()
 {
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
     settings.beginGroup(getBaseName());
     settings.beginGroup(getModName());
     settings.setValue("a", trajectory().at(2));
@@ -345,8 +351,8 @@ void Profile::saveTrajectory()
 
 void Profile::saveMainSettings()
 {
-    QSettings::setDefaultFormat(QSettings::IniFormat);
-    QSettings settings;
+    QSettings settings(QCoreApplication::applicationDirPath() + QDir::separator() + "tm_profile.ini", QSettings::IniFormat);
+
     settings.beginGroup(getBaseName());
     settings.setValue("m", m_m);
     settings.setValue("z1", m_z1);
@@ -481,6 +487,9 @@ void Profile::setListOfParameters()
         m_listOfParameters = list;
         emit listOfParametersChanged(list);
     }
+
+    m_baseName = settings.value("currentProfile").toString();
+    m_modName = settings.value("currentMod").toString();
 }
 
 void Profile::setModificationList(QStringList arg)
