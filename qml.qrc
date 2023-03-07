@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/tm_profile/Alert.qml</file>
+        <file>qml/tm_profile/Buttons.qml</file>
+        <file>qml/tm_profile/Fields.qml</file>
+        <file>qml/tm_profile/Images.qml</file>
+        <file>qml/tm_profile/main.qml</file>
+        <file>qml/tm_profile/Parameters.qml</file>
+        <file>qml/tm_profile/XtList.qml</file>
+    </qresource>
+</RCC>

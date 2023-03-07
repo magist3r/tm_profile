@@ -27,11 +27,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QQmlEngine engine;
+    QQmlApplicationEngine engine;
     QQmlComponent component(&engine);
 
     QCoreApplication::setApplicationName("tm_profile");
     QCoreApplication::setOrganizationName("zb-susu");
+    QCoreApplication::setApplicationVersion("1.0.0");
 
     // Store images next to executable to enable portability
     QDir datadir(QCoreApplication::applicationDirPath() + QDir::separator() + "images");
@@ -52,21 +53,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("imageGenerator", &generator);
     engine.rootContext()->setContextProperty("profile", &profile);
 
-    component.loadUrl(QUrl("qml/tm_profile/main.qml"));
-    if ( !component.isReady() ) {
-        qWarning("%s", qPrintable(component.errorString()));
-        return -1;
-    }
-
-    QObject *topLevel = component.create();
-    QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
-
-    if ( !window ) {
-        qWarning("Error: Your root item has to be a Window.");
-        return -1;
-    }
-
-    window->show();
+    const QUrl url(QStringLiteral("qrc:/qml/tm_profile/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
 
     return app.exec();
 }
