@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 
 Tab {
     title: qsTr("Inertial zone")
+    active: true
     Item {
         id: images
         anchors.fill: parent

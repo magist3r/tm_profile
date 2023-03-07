@@ -1,6 +1,5 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.0
-import QtQuick.Controls.Private 1.0
 
 ApplicationWindow {
     id:mainWindow
@@ -9,10 +8,6 @@ ApplicationWindow {
 
     minimumWidth: 600
     minimumHeight: 690
-
-    onHeightChanged: {
-        console.log(tabs.height)
-    }
 
     property bool parametersChanged: false
     property bool reloading: false
@@ -50,13 +45,8 @@ ApplicationWindow {
 
     Item {
         id: rootItem
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-            margins: 10
-        }
-        height: childrenRect.height
+        anchors.fill: parent
+        anchors.margins: 10
 
         Item {
             id: parameters
@@ -123,7 +113,7 @@ ApplicationWindow {
                 onCurrentTextChanged: {
                     if (!reloading) {
                         profile.loadModSettings(parComboBox.currentText, currentText)
-                        if (currentText == "manual")
+                        if (currentText === qsTr("manual"))
                             checkbox.checked = true
                         else
                             checkbox.checked = false
@@ -147,11 +137,11 @@ ApplicationWindow {
                     parametersChanged = true
                     profile.useManualXtList = checked
                     if (checked) {
-                        var index = profile.modificationList.indexOf("manual")
+                        var index = profile.modificationList.indexOf(qsTr("manual"))
                         if (index !== -1)
                             modComboBox.currentIndex = index
                     } else {
-                        if (modComboBox.currentText == "manual") {
+                        if (modComboBox.currentText === qsTr("manual")) {
                             modComboBox.currentIndex = 0
                         }
                     }
@@ -222,44 +212,45 @@ ApplicationWindow {
                     }
                 }
             }
-       }
-
-       Text {
-           anchors {
-               top: modFields.bottom
-               topMargin: 10
-               left: parent.left
-               right: parent.right
-           }
-           function num(number) {
-               if (number > 0)
-                   return '+ ' + number.toFixed(6)
-               else
-                   return '- ' + Math.abs(number.toFixed(6))
-           }
-
-           text: qsTr("Trajectory: %1 * w^2 %2 * w %3").arg(num(profile.trajectory[2])).arg(num(profile.trajectory[1])).arg(num(profile.trajectory[0]))
-           horizontalAlignment: Text.AlignHCenter
-           wrapMode: Text.WordWrap
-       }
-    }
-
-    TabView {
-        id: tabs
-
-        anchors {
-            top: rootItem.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-            margins: 2
-            topMargin: 10
         }
 
-        Parameters { id: parametersTab }
+        Text {
+            id: trajectory
+            anchors {
+                top: modFields.bottom
+                topMargin: 10
+                left: parent.left
+                right: parent.right
+            }
+            function num(number) {
+                if (number > 0)
+                    return '+ ' + number.toFixed(6)
+                else
+                    return '- ' + Math.abs(number.toFixed(6))
+            }
 
-        Images { id: mainTab }
+            text: qsTr("Trajectory: %1 * w^2 %2 * w %3").arg(num(profile.trajectory[2])).arg(num(profile.trajectory[1])).arg(num(profile.trajectory[0]))
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+        }
 
-        XtList { id: xtListTab }
+        TabView {
+            id: tabs
+
+            anchors {
+                top: trajectory.bottom
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+                margins: -5
+                topMargin: 10
+            }
+
+            Parameters { id: parametersTab }
+
+            Images { id: mainTab }
+
+            XtList { id: xtListTab }
+        }
     }
 }

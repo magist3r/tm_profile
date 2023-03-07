@@ -105,5 +105,9 @@
         <source>Trajectory: %1 * w^2 %2 * w %3</source>
         <translation>Траектория: %1 * w^2 %2 * w %3</translation>
     </message>
+    <message>
+        <source>manual</source>
+        <translation type="unfinished">вручную</translation>
+    </message>
 </context>
 </TS>
